@@ -16,7 +16,7 @@ namespace GraduationProject.Data.Models
         public int PatientId { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Address { get; set; }
-        public string MedicalHistory { get; set; }
+        public string? MedicalHistory { get; set; }
 
        public Gender Gender=Gender.Male;
         

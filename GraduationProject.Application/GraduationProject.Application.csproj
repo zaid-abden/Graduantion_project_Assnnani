@@ -6,4 +6,52 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Admin\Commands\" />
+    <Folder Include="Features\Admin\Dtos\" />
+    <Folder Include="Features\Admin\Queries\" />
+    <Folder Include="Features\AI_Report\Commands\" />
+    <Folder Include="Features\AI_Report\Dtos\" />
+    <Folder Include="Features\AI_Report\Queries\" />
+    <Folder Include="Features\Appointment\Commands\" />
+    <Folder Include="Features\Appointment\Dtos\" />
+    <Folder Include="Features\Appointment\Queries\" />
+    <Folder Include="Features\DoctorSchedule\Commands\" />
+    <Folder Include="Features\DoctorSchedule\Dtos\" />
+    <Folder Include="Features\DoctorSchedule\Queries\" />
+    <Folder Include="Features\Doctor\Commands\" />
+    <Folder Include="Features\Doctor\Dtos\" />
+    <Folder Include="Features\Doctor\Queries\" />
+    <Folder Include="Features\Feedback\Commands\" />
+    <Folder Include="Features\Feedback\Dtos\" />
+    <Folder Include="Features\Feedback\Queries\" />
+    <Folder Include="Features\MedicalRecord\Commands\" />
+    <Folder Include="Features\MedicalRecord\Dtos\" />
+    <Folder Include="Features\MedicalRecord\Queries\" />
+    <Folder Include="Features\Patients\Queries\" />
+    <Folder Include="Features\Receptionist\Commands\" />
+    <Folder Include="Features\Receptionist\Dtos\" />
+    <Folder Include="Features\Receptionist\Queries\" />
+    <Folder Include="Features\StudentDoctor\Commands\" />
+    <Folder Include="Features\StudentDoctor\Dtos\" />
+    <Folder Include="Features\StudentDoctor\Queries\" />
+    <Folder Include="Features\Verification\Commands\" />
+    <Folder Include="Features\Verification\Dtos\" />
+    <Folder Include="Features\Verification\Queries\" />
+    <Folder Include="Mapping\Patients\QueryMapping\" />
+    <Folder Include="Settings\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="14.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GraduationProject.Data\GraduationProject.Data.csproj" />
+  </ItemGroup>
+
 </Project>

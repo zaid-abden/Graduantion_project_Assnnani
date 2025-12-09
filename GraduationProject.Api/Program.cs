@@ -1,11 +1,14 @@
 
+using FluentValidation;
+using GraduationProject.Api.Middleware;
+using GraduationProject.Application.Extensions;
 using GraduationProject.Infrastructure;
-
+using GraduationProject.Infrastructure.Persistence.SeedData;
 namespace GraduationProject.Api
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -18,11 +21,22 @@ namespace GraduationProject.Api
 
 
 
-         builder.Services.AddInfrastructure(builder);
+         builder.Services.AddInfrastructure(builder)
+                .AddApplicationServices();
 
-
+           
 
             var app = builder.Build();
+
+            // RUN SEEDERS
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                await DatabaseSeeder.SeedAsync(services);
+            }
+
+
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -30,7 +44,7 @@ namespace GraduationProject.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();

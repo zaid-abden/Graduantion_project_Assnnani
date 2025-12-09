@@ -19,7 +19,7 @@ namespace GraduationProject.Data.Identity
        
         public DateTime? BirthDate { get; set; }
 
-       
+       public bool IsActive { get; set; }
 
 
         // Relations

@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GraduationProject.Application\GraduationProject.Application.csproj" />
     <ProjectReference Include="..\GraduationProject.Data\GraduationProject.Data.csproj" />
   </ItemGroup>
 

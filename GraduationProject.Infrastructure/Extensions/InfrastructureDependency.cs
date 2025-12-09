@@ -1,5 +1,7 @@
-﻿using GraduationProject.Data.Identity;
+﻿using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Data.Identity;
 using GraduationProject.Infrastructure.Context;
+using GraduationProject.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +19,6 @@ namespace GraduationProject.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services,WebApplicationBuilder builder)
         {
-           
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DBConn"));
@@ -32,6 +33,20 @@ namespace GraduationProject.Infrastructure
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            // Generic Repo
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<IDoctorRepository, DoctorRepository>();
+            services.AddScoped<IDoctorScheduleRepository, DoctorScheduleRepository>();
+            services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            services.AddScoped<IMedicalRecordRepository, MedicalReportRepository>();
+            services.AddScoped<IPatientRepository, PatientRepository>();
+            services.AddScoped<IReceptionstRepository, ReceptionistRepository>();
+            services.AddScoped<IAdminRepository, AdminRepository>();
+            services.AddScoped<IVerificationRepository, VerificationRepository>();
+            services.AddScoped<IStudentDoctorRepository, StudentDoctorRepository>();
+            services.AddScoped<IAI_ReportRepository, AI_ReportRepository>();
             return services;
         }
     }
