@@ -1,4 +1,5 @@
-﻿using GraduationProject.Data.Models;
+﻿using GraduationProject.Data.Enums;
+using GraduationProject.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,8 @@ namespace GraduationProject.Data.Identity
 
        public bool IsActive { get; set; }
 
-
+        public string? Gender { get; set; }
+        public string? Address { get; set; }
         // Relations
         public Receptionist Receptionist { get; set; }
         public Patient Patient { get; set; }

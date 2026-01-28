@@ -1,9 +1,12 @@
 
+using Azure.Identity;
 using FluentValidation;
 using GraduationProject.Api.Middleware;
 using GraduationProject.Application.Extensions;
+using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
 using GraduationProject.Infrastructure;
 using GraduationProject.Infrastructure.Persistence.SeedData;
+using System.Reflection;
 namespace GraduationProject.Api
 {
     public class Program
@@ -24,16 +27,35 @@ namespace GraduationProject.Api
          builder.Services.AddInfrastructure(builder)
                 .AddApplicationServices();
 
-           
+           ValidatorOptions.Global.DefaultClassLevelCascadeMode=CascadeMode.Stop;
 
             var app = builder.Build();
 
-            // RUN SEEDERS
-            using (var scope = app.Services.CreateScope())
+
+            //var services = Assembly.GetExecutingAssembly()
+            //    .GetTypes()
+            //    .Where(x => x.IsClass && x.Name.EndsWith("Middleware"));
+            //foreach(var service in services)
+            //{
+            //    //builder.Services.AddTransient(typeof(IValidator), service);
+            //    Console.WriteLine(service.Name);
+            //}
+           
+            var services=typeof(CreatePatientValidator).Assembly
+                .GetTypes()
+                .Where(x=>x.IsClass&&x.Name.EndsWith("Validator"));
+            foreach(var service in services)
             {
-                var services = scope.ServiceProvider;
-                await DatabaseSeeder.SeedAsync(services);
+                //builder.Services.AddTransient(typeof(IValidator), service);
+                Console.WriteLine(service.Name);
             }
+
+            // RUN SEEDERS
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
+            //    await DatabaseSeeder.SeedAsync(services);
+            //}
 
 
 

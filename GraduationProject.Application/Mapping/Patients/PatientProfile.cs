@@ -12,6 +12,8 @@ namespace GraduationProject.Application.Mapping.Patients
         public PatientProfile()
         {
             CreatePatientCommandMapping();
+            GetAllPatientMapping();
+            GetPatientByIdMapping();
         }
     }
 }

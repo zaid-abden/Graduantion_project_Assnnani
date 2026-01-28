@@ -17,7 +17,7 @@ namespace GraduationProject.Application.Features.Patients.Dtos
 
      
 
-        public Gender Gender { get; set; }
+        public string? Gender { get; set; }
 
        
         public string FullName { get; set; }

@@ -32,7 +32,7 @@ namespace GraduationProject.Data.Models
 
 
         // Medical Information
-        public string Specialization { get; set; }
+        //public string Specialization { get; set; }
         public DoctorDegree Degree { get; set; }
 
 

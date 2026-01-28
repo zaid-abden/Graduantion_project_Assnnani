@@ -1,18 +1,15 @@
 ﻿using FluentValidation;
 using System.Net;
 using System.Text.Json;
-
 namespace GraduationProject.Api.Middleware
 {
     public class GlobalExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;
-
         public GlobalExceptionHandlingMiddleware(RequestDelegate next)
         {
             _next = next;
         }
-
         public async Task InvokeAsync(HttpContext context)
         {
             try
@@ -24,13 +21,10 @@ namespace GraduationProject.Api.Middleware
                 await HandleExceptionAsync(context, ex);
             }
         }
-
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             context.Response.ContentType = "application/json";
-
             var response = new ErrorResponse();
-
             // FluentValidation Exception
             if (ex is ValidationException validationEx)
             {
@@ -58,7 +52,6 @@ namespace GraduationProject.Api.Middleware
             await context.Response.WriteAsync(json);
         }
     }
-
     public class ErrorResponse
     {
         public string Message { get; set; }

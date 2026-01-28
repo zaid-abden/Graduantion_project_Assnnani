@@ -11,7 +11,7 @@ namespace GraduationProject.Application.Features.Patients.Commands.CreatePatient
     {
         public CreatePatientValidator()
         {
-            ClassLevelCascadeMode = CascadeMode.Stop;
+            //ClassLevelCascadeMode = CascadeMode.Stop;
             // First Name
             RuleFor(x => x.FirstName)
                 .NotEmpty().WithMessage("First name is required.")

@@ -28,7 +28,6 @@
     <Folder Include="Features\MedicalRecord\Commands\" />
     <Folder Include="Features\MedicalRecord\Dtos\" />
     <Folder Include="Features\MedicalRecord\Queries\" />
-    <Folder Include="Features\Patients\Queries\" />
     <Folder Include="Features\Receptionist\Commands\" />
     <Folder Include="Features\Receptionist\Dtos\" />
     <Folder Include="Features\Receptionist\Queries\" />
@@ -38,7 +37,6 @@
     <Folder Include="Features\Verification\Commands\" />
     <Folder Include="Features\Verification\Dtos\" />
     <Folder Include="Features\Verification\Queries\" />
-    <Folder Include="Mapping\Patients\QueryMapping\" />
     <Folder Include="Settings\" />
   </ItemGroup>
 

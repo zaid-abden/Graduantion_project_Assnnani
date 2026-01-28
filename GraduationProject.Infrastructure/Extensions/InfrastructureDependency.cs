@@ -1,6 +1,7 @@
 ﻿using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Data.Identity;
 using GraduationProject.Infrastructure.Context;
+using GraduationProject.Infrastructure.Extensions;
 using GraduationProject.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -36,7 +37,15 @@ namespace GraduationProject.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             // Generic Repo
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+           services.AddInfrastructureRepositories();
+            return services;
+        }
+    }
+}
+
+
+/*
+  services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<IDoctorScheduleRepository, DoctorScheduleRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
@@ -47,7 +56,4 @@ namespace GraduationProject.Infrastructure
             services.AddScoped<IVerificationRepository, VerificationRepository>();
             services.AddScoped<IStudentDoctorRepository, StudentDoctorRepository>();
             services.AddScoped<IAI_ReportRepository, AI_ReportRepository>();
-            return services;
-        }
-    }
-}
+ */
