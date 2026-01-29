@@ -11,7 +11,7 @@ namespace GraduationProject.Application.Common.Results
         public bool IsSuccess => Status == ResultStatus.Success;
         public ResultStatus Status { get; }
         public string Error { get; }
-        public T Value { get; }
+        public T? Value { get; }
 
         private Result(ResultStatus status, T value = default, string error = null)
         {

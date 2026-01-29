@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Contracts.Repositories
 {
-    public interface IDoctorRepository: IGenericRepository<doctor>
+    public interface IEmailVerificationRepository
     {
+        Task AddVerification(EmailVerification emailVerification);
+       public  Task<List<EmailVerification>> GetVerifications();  
     }
 }

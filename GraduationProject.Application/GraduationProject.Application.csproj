@@ -19,7 +19,8 @@
     <Folder Include="Features\DoctorSchedule\Commands\" />
     <Folder Include="Features\DoctorSchedule\Dtos\" />
     <Folder Include="Features\DoctorSchedule\Queries\" />
-    <Folder Include="Features\Doctor\Commands\" />
+    <Folder Include="Features\Doctors\Dtos\" />
+    <Folder Include="Features\Doctors\Queries\" />
     <Folder Include="Features\Doctor\Dtos\" />
     <Folder Include="Features\Doctor\Queries\" />
     <Folder Include="Features\Feedback\Commands\" />
@@ -37,7 +38,6 @@
     <Folder Include="Features\Verification\Commands\" />
     <Folder Include="Features\Verification\Dtos\" />
     <Folder Include="Features\Verification\Queries\" />
-    <Folder Include="Settings\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +46,7 @@
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="MediatR" Version="14.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
 
   <ItemGroup>

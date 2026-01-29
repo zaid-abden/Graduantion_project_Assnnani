@@ -20,7 +20,7 @@ namespace GraduationProject.Data.Models
         // FK
         [ForeignKey("Doctor")]
         public int DoctorId { get; set; }
-        public Doctor Doctor { get; set; }
+        public doctor Doctor { get; set; }
         public ICollection<Appointment> Appointments { get; set; }
     }
 

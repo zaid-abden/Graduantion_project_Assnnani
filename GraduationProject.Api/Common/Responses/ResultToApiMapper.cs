@@ -16,7 +16,12 @@ namespace GraduationProject.Api.Common.Responses
                         Data = result.Value,
                         Message = "Success"
                     }),
-
+                ResultStatus.Failure =>   
+       new BadRequestObjectResult(new ApiResponse<T>
+       {
+           Succeeded = false,
+           Message = result.Error
+       }),
                 ResultStatus.ValidationError =>
                     new BadRequestObjectResult(new ApiResponse<T>
                     {

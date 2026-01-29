@@ -21,7 +21,7 @@ namespace GraduationProject.Data.Models
         [ForeignKey("Doctor")]
 
         public int DoctorId { get; set; }
-        public Doctor Doctor { get; set; }
+        public doctor Doctor { get; set; }
     }
 
 }

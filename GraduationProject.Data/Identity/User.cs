@@ -21,14 +21,14 @@ namespace GraduationProject.Data.Identity
         public DateTime? BirthDate { get; set; }
 
        public bool IsActive { get; set; }
-
+        public bool EmailVerified { get; set; } = false;
         public string? Gender { get; set; }
-        public string? Address { get; set; }
+       // public string? Address { get; set; }
         // Relations
         public Receptionist Receptionist { get; set; }
         public Patient Patient { get; set; }
-         public Doctor Doctor { get; set; }
+         public doctor Doctor { get; set; }
         public StudentDoctor StudentDoctor { get; set; }
-       
+        public ICollection<EmailVerification> EmailVerifications { get; set; }
     }
 }

@@ -9,18 +9,15 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Data.Models
 {
-    public class Doctor
+    [Table("Doctors")]
+    public class doctor
     {
         public int DoctorId { get; set; }
 
-
-
-        // Basic Information
-        public string About { get; set; }
+        // Profile
+        public string? About { get; set; }
         public string? ImageUrl { get; set; }
         public int YearsOfExperience { get; set; }
-
-
 
         // Address
         public string Country { get; set; }
@@ -28,25 +25,23 @@ namespace GraduationProject.Data.Models
         public string Street { get; set; }
         public string Details { get; set; }
 
-
-
-
-        // Medical Information
-        //public string Specialization { get; set; }
+        // Medical Info
         public DoctorDegree Degree { get; set; }
 
+        // Verification
+        public DoctorVerificationStatus VerificationStatus { get; set; }
+            = DoctorVerificationStatus.NotSubmitted;
 
+        public DateTime? VerifiedAt { get; set; }
+        public string? RejectionReason { get; set; }
 
         // Statistics
         public int NumberOfPatientsSeen { get; set; } = 0;
-
-        // Rating
-        public double Rating { get; set; } = 0;       
+        public double Rating { get; set; } = 0;
         public int RatingCount { get; set; } = 0;
 
-
-        // Optional Clinic Contact
         public string? ClinicPhoneNumber { get; set; }
+
 
 
 
@@ -61,16 +56,9 @@ namespace GraduationProject.Data.Models
         public ICollection<DoctorSchedule> Schedules { get; set; } 
         public ICollection<Verification> Verifications { get; set; } 
         public Receptionist Receptionist { get; set; }
-       
+
         
     }
 
 }
 
-
-/*
-doctor.Rating = 
-    ((doctor.Rating * doctor.RatingCount) + newRateValue) 
-    / (doctor.RatingCount + 1);
-doctor.RatingCount++;
- */

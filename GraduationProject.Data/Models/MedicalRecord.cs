@@ -24,7 +24,11 @@ namespace GraduationProject.Data.Models
         public Patient Patient { get; set; }
         [ForeignKey("Doctor")]
         public int DoctorId { get; set; }
-        public Doctor Doctor { get; set; }
+        public doctor Doctor { get; set; }
+
+
+        public int? StudentDoctorId { get; set; }
+        public StudentDoctor StudentDoctor { get; set; }
     }
 
 }

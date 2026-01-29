@@ -1,11 +1,18 @@
 
 using Azure.Identity;
 using FluentValidation;
+using GraduationProject.Api.Extensions;
 using GraduationProject.Api.Middleware;
+using GraduationProject.Application.Contracts.ExternalServices;
+using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Extensions;
 using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
+using GraduationProject.Data.Identity;
 using GraduationProject.Infrastructure;
+using GraduationProject.Infrastructure.ExternalServices;
 using GraduationProject.Infrastructure.Persistence.SeedData;
+using GraduationProject.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
 using System.Reflection;
 namespace GraduationProject.Api
 {
@@ -22,14 +29,45 @@ namespace GraduationProject.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+           
 
-
-         builder.Services.AddInfrastructure(builder)
+            builder.Services.AddInfrastructure(builder)
                 .AddApplicationServices();
 
            ValidatorOptions.Global.DefaultClassLevelCascadeMode=CascadeMode.Stop;
 
+
+            builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
+
+
+            builder.Services.AddApiServices(builder.Configuration);
+
+
+
+
+
+
+
+            builder.Services.AddScoped<IEmailService,EmailService>();
+            builder.Services.AddScoped<IEmailVerificationRepository,EmailVerificationRepository>();
             var app = builder.Build();
+            using (var scope = app.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+
+                try
+                {
+                    await DatabaseSeeder.SeedAsync(serviceProvider);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error seeding roles: {ex.Message}");
+                }
+            }
 
 
             //var services = Assembly.GetExecutingAssembly()
@@ -40,8 +78,8 @@ namespace GraduationProject.Api
             //    //builder.Services.AddTransient(typeof(IValidator), service);
             //    Console.WriteLine(service.Name);
             //}
-           
-            var services=typeof(CreatePatientValidator).Assembly
+
+            var services =typeof(CreatePatientValidator).Assembly
                 .GetTypes()
                 .Where(x=>x.IsClass&&x.Name.EndsWith("Validator"));
             foreach(var service in services)

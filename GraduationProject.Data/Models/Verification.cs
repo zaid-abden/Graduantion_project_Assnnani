@@ -18,10 +18,13 @@ namespace GraduationProject.Data.Models
         // FK
         [ForeignKey("Doctor")]
         public int DoctorId { get; set; }
-        public Doctor Doctor { get; set; }
+        public doctor Doctor { get; set; }
         [ForeignKey("Admin")]
         public int AdminId { get; set; }
         public Admin Admin { get; set; }
+
+        public int? StudentDoctorId { get; set; }
+        public StudentDoctor StudentDoctor { get; set; }
     }
 
 }

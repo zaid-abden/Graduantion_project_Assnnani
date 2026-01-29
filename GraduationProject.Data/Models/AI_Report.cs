@@ -25,7 +25,9 @@ namespace GraduationProject.Data.Models
         public Patient Patient { get; set; }
 
         public int DoctorId { get; set; }
-        public Doctor Doctor { get; set; }
+        public doctor Doctor { get; set; }
+        public int? StudentDoctorId { get; set; }
+        public StudentDoctor StudentDoctor { get; set; }
     }
 
 }

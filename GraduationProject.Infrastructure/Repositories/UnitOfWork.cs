@@ -24,6 +24,9 @@ namespace GraduationProject.Infrastructure.Repositories
         public IReceptionstRepository Receptionists { get; }
         public IStudentDoctorRepository StudentDoctors { get; }
         public IVerificationRepository Verifications { get; }
+        public IEmailVerificationRepository emailVerification { get; }
+
+        public IEmailVerificationRepository EmailVerificationRepository { get; }
 
         public UnitOfWork(
             ApplicationDbContext context,
@@ -37,7 +40,9 @@ namespace GraduationProject.Infrastructure.Repositories
             IPatientRepository patientRepository,
             IReceptionstRepository receptionistRepository,
             IStudentDoctorRepository studentDoctorRepository,
-            IVerificationRepository verificationRepository
+            IVerificationRepository verificationRepository,
+            IEmailVerificationRepository emailVerification,
+            IEmailVerificationRepository emailVerificationRepository
         )
         {
             _context = context;
@@ -53,6 +58,8 @@ namespace GraduationProject.Infrastructure.Repositories
             Receptionists = receptionistRepository;
             StudentDoctors = studentDoctorRepository;
             Verifications = verificationRepository;
+            this.emailVerification = emailVerification;
+            EmailVerificationRepository= emailVerificationRepository;
         }
 
         public async Task<int> SaveAsync()

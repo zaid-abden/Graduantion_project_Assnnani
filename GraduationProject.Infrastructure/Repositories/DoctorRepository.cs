@@ -11,7 +11,7 @@ namespace GraduationProject.Infrastructure.Repositories
 {
 
     public class DoctorRepository
-        : GenericRepository<Doctor>, IDoctorRepository
+        : GenericRepository<doctor>, IDoctorRepository
     {
         private readonly ApplicationDbContext _dbContext;
 
