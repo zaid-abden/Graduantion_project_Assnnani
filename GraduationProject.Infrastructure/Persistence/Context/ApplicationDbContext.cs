@@ -2,15 +2,10 @@
 using GraduationProject.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraduationProject.Infrastructure.Context
 {
-    public class ApplicationDbContext:IdentityDbContext<User>
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
         public DbSet<Admin> Admins { get; set; }
@@ -25,6 +20,8 @@ namespace GraduationProject.Infrastructure.Context
         public DbSet<StudentDoctor> StudentDoctors { get; set; }
         public DbSet<Verification> Verifications { get; set; }
         public DbSet<EmailVerification> EmailVerifications { get; set; }
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -110,7 +107,7 @@ namespace GraduationProject.Infrastructure.Context
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-           
+
 
             // ==================== Receptionists ====================
             builder.Entity<Receptionist>()
@@ -184,5 +181,5 @@ namespace GraduationProject.Infrastructure.Context
     }
 }
 
-    
+
 

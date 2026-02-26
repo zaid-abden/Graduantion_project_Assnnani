@@ -2,16 +2,11 @@
 using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.ExternalServices;
 using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Data.Enums;
 using GraduationProject.Data.Identity;
+using GraduationProject.Data.Models;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GraduationProject.Data.Models;
-using GraduationProject.Data.Enums;
 
 namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
 {
@@ -21,7 +16,7 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly IEmailService emailService;
-        
+
         public CreateDoctorCommandHandler(
             UserManager<User> userManager,
             IUnitOfWork unitOfWork,
@@ -33,7 +28,7 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
             this.mapper = mapper;
             this.emailService = emailService;
         }
-        
+
         public async Task<Result<string>> Handle(CreateDoctorCommand request, CancellationToken cancellationToken)
         {
             var existingUser = await userManager.FindByEmailAsync(request.Email);
@@ -47,7 +42,7 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
                 UserName = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 EmailVerified = false,
-               
+
                 IsActive = true
             };
             var result = await userManager.CreateAsync(user, request.Password);
@@ -60,14 +55,14 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
 
             var doc = new doctor
             {
-                UserId=user.Id,
-                YearsOfExperience=0,
-                VerificationStatus=DoctorVerificationStatus.NotSubmitted,
-                Country="",
-                City="",
-                Street="",
-                Details="",
-                
+                UserId = user.Id,
+                YearsOfExperience = 0,
+                VerificationStatus = DoctorVerificationStatus.NotSubmitted,
+                Country = "",
+                City = "",
+                Street = "",
+                Details = "",
+
             };
             await unitOfWork.Doctors.AddAsync(doc);
             await unitOfWork.SaveAsync();
@@ -81,8 +76,8 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
                 IsUsed = false
             };
             await unitOfWork.EmailVerificationRepository.AddVerification(emailVerification);
-            await emailService.SendEmailAsync(user.Email,"Verify Your Email", $"Your verification code is: {code}");
-            
+            await emailService.SendEmailAsync(user.Email, "Verify Your Email", $"Your verification code is: {code}");
+
             return Result<string>.Success("Doctor registered successfully. Verification code sent.");
         }
     }

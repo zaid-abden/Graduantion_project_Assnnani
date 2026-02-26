@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraduationProject.Application.Common.Results
+﻿namespace GraduationProject.Application.Common.Results
 {
     public enum ResultStatus
     {
@@ -14,6 +8,7 @@ namespace GraduationProject.Application.Common.Results
         Conflict,
         Unauthorized,
         Forbidden,
-        Failure
+        Failure,
+        BadRequest
     }
 }
