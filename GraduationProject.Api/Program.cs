@@ -1,5 +1,3 @@
-
-using Azure.Identity;
 using FluentValidation;
 using GraduationProject.Api.Extensions;
 using GraduationProject.Api.Middleware;
@@ -7,13 +5,10 @@ using GraduationProject.Application.Contracts.ExternalServices;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Extensions;
 using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
-using GraduationProject.Data.Identity;
 using GraduationProject.Infrastructure;
 using GraduationProject.Infrastructure.ExternalServices;
 using GraduationProject.Infrastructure.Persistence.SeedData;
 using GraduationProject.Infrastructure.Repositories;
-using Microsoft.AspNetCore.Identity;
-using System.Reflection;
 namespace GraduationProject.Api
 {
     public class Program
@@ -29,12 +24,12 @@ namespace GraduationProject.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-           
+
 
             builder.Services.AddInfrastructure(builder)
                 .AddApplicationServices();
 
-           ValidatorOptions.Global.DefaultClassLevelCascadeMode=CascadeMode.Stop;
+            ValidatorOptions.Global.DefaultClassLevelCascadeMode = CascadeMode.Stop;
 
 
             builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
@@ -52,8 +47,8 @@ namespace GraduationProject.Api
 
 
 
-            builder.Services.AddScoped<IEmailService,EmailService>();
-            builder.Services.AddScoped<IEmailVerificationRepository,EmailVerificationRepository>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {
@@ -79,10 +74,10 @@ namespace GraduationProject.Api
             //    Console.WriteLine(service.Name);
             //}
 
-            var services =typeof(CreatePatientValidator).Assembly
+            var services = typeof(CreatePatientValidator).Assembly
                 .GetTypes()
-                .Where(x=>x.IsClass&&x.Name.EndsWith("Validator"));
-            foreach(var service in services)
+                .Where(x => x.IsClass && x.Name.EndsWith("Validator"));
+            foreach (var service in services)
             {
                 //builder.Services.AddTransient(typeof(IValidator), service);
                 Console.WriteLine(service.Name);
