@@ -16,9 +16,9 @@
     <Folder Include="Features\Appointment\Commands\" />
     <Folder Include="Features\Appointment\Dtos\" />
     <Folder Include="Features\Appointment\Queries\" />
-    <Folder Include="Features\DoctorSchedule\Commands\" />
-    <Folder Include="Features\DoctorSchedule\Dtos\" />
-    <Folder Include="Features\DoctorSchedule\Queries\" />
+    <Folder Include="Features\Auth\Commands\Logout\" />
+    <Folder Include="Features\Auth\Commands\RefershToken\" />
+    <Folder Include="Features\Doctors\Commands\" />
     <Folder Include="Features\Doctors\Dtos\" />
     <Folder Include="Features\Doctors\Queries\" />
     <Folder Include="Features\Doctor\Dtos\" />
@@ -29,6 +29,7 @@
     <Folder Include="Features\MedicalRecord\Commands\" />
     <Folder Include="Features\MedicalRecord\Dtos\" />
     <Folder Include="Features\MedicalRecord\Queries\" />
+    <Folder Include="Features\Patients\Commands\" />
     <Folder Include="Features\Receptionist\Commands\" />
     <Folder Include="Features\Receptionist\Dtos\" />
     <Folder Include="Features\Receptionist\Queries\" />
@@ -46,6 +47,7 @@
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="MediatR" Version="14.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
 

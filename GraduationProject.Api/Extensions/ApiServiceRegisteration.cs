@@ -6,7 +6,7 @@ namespace GraduationProject.Api.Extensions
     {
         public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
         {
-
+            services.Configure<FileStorageSettings>(configuration.GetSection("FileStorageSettings"));
             RegisterServicesAndSettings(services, configuration);
             return services;
         }

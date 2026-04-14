@@ -17,7 +17,7 @@ namespace GraduationProject.Infrastructure.Context
         public DbSet<AI_Report> AI_Reports { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<doctor> Doctors { get; set; }
-        public DbSet<DoctorSchedule> DoctorSchedules { get; set; }
+        public DbSet<doctorSchedule> DoctorSchedules { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<MedicalRecord> MedicalRecords { get; set; }
         public DbSet<Patient> Patients { get; set; }
@@ -25,6 +25,7 @@ namespace GraduationProject.Infrastructure.Context
         public DbSet<StudentDoctor> StudentDoctors { get; set; }
         public DbSet<Verification> Verifications { get; set; }
         public DbSet<EmailVerification> EmailVerifications { get; set; }
+        public DbSet<Specialization> Specializations { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -154,7 +155,7 @@ namespace GraduationProject.Infrastructure.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             // ==================== DoctorSchedules ====================
-            builder.Entity<DoctorSchedule>()
+            builder.Entity<doctorSchedule>()
                 .HasMany(ds => ds.Appointments)
                 .WithOne(a => a.DoctorSchedule)
                 .HasForeignKey(a => a.DoctorScheduleId)

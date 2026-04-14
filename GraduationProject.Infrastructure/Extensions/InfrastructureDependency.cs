@@ -1,8 +1,13 @@
-﻿using GraduationProject.Application.Contracts.Repositories;
+﻿using GraduationProject.Application.Contracts.Identity;
+using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Application.Contracts.Services;
+using GraduationProject.Application.Settings;
 using GraduationProject.Data.Identity;
 using GraduationProject.Infrastructure.Context;
 using GraduationProject.Infrastructure.Extensions;
+using GraduationProject.Infrastructure.Identity;
 using GraduationProject.Infrastructure.Repositories;
+using GraduationProject.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +43,10 @@ namespace GraduationProject.Infrastructure
             // Generic Repo
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
            services.AddInfrastructureRepositories();
+            services.AddScoped<IFileServices, FileStorageService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.Configure<JwtSetting>(builder.Configuration.GetSection("JwtSetting"));
             return services;
         }
     }

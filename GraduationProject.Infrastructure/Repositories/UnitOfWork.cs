@@ -28,6 +28,8 @@ namespace GraduationProject.Infrastructure.Repositories
 
         public IEmailVerificationRepository EmailVerificationRepository { get; }
 
+        public ISpecializationRepository Specialization { get; }    
+
         public UnitOfWork(
             ApplicationDbContext context,
             IAdminRepository adminRepository,
@@ -42,7 +44,9 @@ namespace GraduationProject.Infrastructure.Repositories
             IStudentDoctorRepository studentDoctorRepository,
             IVerificationRepository verificationRepository,
             IEmailVerificationRepository emailVerification,
-            IEmailVerificationRepository emailVerificationRepository
+            IEmailVerificationRepository emailVerificationRepository,
+
+            ISpecializationRepository Specialization
         )
         {
             _context = context;
@@ -60,6 +64,8 @@ namespace GraduationProject.Infrastructure.Repositories
             Verifications = verificationRepository;
             this.emailVerification = emailVerification;
             EmailVerificationRepository= emailVerificationRepository;
+            this.Specialization = Specialization;
+
         }
 
         public async Task<int> SaveAsync()

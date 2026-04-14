@@ -1,6 +1,6 @@
 ﻿using GraduationProject.Api.Common.Responses;
 using GraduationProject.Application.Contracts.Repositories;
-using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
+//using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
 using GraduationProject.Application.Features.Patients.Queries.GetAllPatients;
 using GraduationProject.Application.Features.Patients.Queries.GetPatientById;
 using MediatR;
@@ -19,12 +19,12 @@ namespace GraduationProject.Api.Controllers
             this.mediator = mediator;
         }
 
-        [HttpPost("Register-Patient")]
-        public async Task<IActionResult> CreatePatient(CreatePatientCommand createPatientCommand)
-        {
-            var result=await mediator.Send(createPatientCommand);
-            return Ok(result);
-        }
+        //[HttpPost("Register-Patient")]
+        //public async Task<IActionResult> CreatePatient(CreatePatientCommand createPatientCommand)
+        //{
+        //    var result=await mediator.Send(createPatientCommand);
+        //    return Ok(result);
+        //}
         [HttpGet("Get-All-Patients")]
         public async Task<IActionResult> GetAllPatients()
         {
