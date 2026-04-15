@@ -13,10 +13,13 @@ namespace GraduationProject.Data.Models
     public class doctor
     {
         public int DoctorId { get; set; }
-
+        public string? FullName { get; set; }
+        public string MedicalLicenseNumber { get; set; } = null!;
+        public string? ClinicName { get; set; }
         // Profile
         public string? About { get; set; }
         public string? ImageUrl { get; set; }
+        public string?  DoctorCertificate { get; set; } = null!;
         public int YearsOfExperience { get; set; }
 
         // Address
@@ -43,7 +46,8 @@ namespace GraduationProject.Data.Models
         public string? ClinicPhoneNumber { get; set; }
 
 
-
+        public int? SpecializationId { get; set; }
+        public Specialization Specialization { get; set; }
 
 
         // Relations
@@ -53,7 +57,7 @@ namespace GraduationProject.Data.Models
         public ICollection<MedicalRecord> MedicalRecords { get; set; }
         public ICollection<Feedback> Feedbacks { get; set; }
         public ICollection<AI_Report> AIReports { get; set; }
-        public ICollection<DoctorSchedule> Schedules { get; set; } 
+        public ICollection<doctorSchedule> Schedules { get; set; } 
         public ICollection<Verification> Verifications { get; set; } 
         public Receptionist Receptionist { get; set; }
 

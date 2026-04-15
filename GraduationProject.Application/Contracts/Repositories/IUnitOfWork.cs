@@ -13,6 +13,7 @@
         IReceptionstRepository Receptionists { get; }
         IStudentDoctorRepository StudentDoctors { get; }
         IVerificationRepository Verifications { get; }
+        ISpecializationRepository Specialization { get; }
         IEmailVerificationRepository EmailVerificationRepository { get; }
         IRefreshTokenRepository RefreshTokenRepository { get; }
 

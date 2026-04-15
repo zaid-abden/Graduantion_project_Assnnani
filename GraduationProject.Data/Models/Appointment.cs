@@ -22,7 +22,7 @@ namespace GraduationProject.Data.Models
         public Patient Patient { get; set; }
 
         public int DoctorScheduleId { get; set; }
-        public DoctorSchedule DoctorSchedule { get; set; }
+        public doctorSchedule DoctorSchedule { get; set; }
     }
 
 }

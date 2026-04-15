@@ -22,7 +22,13 @@ namespace GraduationProject.Infrastructure.Repositories
         public IEmailVerificationRepository emailVerification { get; }
 
         public IEmailVerificationRepository EmailVerificationRepository { get; }
+<<<<<<< HEAD
         public IRefreshTokenRepository RefreshTokenRepository { get; }
+=======
+
+        public ISpecializationRepository Specialization { get; }    
+
+>>>>>>> 4194c92e76818c8ac75bb410c5855442320cb043
         public UnitOfWork(
             ApplicationDbContext context,
             IAdminRepository adminRepository,
@@ -37,7 +43,9 @@ namespace GraduationProject.Infrastructure.Repositories
             IStudentDoctorRepository studentDoctorRepository,
             IVerificationRepository verificationRepository,
             IEmailVerificationRepository emailVerification,
-            IEmailVerificationRepository emailVerificationRepository
+            IEmailVerificationRepository emailVerificationRepository,
+
+            ISpecializationRepository Specialization
         )
         {
             _context = context;
@@ -54,7 +62,13 @@ namespace GraduationProject.Infrastructure.Repositories
             StudentDoctors = studentDoctorRepository;
             Verifications = verificationRepository;
             this.emailVerification = emailVerification;
+<<<<<<< HEAD
             EmailVerificationRepository = emailVerificationRepository;
+=======
+            EmailVerificationRepository= emailVerificationRepository;
+            this.Specialization = Specialization;
+
+>>>>>>> 4194c92e76818c8ac75bb410c5855442320cb043
         }
 
         public async Task<int> SaveAsync()

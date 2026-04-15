@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using GraduationProject.Application.Common.Results;
+using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
 {
-    public class SubmitDoctorVerificationCommand
+    public class SubmitDoctorVerificationCommand: IRequest<Result<string>>
     {
+        public int DoctorId { get; set; }
         public string MedicalLicenseNumber { get; set; } = null!;
         public string NationalId { get; set; } = null!;
         public int SpecializationId { get; set; }

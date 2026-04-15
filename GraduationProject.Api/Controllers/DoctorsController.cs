@@ -1,4 +1,5 @@
 ﻿using GraduationProject.Api.Common.Responses;
+using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Features.Doctors.Commands.CreateDoctor;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -12,22 +13,13 @@ namespace GraduationProject.Api.Controllers
     public class DoctorsController : ControllerBase
     {
         private readonly IMediator mediator;
-        public DoctorsController(IMediator mediator)
+        private readonly ICurrentUserService currentUserService;
+
+        public DoctorsController(IMediator mediator,ICurrentUserService currentUserService)
         {
             this.mediator = mediator;
+            this.currentUserService = currentUserService;
         }
-        [HttpPost("Register-Doctor")]
-        public async Task<IActionResult> CreateDoctor( CreateDoctorCommand command)
-        {
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
-
-        [HttpPost("Verify-Email")]
-        public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailCommand verifyEmailCommand)
-        {
-            var result = await mediator.Send(verifyEmailCommand);
-            return result.ToActionResult();
-        }
+       
     }
 }
