@@ -13,9 +13,9 @@ namespace GraduationProject.Application.Mapping.Patients
     {
         public void GetAllPatientMapping()
         {
-            CreateMap<Data.Models.Patient, Features.Patients.Dtos.PatientDto>()
+            CreateMap<Data.Models.Patient, Features.Patients.Dtos.createPatientDto>()
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => (Gender)src.Gender));
-            CreateMap<User,PatientDto>()
+            CreateMap<User,createPatientDto>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
 .ForMember(PatientDto=> PatientDto.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));

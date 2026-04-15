@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GraduationProject.Data.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace GraduationProject.Application.Logics.pationtLogics
 {
-    internal class CreatePationtLogic
+    public class CreatePationtLogic
     {
+        private readonly UserManager<User> _userManager;
+
+        public CreatePationtLogic(UserManager<User> userManager)
+        {
+            _userManager = userManager;
+        }
+
+
+
     }
 }

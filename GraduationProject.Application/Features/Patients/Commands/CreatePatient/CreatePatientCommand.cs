@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Patients.Commands.CreatePatient
 {
-    public class CreatePatientCommand : IRequest<PatientDto>
+    public class CreatePatientCommand : IRequest<createPatientDto>
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

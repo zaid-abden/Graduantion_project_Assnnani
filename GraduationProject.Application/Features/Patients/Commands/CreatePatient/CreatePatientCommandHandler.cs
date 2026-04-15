@@ -5,11 +5,6 @@ using GraduationProject.Data.Identity;
 using GraduationProject.Data.Models;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Patients.Commands.CreatePatient
 {
@@ -37,13 +32,13 @@ namespace GraduationProject.Application.Features.Patients.Commands.CreatePatient
             await userManager.AddToRoleAsync(user, "Patient");
 
             var patient = mapper.Map<Patient>(request);
-            patient.UserId=user.Id;
+            patient.UserId = user.Id;
             await unitOfWork.Patients.AddAsync(patient);
             await unitOfWork.SaveAsync();
             var patientDto = mapper.Map<PatientDto>(patient);
-           patientDto.Email= user.Email;
-            patientDto.FullName= user.FullName;
-            patientDto.PhoneNumber= user.PhoneNumber;
+            patientDto.Email = user.Email;
+            patientDto.FullName = user.FullName;
+            patientDto.PhoneNumber = user.PhoneNumber;
             return patientDto;
         }
     }

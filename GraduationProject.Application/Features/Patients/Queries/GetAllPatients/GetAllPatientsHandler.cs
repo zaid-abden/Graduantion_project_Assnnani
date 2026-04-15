@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Patients.Queries.GetAllPatients
 {
-    public class GetAllPatientsHandler : IRequestHandler<GetAllPatientsQuery, Result<List<PatientDto>>>
+    public class GetAllPatientsHandler : IRequestHandler<GetAllPatientsQuery, Result<List<createPatientDto>>>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly UserManager<User> userManager;
@@ -25,12 +25,12 @@ namespace GraduationProject.Application.Features.Patients.Queries.GetAllPatients
             this.userManager = userManager;
             this.mapper = mapper;
         }
-        public async Task<Result<List<PatientDto>>> Handle(GetAllPatientsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<createPatientDto>>> Handle(GetAllPatientsQuery request, CancellationToken cancellationToken)
         {
             var patientList = await unitOfWork.Patients.GetAllAsync();
             if(!patientList.Any())
             {
-                return Result<List<PatientDto>>.Failure(ResultStatus.NotFound,"No patients found.");
+                return Result<List<createPatientDto>>.Failure(ResultStatus.NotFound,"No patients found.");
             }
             var userIds = patientList.Select(x => x.UserId).ToList();
             var users = await userManager.Users
@@ -40,7 +40,7 @@ namespace GraduationProject.Application.Features.Patients.Queries.GetAllPatients
             var patientDtoList = patientList.Select(
                 patient =>
                 {
-                    var dto = mapper.Map<PatientDto>(patient);
+                    var dto = mapper.Map<createPatientDto>(patient);
                     var userInfo = users.FirstOrDefault(x => x.Id == patient.UserId);
                     if (userInfo != null)
                         mapper.Map(userInfo, dto);
@@ -48,7 +48,7 @@ namespace GraduationProject.Application.Features.Patients.Queries.GetAllPatients
                 }
 
                 ).ToList();
-            return Result<List<PatientDto>>.Success(patientDtoList);
+            return Result<List<createPatientDto>>.Success(patientDtoList);
         }
     }
 }

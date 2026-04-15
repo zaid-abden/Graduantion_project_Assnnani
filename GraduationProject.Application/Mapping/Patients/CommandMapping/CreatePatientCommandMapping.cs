@@ -26,10 +26,10 @@ namespace GraduationProject.Application.Mapping.Patients
 
             CreateMap<CreatePatientCommand, Patient>()
                ;
-            CreateMap<User, PatientDto>().ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName+" "+src.LastName))
+            CreateMap<User, createPatientDto>().ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName+" "+src.LastName))
                ;
                 
-            CreateMap<Patient, PatientDto>();
+            CreateMap<Patient, createPatientDto>();
         }
     }
 }
