@@ -1,4 +1,10 @@
-﻿namespace GraduationProject.Application.Contracts.Repositories
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace GraduationProject.Application.Contracts.Repositories
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -15,8 +21,6 @@
         IVerificationRepository Verifications { get; }
         ISpecializationRepository Specialization { get; }
         IEmailVerificationRepository EmailVerificationRepository { get; }
-        IRefreshTokenRepository RefreshTokenRepository { get; }
-
         Task<int> SaveAsync();
     }
 }

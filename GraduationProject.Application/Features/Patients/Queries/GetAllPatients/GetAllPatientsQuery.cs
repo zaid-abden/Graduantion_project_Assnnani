@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Patients.Queries.GetAllPatients
 {
-    public class GetAllPatientsQuery:IRequest<Result<List<createPatientDto>>>
+    public class GetAllPatientsQuery:IRequest<Result<List<PatientDto>>>
     {
     }
 }

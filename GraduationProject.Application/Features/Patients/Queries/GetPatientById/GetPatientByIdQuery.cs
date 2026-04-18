@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Patients.Queries.GetPatientById
 {
-    public class GetPatientByIdQuery:IRequest<Result<createPatientDto>>
+    public class GetPatientByIdQuery:IRequest<Result<PatientDto>>
     {
         public int Id { get; set; }
         public GetPatientByIdQuery(int id)

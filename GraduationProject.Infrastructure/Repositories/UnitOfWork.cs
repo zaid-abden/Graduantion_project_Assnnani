@@ -1,5 +1,10 @@
 ﻿using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Infrastructure.Context;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace GraduationProject.Infrastructure.Repositories
 {
@@ -22,13 +27,9 @@ namespace GraduationProject.Infrastructure.Repositories
         public IEmailVerificationRepository emailVerification { get; }
 
         public IEmailVerificationRepository EmailVerificationRepository { get; }
-<<<<<<< HEAD
-        public IRefreshTokenRepository RefreshTokenRepository { get; }
-=======
 
         public ISpecializationRepository Specialization { get; }    
 
->>>>>>> 4194c92e76818c8ac75bb410c5855442320cb043
         public UnitOfWork(
             ApplicationDbContext context,
             IAdminRepository adminRepository,
@@ -62,13 +63,9 @@ namespace GraduationProject.Infrastructure.Repositories
             StudentDoctors = studentDoctorRepository;
             Verifications = verificationRepository;
             this.emailVerification = emailVerification;
-<<<<<<< HEAD
-            EmailVerificationRepository = emailVerificationRepository;
-=======
             EmailVerificationRepository= emailVerificationRepository;
             this.Specialization = Specialization;
 
->>>>>>> 4194c92e76818c8ac75bb410c5855442320cb043
         }
 
         public async Task<int> SaveAsync()

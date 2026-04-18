@@ -24,21 +24,12 @@ namespace GraduationProject.Application.Mapping.Patients
             //      .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
             //      .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => (Gender)src.Gender));
 
-<<<<<<< HEAD
-            CreateMap<CreatePatientCommand, Patient>()
-               ;
-            CreateMap<User, createPatientDto>().ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName+" "+src.LastName))
-               ;
-                
-            CreateMap<Patient, createPatientDto>();
-=======
             //CreateMap<CreatePatientCommand, Patient>()
             //   ;
             //CreateMap<User, PatientDto>().ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName+" "+src.LastName))
             //   ;
                 
             //CreateMap<Patient, PatientDto>();
->>>>>>> 4194c92e76818c8ac75bb410c5855442320cb043
         }
     }
 }

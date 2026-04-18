@@ -2,13 +2,9 @@
 using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.ExternalServices;
 using GraduationProject.Application.Contracts.Repositories;
-using GraduationProject.Data.Enums;
 using GraduationProject.Data.Identity;
-using GraduationProject.Data.Models;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-<<<<<<< HEAD:GraduationProject.Application/Features/Doctors/Commands/CreateDoctor/CreateDoctorCommandHandler.cs
-=======
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +13,6 @@ using System.Threading.Tasks;
 using GraduationProject.Data.Models;
 using GraduationProject.Data.Enums;
 using Microsoft.AspNetCore.Http;
->>>>>>> 4194c92e76818c8ac75bb410c5855442320cb043:GraduationProject.Application/Features/Auth/Commands/Register/CreateDoctor/CreateDoctorCommandHandler.cs
 
 namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
 {
@@ -27,11 +22,7 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly IEmailService emailService;
-<<<<<<< HEAD:GraduationProject.Application/Features/Doctors/Commands/CreateDoctor/CreateDoctorCommandHandler.cs
-
-=======
         private readonly IHttpContextAccessor httpContextAccessor;
->>>>>>> 4194c92e76818c8ac75bb410c5855442320cb043:GraduationProject.Application/Features/Auth/Commands/Register/CreateDoctor/CreateDoctorCommandHandler.cs
         public CreateDoctorCommandHandler(
             UserManager<User> userManager,
             IUnitOfWork unitOfWork,
@@ -44,7 +35,7 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
             this.emailService = emailService;
             this.httpContextAccessor=httpContextAccessor;
         }
-
+        
         public async Task<Result<string>> Handle(CreateDoctorCommand request, CancellationToken cancellationToken)
         {
             var existingUser = await userManager.FindByEmailAsync(request.Email);
@@ -58,7 +49,7 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
                 UserName = request.Email,
                 PhoneNumber = request.PhoneNumber,
                 EmailVerified = false,
-
+               
                 IsActive = true
             };
             var result = await userManager.CreateAsync(user, request.Password);
@@ -71,16 +62,6 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
 
             var doc = new doctor
             {
-<<<<<<< HEAD:GraduationProject.Application/Features/Doctors/Commands/CreateDoctor/CreateDoctorCommandHandler.cs
-                UserId = user.Id,
-                YearsOfExperience = 0,
-                VerificationStatus = DoctorVerificationStatus.NotSubmitted,
-                Country = "",
-                City = "",
-                Street = "",
-                Details = "",
-
-=======
                 UserId=user.Id,
                 YearsOfExperience=0,
                 VerificationStatus=DoctorVerificationStatus.NotSubmitted,
@@ -91,7 +72,6 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
                 ClinicName="",
                 MedicalLicenseNumber="",
                 
->>>>>>> 4194c92e76818c8ac75bb410c5855442320cb043:GraduationProject.Application/Features/Auth/Commands/Register/CreateDoctor/CreateDoctorCommandHandler.cs
             };
             await unitOfWork.Doctors.AddAsync(doc);
             await unitOfWork.SaveAsync();
@@ -105,15 +85,9 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
                 IsUsed = false
             };
             await unitOfWork.EmailVerificationRepository.AddVerification(emailVerification);
-<<<<<<< HEAD:GraduationProject.Application/Features/Doctors/Commands/CreateDoctor/CreateDoctorCommandHandler.cs
-            await emailService.SendEmailAsync(user.Email, "Verify Your Email", $"Your verification code is: {code}");
-
-            return Result<string>.Success("Doctor registered successfully. Verification code sent.");
-=======
             await emailService.SendEmailAsync(user.Email,"Verify Your Email", $"Your verification code is: {code}");
             //httpContextAccessor.HttpContext.Request.Headers.Add("doctor-id", doc.DoctorId.ToString()); 
             return Result<string>.Success($"{doc.DoctorId}");
->>>>>>> 4194c92e76818c8ac75bb410c5855442320cb043:GraduationProject.Application/Features/Auth/Commands/Register/CreateDoctor/CreateDoctorCommandHandler.cs
         }
     }
 }

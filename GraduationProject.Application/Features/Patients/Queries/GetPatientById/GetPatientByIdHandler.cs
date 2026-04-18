@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Patients.Queries.GetPatientById
 {
-    public class GetPatientByIdHandler : IRequestHandler<GetPatientByIdQuery, Result<createPatientDto>>
+    public class GetPatientByIdHandler : IRequestHandler<GetPatientByIdQuery, Result<PatientDto>>
     {
         private readonly IMapper mapper;
         private readonly IUnitOfWork unitOfWork;
@@ -24,20 +24,20 @@ namespace GraduationProject.Application.Features.Patients.Queries.GetPatientById
             this.unitOfWork = unitOfWork;
             this.userManager = userManager;
         }
-        public async Task<Result<createPatientDto>> Handle(GetPatientByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PatientDto>> Handle(GetPatientByIdQuery request, CancellationToken cancellationToken)
         {
             var patient = await unitOfWork.Patients.GetByIdAsync(request.Id);
             if (patient == null)
-                return Result<createPatientDto>.Failure(ResultStatus.NotFound, "Patient not found.");
+                return Result<PatientDto>.Failure(ResultStatus.NotFound, "Patient not found.");
 
             var userInfo = await userManager.FindByIdAsync(patient.UserId);
             if (userInfo == null)
-                return Result<createPatientDto>.Failure(ResultStatus.NotFound, "User information not found for the patient.");
+                return Result<PatientDto>.Failure(ResultStatus.NotFound, "User information not found for the patient.");
 
-            var patientDto = mapper.Map<createPatientDto>(patient);
+            var patientDto = mapper.Map<PatientDto>(patient);
             mapper.Map(userInfo, patientDto);
 
-            return Result<createPatientDto>.Success(patientDto);
+            return Result<PatientDto>.Success(patientDto);
         }
     }
 }

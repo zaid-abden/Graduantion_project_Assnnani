@@ -13,8 +13,8 @@ namespace GraduationProject.Application.Mapping.Patients
     {
         public void GetPatientByIdMapping()
         {
-            CreateMap<Patient, createPatientDto>();
-            CreateMap<User, createPatientDto>()
+            CreateMap<Patient, PatientDto>();
+            CreateMap<User, PatientDto>()
                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FirstName + " " + src.LastName))
 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
 .ForMember(PatientDto => PatientDto.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber));
