@@ -18,11 +18,6 @@
     <Folder Include="Features\Appointment\Queries\" />
     <Folder Include="Features\Auth\Commands\Logout\" />
     <Folder Include="Features\Auth\Commands\RefershToken\" />
-    <Folder Include="Features\Doctors\Commands\" />
-    <Folder Include="Features\Doctors\Dtos\" />
-    <Folder Include="Features\Doctors\Queries\" />
-    <Folder Include="Features\Doctor\Dtos\" />
-    <Folder Include="Features\Doctor\Queries\" />
     <Folder Include="Features\Feedback\Commands\" />
     <Folder Include="Features\Feedback\Dtos\" />
     <Folder Include="Features\Feedback\Queries\" />
