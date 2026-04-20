@@ -13,5 +13,16 @@ namespace GraduationProject.Infrastructure.Repositories
 		{
 			_dbContext = dbContext;
 		}
-	}
+
+        public async Task<Patient> GetpatientByIdAsync(int id)
+        {
+           return await _dbContext.Patients.FindAsync(id);
+        }
+        public async Task UpdateAsync(Patient entity)
+        {
+            _dbContext.Patients.Update(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+    }
 }

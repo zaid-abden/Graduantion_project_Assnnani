@@ -1,4 +1,5 @@
 ﻿using GraduationProject.Data.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,8 @@ namespace GraduationProject.Application.Contracts.Repositories
 {
     public interface IPatientRepository: IGenericRepository<Patient>
     {
+
+        Task<Patient> GetpatientByIdAsync(int id);
+        Task UpdateAsync(Patient entity);
     }
 }

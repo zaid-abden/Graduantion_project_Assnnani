@@ -24,7 +24,6 @@
     <Folder Include="Features\MedicalRecord\Commands\" />
     <Folder Include="Features\MedicalRecord\Dtos\" />
     <Folder Include="Features\MedicalRecord\Queries\" />
-    <Folder Include="Features\Patients\Commands\" />
     <Folder Include="Features\Receptionist\Commands\" />
     <Folder Include="Features\Receptionist\Dtos\" />
     <Folder Include="Features\Receptionist\Queries\" />

@@ -1,5 +1,7 @@
 ﻿using GraduationProject.Api.Common.Responses;
 using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Application.Features.Patients.commands.updatepationtcommand;
+
 //using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
 using GraduationProject.Application.Features.Patients.Queries.GetAllPatients;
 using GraduationProject.Application.Features.Patients.Queries.GetPatientById;
@@ -36,6 +38,12 @@ namespace GraduationProject.Api.Controllers
         public async Task<IActionResult> GetPatientById([FromRoute] int id)
         {
             var result=await mediator.Send(new GetPatientByIdQuery(id));
+            return result.ToActionResult();
+        }
+        [HttpPut("Patient/Profile/")]
+        public async Task<IActionResult> EditPatientById([FromBody] updatepationtcommand dto)
+        {
+            var result = await mediator.Send(dto);
             return result.ToActionResult();
         }
     }
