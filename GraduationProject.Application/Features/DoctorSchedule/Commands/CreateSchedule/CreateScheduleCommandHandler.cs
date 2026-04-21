@@ -56,7 +56,10 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
                 EndTime = request.EndTime,
                 Location = request.Location,
                 MaxAppointments = request.MaxAppointments,
-                DoctorId = doctor.DoctorId
+                DoctorId = doctor.DoctorId,
+                CreatedAt = DateTime.Now,
+                CreatedBy = currentUserService.UserName,
+              
             };
 
             await unitOfWork.DoctorSchedules.AddAsync(schedule);

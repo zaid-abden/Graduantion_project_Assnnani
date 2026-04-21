@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace GraduationProject.Data.Models
 {
     [Table("DoctorSchedules")]
-    public class doctorSchedule
+    public class doctorSchedule:BaseEntity
     {
         [Key]
         public int ScheduleId { get; set; }
@@ -19,6 +19,7 @@ namespace GraduationProject.Data.Models
         public TimeSpan EndTime { get; set; }
         public string? Location { get; set; } 
         public bool IsActive { get; set; } = true;
+       
         public int MaxAppointments { get; set; } = 10;
         // FK
         [ForeignKey("Doctor")]

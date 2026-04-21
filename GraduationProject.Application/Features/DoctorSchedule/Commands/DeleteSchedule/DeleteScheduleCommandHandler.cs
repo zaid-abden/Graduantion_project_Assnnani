@@ -44,6 +44,12 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.DeleteS
                 return Result<string>.Failure(ResultStatus.Unauthorized, "You are not authorized to delete this schedule.");
             }
             schedule.IsActive=false;
+            schedule.IsDeleted = true;
+            schedule.DeletedAt = DateTime.Now;
+            schedule.DeletedBy = currentUserService.UserName;
+            schedule.UpdatedAt = DateTime.Now;
+                schedule.UpdatedBy = currentUserService.UserName;
+             
             await unitOfWork.SaveAsync();
             return Result<string>.Success("Schedule deleted successfully.");
         }

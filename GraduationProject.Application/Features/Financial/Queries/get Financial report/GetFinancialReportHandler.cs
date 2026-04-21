@@ -22,7 +22,7 @@ namespace GraduationProject.Application.Features.Financial.Queries.get_Financial
 				{
 					// نستخدم ميثود NotFound الجديدة. 
 					// لاحظ أن الكلاس المعدل يأخذ 'error' كأول باراميتر في ميثود NotFound
-					return Result<FinancialReportResponse>.NotFound("No financial data found for the selected range.");
+					return Result<FinancialReportResponse>.Failure(ResultStatus.NotFound,"No financial data found for the selected range.");
 				}
 
 				// 3. في حالة النجاح
