@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraduationProject.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260129145529_asahgsshhsjaaaaaammmzzm")]
-    partial class asahgsshhsjaaaaaammmzzm
+    [Migration("20260421170547_v1221")]
+    partial class v1221
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -210,33 +210,6 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.ToTable("Appointments");
                 });
 
-            modelBuilder.Entity("GraduationProject.Data.Models.DoctorSchedule", b =>
-                {
-                    b.Property<int>("ScheduleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScheduleId"));
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ScheduleId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.ToTable("DoctorSchedules");
-                });
-
             modelBuilder.Entity("GraduationProject.Data.Models.EmailVerification", b =>
                 {
                     b.Property<int>("Id")
@@ -310,16 +283,28 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("int");
+
                     b.Property<string>("Diagnosis")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
@@ -329,7 +314,14 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Property<string>("Treatment")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("VisitDate")
                         .HasColumnType("datetime2");
@@ -416,6 +408,23 @@ namespace GraduationProject.Infrastructure.Migrations
                         .HasFilter("[UserId1] IS NOT NULL");
 
                     b.ToTable("Receptionists");
+                });
+
+            modelBuilder.Entity("GraduationProject.Data.Models.Specialization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Specializations");
                 });
 
             modelBuilder.Entity("GraduationProject.Data.Models.StudentDoctor", b =>
@@ -512,6 +521,9 @@ namespace GraduationProject.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ClinicName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ClinicPhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -526,7 +538,17 @@ namespace GraduationProject.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DoctorCertificate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MedicalLicenseNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NumberOfPatientsSeen")
@@ -540,6 +562,9 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Property<string>("RejectionReason")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SpecializationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -561,15 +586,57 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<int>("YearsOfExperience")
                         .HasColumnType("int");
 
+                    b.Property<int>("price")
+                        .HasColumnType("int");
+
                     b.HasKey("DoctorId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("SpecializationId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.HasIndex("UserId1")
                         .IsUnique()
                         .HasFilter("[UserId1] IS NOT NULL");
 
                     b.ToTable("Doctors");
+                });
+
+            modelBuilder.Entity("GraduationProject.Data.Models.doctorSchedule", b =>
+                {
+                    b.Property<int>("ScheduleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScheduleId"));
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxAppointments")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.HasKey("ScheduleId");
+
+                    b.HasIndex("DoctorId");
+
+                    b.ToTable("DoctorSchedules");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -744,7 +811,7 @@ namespace GraduationProject.Infrastructure.Migrations
 
             modelBuilder.Entity("GraduationProject.Data.Models.Appointment", b =>
                 {
-                    b.HasOne("GraduationProject.Data.Models.DoctorSchedule", "DoctorSchedule")
+                    b.HasOne("GraduationProject.Data.Models.doctorSchedule", "DoctorSchedule")
                         .WithMany("Appointments")
                         .HasForeignKey("DoctorScheduleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -759,17 +826,6 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Navigation("DoctorSchedule");
 
                     b.Navigation("Patient");
-                });
-
-            modelBuilder.Entity("GraduationProject.Data.Models.DoctorSchedule", b =>
-                {
-                    b.HasOne("GraduationProject.Data.Models.doctor", "Doctor")
-                        .WithMany("Schedules")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("GraduationProject.Data.Models.EmailVerification", b =>
@@ -909,17 +965,34 @@ namespace GraduationProject.Infrastructure.Migrations
 
             modelBuilder.Entity("GraduationProject.Data.Models.doctor", b =>
                 {
+                    b.HasOne("GraduationProject.Data.Models.Specialization", "Specialization")
+                        .WithMany("Doctors")
+                        .HasForeignKey("SpecializationId");
+
                     b.HasOne("GraduationProject.Data.Identity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithOne()
+                        .HasForeignKey("GraduationProject.Data.Models.doctor", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("GraduationProject.Data.Identity.User", null)
                         .WithOne("Doctor")
                         .HasForeignKey("GraduationProject.Data.Models.doctor", "UserId1");
 
+                    b.Navigation("Specialization");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GraduationProject.Data.Models.doctorSchedule", b =>
+                {
+                    b.HasOne("GraduationProject.Data.Models.doctor", "Doctor")
+                        .WithMany("Schedules")
+                        .HasForeignKey("DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -995,11 +1068,6 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Navigation("Verifications");
                 });
 
-            modelBuilder.Entity("GraduationProject.Data.Models.DoctorSchedule", b =>
-                {
-                    b.Navigation("Appointments");
-                });
-
             modelBuilder.Entity("GraduationProject.Data.Models.Patient", b =>
                 {
                     b.Navigation("AIReports");
@@ -1009,6 +1077,11 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Navigation("Feedbacks");
 
                     b.Navigation("MedicalRecords");
+                });
+
+            modelBuilder.Entity("GraduationProject.Data.Models.Specialization", b =>
+                {
+                    b.Navigation("Doctors");
                 });
 
             modelBuilder.Entity("GraduationProject.Data.Models.StudentDoctor", b =>
@@ -1034,6 +1107,11 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Navigation("Schedules");
 
                     b.Navigation("Verifications");
+                });
+
+            modelBuilder.Entity("GraduationProject.Data.Models.doctorSchedule", b =>
+                {
+                    b.Navigation("Appointments");
                 });
 #pragma warning restore 612, 618
         }

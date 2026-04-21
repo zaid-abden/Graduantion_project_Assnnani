@@ -48,11 +48,11 @@ namespace GraduationProject.Api.Controllers
             return result.ToActionResult();
         }
 
-        [HttpGet("Get/Doctors")]
-        public async Task<IActionResult> GetDoctor_Filteration([FromQuery] DoctorFilterationQuery query)
-        {
-            Result<PagedResult<DoctorFDTO>> result = await mediator.Send(query);
-            return result.ToActionResult();
-        }
+        //[HttpGet("Get/Doctors")]
+        //public async Task<IActionResult> GetDoctor_Filteration([FromQuery] DoctorFilterationQuery query)
+        //{
+        //    Result<PagedResult<DoctorFDTO>> result = await mediator.Send(query);
+        //    return result.ToActionResult();
+        //}
     }
 }

@@ -11,10 +11,13 @@ namespace GraduationProject.Application.Contracts.Identity
     {
         string? UserId { get; }
         string? Email { get; }
+        string? UserName { get; }
         bool IsAuthenticated { get; }
-       
+        //bool IsDeleted { get; }
         IEnumerable<string> Roles { get; }
-      
+
+        public bool IsInRole(string role);
+
 
 
     }

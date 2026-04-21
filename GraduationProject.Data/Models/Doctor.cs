@@ -46,8 +46,10 @@ namespace GraduationProject.Data.Models
 
 
         // Relations
+        [ForeignKey(nameof(UserId))]
+      
         public User User { get; set; }
-        [ForeignKey("User")]
+        
         public string UserId { get; set; }
         public ICollection<MedicalRecord> MedicalRecords { get; set; }
         public ICollection<Feedback> Feedbacks { get; set; }

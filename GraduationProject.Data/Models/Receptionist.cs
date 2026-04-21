@@ -16,9 +16,9 @@ namespace GraduationProject.Data.Models
         public ShiftType Shift { get; set; }= ShiftType.Morning;
         public string? ImageUrl { get; set; }
 
-        // FK
-        [ForeignKey("User")]
+     
         public string UserId { get; set; }
+        [ForeignKey(nameof(UserId))]
         public User User { get; set; }
         [ForeignKey("Doctor")]
         public int DoctorId { get; set; }

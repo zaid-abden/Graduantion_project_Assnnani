@@ -14,8 +14,10 @@ namespace GraduationProject.Data.Models
         public int AdminId { get; set; }
         // Relations
         public ICollection<Verification> Verifications { get; set; }
+        [ForeignKey(nameof(UserId))]
+    
         public User User { get; set; }
-        [ForeignKey("User")]
+       
         public string UserId { get; set; }
 
     }

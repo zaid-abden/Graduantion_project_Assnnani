@@ -14,9 +14,9 @@ namespace GraduationProject.Data.Models
         public string University { get; set; }
        public string ImageUrl { get; set; }
         public int YearsOfStudy { get; set; }
-        // FK
-        [ForeignKey("User")]
+    
         public string UserId { get; set; }
+        [ForeignKey(nameof(UserId))]
         public User User { get; set; }
 
         // Relationsip
