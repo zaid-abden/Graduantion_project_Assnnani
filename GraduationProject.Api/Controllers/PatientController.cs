@@ -1,12 +1,13 @@
 ﻿using GraduationProject.Api.Common.Responses;
-using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Features.Patients.commands.updatepationtcommand;
+using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion;
+
 
 //using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
 using GraduationProject.Application.Features.Patients.Queries.GetAllPatients;
 using GraduationProject.Application.Features.Patients.Queries.GetPatientById;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GraduationProject.Api.Controllers
@@ -37,13 +38,20 @@ namespace GraduationProject.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPatientById([FromRoute] int id)
         {
-            var result=await mediator.Send(new GetPatientByIdQuery(id));
+            var result = await mediator.Send(new GetPatientByIdQuery(id));
             return result.ToActionResult();
         }
         [HttpPut("Patient/Profile/")]
         public async Task<IActionResult> EditPatientById([FromBody] updatepationtcommand dto)
         {
             var result = await mediator.Send(dto);
+            return result.ToActionResult();
+        }
+
+        [HttpGet("Get/Doctors")]
+        public async Task<IActionResult> GetDoctor_Filteration([FromQuery] DoctorFilterationQuery query)
+        {
+            Result<PagedResult<DoctorFDTO>> result = await mediator.Send(query);
             return result.ToActionResult();
         }
     }
