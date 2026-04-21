@@ -1,12 +1,16 @@
 ﻿using GraduationProject.Api.Common.Responses;
 using GraduationProject.Application.Common.Results;
+using GraduationProject.Application.Features.Doctors.Queries.GetDoctorById;
 using GraduationProject.Application.Features.Patients.commands.updatepationtcommand;
+using GraduationProject.Application.Features.Patients.Queries.DoctorByID;
 using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion;
+using GraduationProject.Application.Features.Patients.Queries.GetPatientProfile;
+using GraduationProject.Data.Models;
+
 
 
 //using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
-using GraduationProject.Application.Features.Patients.Queries.GetAllPatients;
-using GraduationProject.Application.Features.Patients.Queries.GetPatientById;
+
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,10 +20,10 @@ namespace GraduationProject.Api.Controllers
     [ApiController]
     public class PatientController : ControllerBase
     {
-        private readonly IMediator mediator;
+        private readonly IMediator _mediator;
         public PatientController(IMediator mediator)
         {
-            this.mediator = mediator;
+            _mediator = mediator;
         }
 
         //[HttpPost("Register-Patient")]
@@ -28,25 +32,38 @@ namespace GraduationProject.Api.Controllers
         //    var result=await mediator.Send(createPatientCommand);
         //    return Ok(result);
         //}
-        [HttpGet("Get-All-Patients")]
-        public async Task<IActionResult> GetAllPatients()
+        
+       
+        [HttpPut("Patient/Profile/")]
+        public async Task<IActionResult> EditPatientById([FromBody] updatepationtcommand dto)
         {
-            var result = await mediator.Send(new GetAllPatientsQuery());
+            Result<string> result = await _mediator.Send(dto);
             return result.ToActionResult();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPatientById([FromRoute] int id)
+        public async Task<IActionResult> GetDoctorById(int id)
         {
-            var result = await mediator.Send(new GetPatientByIdQuery(id));
+            Result<DoctorById_Dto> result = await _mediator.Send(new GetDoctorByIdQuery { DoctorId = id });        
+
             return result.ToActionResult();
         }
-        [HttpPut("Patient/Profile/")]
-        public async Task<IActionResult> EditPatientById([FromBody] updatepationtcommand dto)
+
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
         {
-            var result = await mediator.Send(dto);
+            // 🔥 هنا المفروض تجيب UserId من JWT
+            var userId = User.FindFirst("sub")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var result = await _mediator.Send(new GetPatientProfileQuery { UserId = userId });
+            
             return result.ToActionResult();
         }
+
+
 
         //[HttpGet("Get/Doctors")]
         //public async Task<IActionResult> GetDoctor_Filteration([FromQuery] DoctorFilterationQuery query)

@@ -59,6 +59,8 @@ namespace GraduationProject.Data.Models
         public Receptionist Receptionist { get; set; }
 
         public int price { get; set; }
+        public decimal? Price { get; set; }
+        public int YearsOfService { get; set; }
     }
 
 }

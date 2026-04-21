@@ -1,4 +1,4 @@
-
+﻿
 using Azure.Identity;
 using FluentValidation;
 using GraduationProject.Api.Extensions;
@@ -7,6 +7,8 @@ using GraduationProject.Application.Contracts.ExternalServices;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Contracts.Services;
 using GraduationProject.Application.Extensions;
+using GraduationProject.Application.Features.Patients.Queries.GetPatientProfile;
+
 //using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
 using GraduationProject.Data.Identity;
 using GraduationProject.Infrastructure;
@@ -36,12 +38,15 @@ namespace GraduationProject.Api
             builder.Services.AddEndpointsApiExplorer();
             //builder.Services.AddSwaggerGen();
 
-           
+            // ✅ MediatR 12+
+            builder.Services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(
+                    typeof(GetPatientProfileQuery).Assembly));
 
             builder.Services.AddInfrastructure(builder)
                 .AddApplicationServices();
 
-           ValidatorOptions.Global.DefaultClassLevelCascadeMode=CascadeMode.Stop;
+            ValidatorOptions.Global.DefaultClassLevelCascadeMode=CascadeMode.Stop;
 
 
             builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
