@@ -1,5 +1,4 @@
 ﻿using GraduationProject.Application.Contracts.Repositories;
-using GraduationProject.Application.Features.Doctors.Dtos;
 using GraduationProject.Data.Models;
 using GraduationProject.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +16,10 @@ namespace GraduationProject.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        //public IQueryable<doctor> GetAll()
-        //{
-        //    return _dbContext.Doctors.AsQueryable().Include(ww => ww.User);
-        //}
+        public IQueryable<doctor> GetAll()
+        {
+            return _dbContext.Doctors.AsQueryable().Include(ww => ww.User);
+        }
 
         //public async Task<doctor> GetCurrentDoctor(string userId)
         //{

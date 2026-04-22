@@ -1,22 +1,13 @@
 ﻿using GraduationProject.Api.Common.Responses;
 using GraduationProject.Application.Common.Results;
-<<<<<<< HEAD
-using GraduationProject.Application.Features.Patients.commands.AddPatient;
-=======
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorById;
->>>>>>> 01b6955e8a596f978d2660d48e35933fc669820a
+using GraduationProject.Application.Features.Patients.commands.AddFeadback;
+using GraduationProject.Application.Features.Patients.commands.AddPatient;
 using GraduationProject.Application.Features.Patients.commands.updatepationtcommand;
 using GraduationProject.Application.Features.Patients.Queries.DoctorByID;
 using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion;
 using GraduationProject.Application.Features.Patients.Queries.GetAvaliableSlots;
 using GraduationProject.Application.Features.Patients.Queries.GetPatientProfile;
-using GraduationProject.Data.Models;
-using GraduationProject.Application.Features.Patients.Queries.GetAvaliableSlots;
-
-
-
-//using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
-
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -33,14 +24,14 @@ namespace GraduationProject.Api.Controllers
             _mediator = mediator;
         }
 
-        //[HttpPost("Register-Patient")]
-        //public async Task<IActionResult> CreatePatient(CreatePatientCommand createPatientCommand)
-        //{
-        //    var result=await mediator.Send(createPatientCommand);
-        //    return Ok(result);
-        //}
-        
-       
+        [HttpPost("Register-Patient")]
+        public async Task<IActionResult> CreatePatient(AddPatientCommand createPatientCommand)
+        {
+            var result = await _mediator.Send(createPatientCommand);
+            return Ok(result);
+        }
+
+
         [HttpPut("Patient/Profile/")]
         public async Task<IActionResult> EditPatientById([FromBody] updatepationtcommand dto)
         {
@@ -51,7 +42,7 @@ namespace GraduationProject.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDoctorById(int id)
         {
-            Result<DoctorById_Dto> result = await _mediator.Send(new GetDoctorByIdQuery { DoctorId = id });        
+            Result<DoctorById_Dto> result = await _mediator.Send(new GetDoctorByIdQuery { DoctorId = id });
 
             return result.ToActionResult();
         }
@@ -69,7 +60,7 @@ namespace GraduationProject.Api.Controllers
                 return Unauthorized();
 
             var result = await _mediator.Send(new GetPatientProfileQuery { UserId = userId });
-            
+
             return result.ToActionResult();
         }
 
@@ -85,12 +76,12 @@ namespace GraduationProject.Api.Controllers
             return result.ToActionResult();
         }
 
-        //[HttpGet("Get/Doctors")]
-        //public async Task<IActionResult> GetDoctor_Filteration([FromQuery] DoctorFilterationQuery query)
-        //{
-        //    Result<PagedResult<DoctorFDTO>> result = await mediator.Send(query);
-        //    return result.ToActionResult();
-        //}
+        [HttpGet("Get/Doctors")]
+        public async Task<IActionResult> GetDoctor_Filteration([FromQuery] DoctorFilterationQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return result.ToActionResult();
+        }
 
         [HttpPost("register")]
         [SwaggerOperation(
@@ -102,7 +93,14 @@ namespace GraduationProject.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> RegisterPatient([FromBody] AddPatientCommand command)
         {
-            var result = await mediator.Send(command);
+            var result = await _mediator.Send(command);
+            return result.ToActionResult();
+        }
+
+        [HttpPost("/api/feedback")]
+        public async Task<IActionResult> AddFeedback([FromBody] AddFeedbackCommand command)
+        {
+            var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
     }

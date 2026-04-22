@@ -13,17 +13,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraduationProject.Infrastructure
 {
-    public  static class InfrastructureDependency
+    public static class InfrastructureDependency
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services,WebApplicationBuilder builder)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, WebApplicationBuilder builder)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -42,7 +37,7 @@ namespace GraduationProject.Infrastructure
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             // Generic Repo
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-           services.AddInfrastructureRepositories();
+            services.AddInfrastructureRepositories();
             services.AddScoped<IFileServices, FileStorageService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IAuthService, AuthService>();

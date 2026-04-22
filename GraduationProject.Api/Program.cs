@@ -1,8 +1,5 @@
-﻿
-using Azure.Identity;
-using FluentValidation;
+﻿using FluentValidation;
 using GraduationProject.Api.Extensions;
-using GraduationProject.Api.Middleware;
 using GraduationProject.Application.Contracts.ExternalServices;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Contracts.Services;
@@ -10,17 +7,14 @@ using GraduationProject.Application.Extensions;
 using GraduationProject.Application.Features.Patients.Queries.GetPatientProfile;
 
 //using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
-using GraduationProject.Data.Identity;
 using GraduationProject.Infrastructure;
 using GraduationProject.Infrastructure.ExternalServices;
 using GraduationProject.Infrastructure.Persistence.SeedData;
 using GraduationProject.Infrastructure.Repositories;
 using GraduationProject.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 namespace GraduationProject.Api
@@ -38,19 +32,16 @@ namespace GraduationProject.Api
             builder.Services.AddEndpointsApiExplorer();
             //builder.Services.AddSwaggerGen();
 
-<<<<<<< HEAD
-         
-=======
+
             // ✅ MediatR 12+
             builder.Services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(
                     typeof(GetPatientProfileQuery).Assembly));
->>>>>>> 01b6955e8a596f978d2660d48e35933fc669820a
 
             builder.Services.AddInfrastructure(builder)
                 .AddApplicationServices();
 
-            ValidatorOptions.Global.DefaultClassLevelCascadeMode=CascadeMode.Stop;
+            ValidatorOptions.Global.DefaultClassLevelCascadeMode = CascadeMode.Stop;
 
 
             builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
@@ -95,8 +86,8 @@ namespace GraduationProject.Api
             builder.Services.AddControllers()
 .AddJsonOptions(options =>
 {
-options.JsonSerializerOptions.Converters.Add(
- new JsonStringEnumConverter());
+    options.JsonSerializerOptions.Converters.Add(
+     new JsonStringEnumConverter());
 });
 
 
@@ -127,8 +118,8 @@ options.JsonSerializerOptions.Converters.Add(
 
 
 
-            builder.Services.AddScoped<IEmailService,EmailService>();
-            builder.Services.AddScoped<IEmailVerificationRepository,EmailVerificationRepository>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+            builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {
@@ -170,7 +161,7 @@ options.JsonSerializerOptions.Converters.Add(
             //    await DatabaseSeeder.SeedAsync(services);
             //}
 
- 
+
 
 
             // Configure the HTTP request pipeline.
@@ -179,7 +170,7 @@ options.JsonSerializerOptions.Converters.Add(
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-           // app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+            // app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
