@@ -20,6 +20,7 @@ namespace GraduationProject.Application.Contracts.Repositories
         IStudentDoctorRepository StudentDoctors { get; }
         IVerificationRepository Verifications { get; }
         ISpecializationRepository Specialization { get; }
+        IScheduleSlotRepository ScheduleSlots { get; }
         IEmailVerificationRepository EmailVerificationRepository { get; }
         Task<int> SaveAsync();
     }

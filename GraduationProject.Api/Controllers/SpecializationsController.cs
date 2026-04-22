@@ -22,7 +22,8 @@ namespace GraduationProject.Api.Controllers
             this.mediator = mediator;
         }
         [HttpGet("GetAllSpecializations")]
-       
+
+        [Authorize(Roles = "Doctor")]
         public async Task<IActionResult> GetAllSpecializations()
         {
             var result = await mediator.Send(new GetAllSpecilaizationQuery());

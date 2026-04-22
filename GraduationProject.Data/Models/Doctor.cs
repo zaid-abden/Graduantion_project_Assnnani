@@ -46,8 +46,10 @@ namespace GraduationProject.Data.Models
 
 
         // Relations
+        [ForeignKey(nameof(UserId))]
+      
         public User User { get; set; }
-        [ForeignKey("User")]
+        
         public string UserId { get; set; }
         public ICollection<MedicalRecord> MedicalRecords { get; set; }
         public ICollection<Feedback> Feedbacks { get; set; }
@@ -57,6 +59,8 @@ namespace GraduationProject.Data.Models
         public Receptionist Receptionist { get; set; }
 
         public int price { get; set; }
+        public decimal? Price { get; set; }
+        public int YearsOfService { get; set; }
     }
 
 }

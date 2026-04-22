@@ -11,6 +11,7 @@ namespace GraduationProject.Application.Contracts.Repositories
         Task<T> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
         Task AddAsync(T entity);
+        Task AddRangeAsync(IEnumerable<T> entities);
         void Update(T entity);
         void Delete(T entity);
         IQueryable<T> Query();

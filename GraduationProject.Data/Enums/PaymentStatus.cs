@@ -8,11 +8,11 @@ namespace GraduationProject.Data.Enums
 {
     public enum PaymentStatus
     {
-        Pending = 0,   // لسه ما اتدفعش
-        Paid = 1,      // اتدفع بالكامل
-        Failed = 2,    // فشل الدفع
-        Refunded = 3,  // تم استرجاع الفلوس
-        Cancelled = 4  // تم إلغاء العملية
+        Pending = 1,   // لسه ما اتدفعش
+        Paid = 2,      // اتدفع بالكامل
+        Failed = 3,    // فشل الدفع
+        Refunded = 4,  // تم استرجاع الفلوس
+        Cancelled = 5  // تم إلغاء العملية
     }
 
 }

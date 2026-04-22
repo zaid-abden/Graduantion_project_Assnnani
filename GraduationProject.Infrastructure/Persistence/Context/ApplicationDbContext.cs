@@ -16,6 +16,7 @@ namespace GraduationProject.Infrastructure.Context
         public DbSet<Admin> Admins { get; set; }
         public DbSet<AI_Report> AI_Reports { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<ScheduleSlot> ScheduleSlots { get; set; }
         public DbSet<doctor> Doctors { get; set; }
         public DbSet<doctorSchedule> DoctorSchedules { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
@@ -155,11 +156,7 @@ namespace GraduationProject.Infrastructure.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             // ==================== DoctorSchedules ====================
-            builder.Entity<doctorSchedule>()
-                .HasMany(ds => ds.Appointments)
-                .WithOne(a => a.DoctorSchedule)
-                .HasForeignKey(a => a.DoctorScheduleId)
-                .OnDelete(DeleteBehavior.Restrict);
+        
 
 
 

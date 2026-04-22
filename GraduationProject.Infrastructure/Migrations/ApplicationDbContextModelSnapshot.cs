@@ -176,17 +176,28 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AppointmentId"));
 
-                    b.Property<DateTime>("AppointmentTime")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("AppointmentStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("BookingType")
                         .HasColumnType("int");
 
-                    b.Property<int>("DoctorScheduleId")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Notes")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("PatientId")
@@ -198,11 +209,26 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
+                    b.Property<int>("ScheduleSlotId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("doctorScheduleScheduleId")
+                        .HasColumnType("int");
+
                     b.HasKey("AppointmentId");
 
-                    b.HasIndex("DoctorScheduleId");
-
                     b.HasIndex("PatientId");
+
+                    b.HasIndex("ScheduleSlotId")
+                        .IsUnique();
+
+                    b.HasIndex("doctorScheduleScheduleId");
 
                     b.ToTable("Appointments");
                 });
@@ -280,16 +306,28 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Diagnosis")
-                        .IsRequired()
+                    b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Diagnosis")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
@@ -299,6 +337,13 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Property<string>("Treatment")
                         .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("VisitDate")
@@ -386,6 +431,36 @@ namespace GraduationProject.Infrastructure.Migrations
                         .HasFilter("[UserId1] IS NOT NULL");
 
                     b.ToTable("Receptionists");
+                });
+
+            modelBuilder.Entity("GraduationProject.Data.Models.ScheduleSlot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DoctorScheduleId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DoctorScheduleId");
+
+                    b.ToTable("ScheduleSlots");
                 });
 
             modelBuilder.Entity("GraduationProject.Data.Models.Specialization", b =>
@@ -589,8 +664,20 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScheduleId"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("DayOfWeek")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
@@ -601,6 +688,9 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
@@ -609,6 +699,12 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ScheduleId");
 
@@ -789,21 +885,25 @@ namespace GraduationProject.Infrastructure.Migrations
 
             modelBuilder.Entity("GraduationProject.Data.Models.Appointment", b =>
                 {
-                    b.HasOne("GraduationProject.Data.Models.doctorSchedule", "DoctorSchedule")
-                        .WithMany("Appointments")
-                        .HasForeignKey("DoctorScheduleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("GraduationProject.Data.Models.Patient", "Patient")
                         .WithMany("Appointments")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("DoctorSchedule");
+                    b.HasOne("GraduationProject.Data.Models.ScheduleSlot", "ScheduleSlot")
+                        .WithOne("Appointment")
+                        .HasForeignKey("GraduationProject.Data.Models.Appointment", "ScheduleSlotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GraduationProject.Data.Models.doctorSchedule", null)
+                        .WithMany("Appointments")
+                        .HasForeignKey("doctorScheduleScheduleId");
 
                     b.Navigation("Patient");
+
+                    b.Navigation("ScheduleSlot");
                 });
 
             modelBuilder.Entity("GraduationProject.Data.Models.EmailVerification", b =>
@@ -898,6 +998,17 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Navigation("Doctor");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("GraduationProject.Data.Models.ScheduleSlot", b =>
+                {
+                    b.HasOne("GraduationProject.Data.Models.doctorSchedule", "DoctorSchedule")
+                        .WithMany("Slots")
+                        .HasForeignKey("DoctorScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DoctorSchedule");
                 });
 
             modelBuilder.Entity("GraduationProject.Data.Models.StudentDoctor", b =>
@@ -1057,6 +1168,11 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Navigation("MedicalRecords");
                 });
 
+            modelBuilder.Entity("GraduationProject.Data.Models.ScheduleSlot", b =>
+                {
+                    b.Navigation("Appointment");
+                });
+
             modelBuilder.Entity("GraduationProject.Data.Models.Specialization", b =>
                 {
                     b.Navigation("Doctors");
@@ -1090,6 +1206,8 @@ namespace GraduationProject.Infrastructure.Migrations
             modelBuilder.Entity("GraduationProject.Data.Models.doctorSchedule", b =>
                 {
                     b.Navigation("Appointments");
+
+                    b.Navigation("Slots");
                 });
 #pragma warning restore 612, 618
         }
