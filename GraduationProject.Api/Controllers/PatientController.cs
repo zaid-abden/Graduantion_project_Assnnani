@@ -8,8 +8,10 @@ using GraduationProject.Application.Features.Doctors.Queries.GetDoctorById;
 using GraduationProject.Application.Features.Patients.commands.updatepationtcommand;
 using GraduationProject.Application.Features.Patients.Queries.DoctorByID;
 using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion;
+using GraduationProject.Application.Features.Patients.Queries.GetAvaliableSlots;
 using GraduationProject.Application.Features.Patients.Queries.GetPatientProfile;
 using GraduationProject.Data.Models;
+using GraduationProject.Application.Features.Patients.Queries.GetAvaliableSlots;
 
 
 
@@ -58,9 +60,12 @@ namespace GraduationProject.Api.Controllers
         public async Task<IActionResult> GetProfile()
         {
             // 🔥 هنا المفروض تجيب UserId من JWT
-            var userId = User.FindFirst("sub")?.Value;
+            //var userId = User.FindFirst("sub")?.Value;
 
-            if (string.IsNullOrEmpty(userId))
+            //if (string.IsNullOrEmpty(userId))
+            //    return Unauthorized();
+
+            if (!int.TryParse(User.FindFirst("sub")?.Value, out int userId))
                 return Unauthorized();
 
             var result = await _mediator.Send(new GetPatientProfileQuery { UserId = userId });
@@ -69,6 +74,16 @@ namespace GraduationProject.Api.Controllers
         }
 
 
+        [HttpGet("{id}/available-slots")]
+        public async Task<IActionResult> GetAvailableSlots(int id)
+        {
+            var result = await _mediator.Send(new GetAvaliableSlotsQuery
+            {
+                DoctorId = id
+            });
+
+            return result.ToActionResult();
+        }
 
         //[HttpGet("Get/Doctors")]
         //public async Task<IActionResult> GetDoctor_Filteration([FromQuery] DoctorFilterationQuery query)
