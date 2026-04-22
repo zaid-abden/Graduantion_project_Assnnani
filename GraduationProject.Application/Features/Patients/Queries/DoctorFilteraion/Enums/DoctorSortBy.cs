@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion.Enums
+﻿namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion.Enums
 {
-    internal class DoctorSortBy
+    public enum DoctorSortBy
     {
+        Rating,
+        Price,
+        Name,
+        Experience
     }
 }

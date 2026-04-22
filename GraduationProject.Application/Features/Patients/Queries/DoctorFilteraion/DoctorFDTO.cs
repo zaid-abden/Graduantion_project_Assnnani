@@ -1,6 +1,6 @@
 ﻿namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion
 {
-    internal class DoctorFDTO
+    public class DoctorFDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
