@@ -9,19 +9,24 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Data.Models
 {
-    public class DoctorSchedule
+    [Table("DoctorSchedules")]
+    public class doctorSchedule:BaseEntity
     {
         [Key]
         public int ScheduleId { get; set; }
         public WeekDay DayOfWeek { get; set; }= WeekDay.Saturday;
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
-
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+        public string? Location { get; set; } 
+        public bool IsActive { get; set; } = true;
+       
+        public int MaxAppointments { get; set; } = 10;
         // FK
         [ForeignKey("Doctor")]
         public int DoctorId { get; set; }
-        public doctor Doctor { get; set; }
+        public doctor Doctor { get; set; }=null!;
         public ICollection<Appointment> Appointments { get; set; }
+        public ICollection<ScheduleSlot> Slots { get; set; } = new List<ScheduleSlot>();
     }
 
 }

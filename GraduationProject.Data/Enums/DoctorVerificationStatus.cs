@@ -8,10 +8,10 @@ namespace GraduationProject.Data.Enums
 {
     public enum DoctorVerificationStatus
     {
-        NotSubmitted = 0,
-        Pending = 1,
-        Approved = 2,
-        Rejected = 3 
+        NotSubmitted = 1,
+        Pending = 2,
+        Approved = 3,
+        Rejected = 4 
     }
 
 }

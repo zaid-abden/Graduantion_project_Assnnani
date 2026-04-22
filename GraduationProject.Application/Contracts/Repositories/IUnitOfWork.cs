@@ -19,6 +19,8 @@ namespace GraduationProject.Application.Contracts.Repositories
         IReceptionstRepository Receptionists { get; }
         IStudentDoctorRepository StudentDoctors { get; }
         IVerificationRepository Verifications { get; }
+        ISpecializationRepository Specialization { get; }
+        IScheduleSlotRepository ScheduleSlots { get; }
         IEmailVerificationRepository EmailVerificationRepository { get; }
         Task<int> SaveAsync();
     }

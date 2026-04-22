@@ -8,11 +8,11 @@ namespace GraduationProject.Data.Enums
 {
     public enum BookingType
     {
-        Online = 0,
-        WalkIn = 1,
-        PhoneCall = 2,
-        Emergency = 3,
-        Referred = 4
+        Online = 1,
+        WalkIn = 2,
+        PhoneCall = 3,
+        Emergency = 4,
+        Referred = 5
     }
 
 }

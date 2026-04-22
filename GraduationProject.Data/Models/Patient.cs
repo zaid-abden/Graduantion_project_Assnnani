@@ -20,9 +20,10 @@ namespace GraduationProject.Data.Models
 
        public Gender Gender=Gender.Male;
         
-        // FK
-        [ForeignKey("User")]
+    
         public string UserId { get; set; }
+        [ForeignKey(nameof(UserId))]
+  
         public User User { get; set; }
 
         // Relations
