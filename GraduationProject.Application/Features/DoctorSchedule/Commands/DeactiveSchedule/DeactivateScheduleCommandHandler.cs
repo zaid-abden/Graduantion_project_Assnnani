@@ -36,7 +36,8 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.Deactiv
                 .Include(x => x.Doctor)
                 .FirstOrDefaultAsync(x =>
                     x.ScheduleId == request.ScheduleId &&
-                    x.Doctor.UserId == userId,
+                    x.Doctor.UserId == userId
+                    && !x.IsDeleted,
                     cancellationToken);
 
             if (schedule is null)
@@ -53,18 +54,18 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.Deactiv
                     "Schedule is already inactive.");
             }
 
-            var hasAppointments = await unitOfWork.Appointments.Query()
-                .AnyAsync(c =>
-                    c.DoctorScheduleId == schedule.ScheduleId &&
-                    !c.IsDeleted,
-                    cancellationToken);
+            //var hasAppointments = await unitOfWork.Appointments.Query()
+            //    .AnyAsync(c =>
+            //        c.DoctorScheduleId == schedule.ScheduleId &&
+            //        !c.IsDeleted,
+            //        cancellationToken);
 
-            if (hasAppointments)
-            {
-                return Result<string>.Failure(
-                    ResultStatus.Conflict,
-                    "Cannot deactivate schedule because it has active booked appointments.");
-            }
+            //if (hasAppointments)
+            //{
+            //    return Result<string>.Failure(
+            //        ResultStatus.Conflict,
+            //        "Cannot deactivate schedule because it has active booked appointments.");
+            //}
 
             schedule.IsActive = false;
             schedule.UpdatedAt = DateTime.Now;

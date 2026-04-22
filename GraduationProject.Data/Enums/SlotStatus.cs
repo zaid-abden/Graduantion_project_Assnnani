@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Data.Enums
 {
-    public enum BookingType
+    public enum SlotStatus
     {
-        Online = 1,
-        WalkIn = 2,
-        PhoneCall = 3,
-        Emergency = 4,
-        Referred = 5
+        Available =1,
+        Booked,
+        Cancelled,
+        Blocked
     }
-
 }

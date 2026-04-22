@@ -4,9 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace GraduationProject.Application.Features.Doctors.Commands.UpdateDoctorProfile
 {
-	public class UpdateDoctorProfileCommand : IRequest<Result<bool>>
+	public class UpdateDoctorProfileCommand : IRequest<Result<string>>
 	{
-		public int DoctorId { get; set; } 
+		
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string PhoneNumber { get; set; }

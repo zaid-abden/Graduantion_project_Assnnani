@@ -46,6 +46,7 @@ namespace GraduationProject.Infrastructure
             services.AddScoped<IFileServices, FileStorageService>();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IFinancialRepository, FinancialRepository>();
             services.Configure<JwtSetting>(builder.Configuration.GetSection("JwtSetting"));
             return services;
         }

@@ -3,6 +3,7 @@ using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.DoctorSchedule.Dtos;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,11 +24,14 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Queries.GetAllSc
         }
         public async Task<Result<List<DoctorScheduleDto>>> Handle(GetAllSchedulesQuery request, CancellationToken cancellationToken)
         {
-            var doctor = await unitOfWork.Doctors.GetCurrentDoctor(currentUserService.UserId);
             if (!currentUserService.IsAuthenticated)
             {
                 return Result<List<DoctorScheduleDto>>.Failure(ResultStatus.Unauthorized, "You are not authorized to perform this action.");
             }
+            var userId = currentUserService.UserId;
+            var doctor = await unitOfWork.Doctors.Query()
+                .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+
             if (doctor == null)
             {
                 return Result<List<DoctorScheduleDto>>.Failure(ResultStatus.Failure, "Doctor profile not found.");

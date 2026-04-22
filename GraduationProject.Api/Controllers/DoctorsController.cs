@@ -44,10 +44,10 @@ namespace GraduationProject.Api.Controllers
 			return result.ToActionResult();
 		}
 
-		[HttpPost("updateprofile/{doctorId}")]
+		[HttpPost("updateprofile")]
 		public async Task<IActionResult> UpdateProfile([FromRoute] int doctorId, [FromBody] UpdateDoctorProfileCommand command)
 		{
-			command.DoctorId = doctorId;
+			
 
 			var result = await mediator.Send(command);
 

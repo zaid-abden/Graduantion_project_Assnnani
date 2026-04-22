@@ -36,7 +36,7 @@ namespace GraduationProject.Api
             builder.Services.AddEndpointsApiExplorer();
             //builder.Services.AddSwaggerGen();
 
-           
+         
 
             builder.Services.AddInfrastructure(builder)
                 .AddApplicationServices();
@@ -55,6 +55,7 @@ namespace GraduationProject.Api
 
             builder.Services.AddSwaggerGen(options =>
             {
+                options.EnableAnnotations();
                 options.AddSecurityDefinition(name: JwtBearerDefaults.AuthenticationScheme,
     securityScheme: new OpenApiSecurityScheme
     {
@@ -169,7 +170,7 @@ options.JsonSerializerOptions.Converters.Add(
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+           // app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();

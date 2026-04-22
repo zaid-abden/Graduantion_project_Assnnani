@@ -1,5 +1,6 @@
 ﻿using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Infrastructure.Context;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace GraduationProject.Infrastructure.Repositories
 {
@@ -25,7 +26,9 @@ namespace GraduationProject.Infrastructure.Repositories
 
 		public ISpecializationRepository Specialization { get; }
 
-		public UnitOfWork(
+        public IScheduleSlotRepository ScheduleSlots {  get; }
+
+        public UnitOfWork(
 			ApplicationDbContext context,
 			IAdminRepository adminRepository,
 			IAI_ReportRepository aiReportRepository,
@@ -40,17 +43,18 @@ namespace GraduationProject.Infrastructure.Repositories
 			IVerificationRepository verificationRepository,
 			IEmailVerificationRepository emailVerification,
 			IEmailVerificationRepository emailVerificationRepository,
-
+			IScheduleSlotRepository scheduleSlotRepository,
 			ISpecializationRepository Specialization
 		)
 		{
 			_context = context;
-
-			Admins = adminRepository;
+          
+            Admins = adminRepository;
 			AI_Reports = aiReportRepository;
 			Appointments = appointmentRepository;
 			Doctors = doctorRepository;
 			DoctorSchedules = doctorScheduleRepository;
+			
 			Feedbacks = feedbackRepository;
 			MedicalRecords = medicalRecordRepository;
 			Patients = patientRepository;
@@ -60,7 +64,7 @@ namespace GraduationProject.Infrastructure.Repositories
 			this.emailVerification = emailVerification;
 			EmailVerificationRepository = emailVerificationRepository;
 			this.Specialization = Specialization;
-
+			this.ScheduleSlots = scheduleSlotRepository;
 		}
 
 		public async Task<int> SaveAsync()

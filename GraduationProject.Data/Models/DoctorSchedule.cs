@@ -26,6 +26,7 @@ namespace GraduationProject.Data.Models
         public int DoctorId { get; set; }
         public doctor Doctor { get; set; }=null!;
         public ICollection<Appointment> Appointments { get; set; }
+        public ICollection<ScheduleSlot> Slots { get; set; } = new List<ScheduleSlot>();
     }
 
 }

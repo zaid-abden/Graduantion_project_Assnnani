@@ -1,38 +1,53 @@
 ﻿using AutoMapper;
 using GraduationProject.Application.Common.Results;
+using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Application.Features.DoctorSchedule.Dtos;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 
 namespace GraduationProject.Application.Features.Doctors.Commands.UpdateDoctorProfile
 {
-	public class UpdateDoctorProfileHandler : IRequestHandler<UpdateDoctorProfileCommand, Result<bool>>
+	public class UpdateDoctorProfileHandler : IRequestHandler<UpdateDoctorProfileCommand, Result<string>>
 	{
-		private readonly IDoctorRepository _doctorRepository;
-		private readonly IMapper _mapper;
+		
+        private readonly IUnitOfWork unitOfWork;
+        private readonly ICurrentUserService currentUserService;
 
-		public UpdateDoctorProfileHandler(IDoctorRepository doctorRepository, IMapper mapper)
+        public UpdateDoctorProfileHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
 		{
-			_doctorRepository = doctorRepository;
-			_mapper = mapper;
-		}
+		
+            this.unitOfWork = unitOfWork;
+            this.currentUserService = currentUserService;
+        }
 
-		public async Task<Result<bool>> Handle(UpdateDoctorProfileCommand request, CancellationToken cancellationToken)
+		public async Task<Result<string>> Handle(UpdateDoctorProfileCommand request, CancellationToken cancellationToken)
 		{
-			// 1. Fetch existing entity
-			var doctor = await _doctorRepository.GetDoctorWithUserAsync(request.DoctorId);
+			if (!currentUserService.IsAuthenticated)
+			{
+				return Result<string>.Failure(ResultStatus.Unauthorized, "You are not authorized to perform this action.");
+			}
+			var userId = currentUserService.UserId;
+			var doctor = await unitOfWork.Doctors.Query()
+				.FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+			if (doctor is null)
+				return Result<string>.Failure(ResultStatus.NotFound, "Doctor profile not found");
 
-			if (doctor == null)
-				return Result<bool>.Failure(ResultStatus.NotFound, "Doctor profile not found.");
+			doctor.FullName = request.FirstName + request.LastName;
 
-			_mapper.Map(request, doctor);
+			doctor.ClinicPhoneNumber = request.PhoneNumber;
+			doctor.About = request.About;
+			doctor.City = request.City;
+			doctor.Street = request.Street;
+			doctor.Country = request.Country;
+			doctor.YearsOfExperience = request.YearsOfExperience;
+			await unitOfWork.SaveAsync();
+			 return Result<string>.Success("Doctor profile updated sucessfull");
 
-			_doctorRepository.Update(doctor);
-			var success = await _doctorRepository.SaveChangesAsync();
 
-			if (!success)
-				return Result<bool>.Failure(ResultStatus.Failure, "An error occurred while updating the profile.");
 
-			return Result<bool>.Success(true);
 		}
 	}
 }
+

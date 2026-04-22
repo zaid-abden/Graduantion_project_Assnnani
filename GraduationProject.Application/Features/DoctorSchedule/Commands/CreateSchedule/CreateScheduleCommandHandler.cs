@@ -2,9 +2,11 @@
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.DoctorSchedule.Dtos;
+using GraduationProject.Data.Enums;
 using GraduationProject.Data.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,12 +29,16 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
         }
         public async Task<Result<DoctorScheduleDto>> Handle(CreateScheduleCommand request, CancellationToken cancellationToken)
         {
-            
-            var doctor = await unitOfWork.Doctors.GetCurrentDoctor(currentUserService.UserId);
+
+
             if (!currentUserService.IsAuthenticated)
             {
                 return Result<DoctorScheduleDto>.Failure(ResultStatus.Unauthorized, "You are not authorized to perform this action.");
             }
+            var userId = currentUserService.UserId;
+            var doctor = await unitOfWork.Doctors.Query()
+                .FirstOrDefaultAsync(x => x.UserId == userId,cancellationToken);
+           
             if (doctor == null)
             {
                 return Result<DoctorScheduleDto>.Failure(ResultStatus.Failure, "Doctor profile not found.");
@@ -63,7 +69,61 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
             };
 
             await unitOfWork.DoctorSchedules.AddAsync(schedule);
+
+
+
             await unitOfWork.SaveAsync();
+
+
+            var slots = new List<ScheduleSlot>();
+
+            var current = schedule.StartTime;
+            var slotDuration = TimeSpan.FromMinutes(30);
+
+            while (current < schedule.EndTime)
+            {
+                var end = current.Add(slotDuration);
+
+                if (end > schedule.EndTime)
+                    break;
+
+                
+                var exists = await unitOfWork.ScheduleSlots.Query()
+                    .AnyAsync(s =>
+                        s.DoctorScheduleId == schedule.ScheduleId &&
+                        current < s.EndTime &&
+                        end > s.StartTime,
+                        cancellationToken);
+
+                if (exists)
+                {
+                    return Result<DoctorScheduleDto>.Failure(
+                        ResultStatus.Failure,
+                        $"Slot overlap detected at {current}");
+                }
+
+                slots.Add(new ScheduleSlot
+                {
+                    DoctorScheduleId = schedule.ScheduleId,
+                    StartTime = current,
+                    EndTime = end,
+                    Status = SlotStatus.Available,
+                    CreatedAt = DateTime.Now
+                });
+
+                current = end;
+            }
+
+
+
+
+
+            await unitOfWork.ScheduleSlots.AddRangeAsync(slots);
+
+            await unitOfWork.SaveAsync();
+
+
+
             var scheduleDto = new DoctorScheduleDto
             {
                 ScheduleId = schedule.ScheduleId,

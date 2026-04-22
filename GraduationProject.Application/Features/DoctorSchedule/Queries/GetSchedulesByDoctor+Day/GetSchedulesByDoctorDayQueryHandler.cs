@@ -21,7 +21,8 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Queries.GetSched
         public async Task<Result<List<DoctorScheduleDto>>> Handle(GetSchedulesByDoctorDayQuery request, CancellationToken cancellationToken)
         {
             var schedules = (await unitOfWork.DoctorSchedules.GetAllAsync())
-                .Where(x => x.DoctorId == request.DoctorId && x.DayOfWeek == request.Day);
+                .Where(x => x.DoctorId == request.DoctorId && x.DayOfWeek == request.Day
+                && x.IsActive && !x.IsDeleted);
             var schedulesDto = schedules.Select(x => new DoctorScheduleDto
             {
                 ScheduleId = x.ScheduleId,

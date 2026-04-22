@@ -3,6 +3,7 @@ using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.DoctorSchedule.Dtos;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,18 +24,23 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.DeleteS
         }
         public async Task<Result<string>> Handle(DeleteScheduleCommand request, CancellationToken cancellationToken)
         {
-            var doctor = await unitOfWork.Doctors.GetCurrentDoctor(currentUserService.UserId);
             if (!currentUserService.IsAuthenticated)
             {
                 return Result<string>.Failure(ResultStatus.Unauthorized, "You are not authorized to perform this action.");
             }
+            var userId = currentUserService.UserId;
+            var doctor = await unitOfWork.Doctors.Query()
+                .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+
             if (doctor == null)
             {
                 return Result<string>
                     .Failure(ResultStatus.Failure, "Doctor profile not found.");
             }
            
-            var schedule = await unitOfWork.DoctorSchedules.GetByIdAsync(request.ScheduleId);
+            var schedule = await unitOfWork.DoctorSchedules.Query()
+                .FirstOrDefaultAsync(x => x.ScheduleId == request.ScheduleId
+                && !x.IsDeleted,cancellationToken);
             if (schedule == null)
             {
                 return Result<string>.Failure(ResultStatus.NotFound, "Schedule not found.");

@@ -3,6 +3,7 @@ using GraduationProject.Application.Features.DoctorSchedule.Commands.CreateSched
 using GraduationProject.Application.Features.DoctorSchedule.Commands.DeactiveSchedule;
 using GraduationProject.Application.Features.DoctorSchedule.Commands.DeleteSchedule;
 using GraduationProject.Application.Features.DoctorSchedule.Commands.MakeAScheduleActive;
+using GraduationProject.Application.Features.DoctorSchedule.Commands.RestoreSchedule;
 using GraduationProject.Application.Features.DoctorSchedule.Commands.UpdateSchedule;
 using GraduationProject.Application.Features.DoctorSchedule.Queries.GellAllActiveSchedule;
 using GraduationProject.Application.Features.DoctorSchedule.Queries.GetAllActiveScheduleForDoctor;
@@ -18,118 +19,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace GraduationProject.Api.Controllers
 {
-    //    [Route("api/[controller]")]
-    //    [ApiController]
-    //    public class DoctorSchedulesController : ControllerBase
-    //    {
-    //        private readonly IMediator mediator;
-    //        public DoctorSchedulesController(IMediator mediator)
-    //        {
-    //            this.mediator = mediator;
-    //        }
-    //        [HttpGet("Get-All-Schedules")]
-    //        public async Task<IActionResult> GetAllSchedules()
-    //        {
-    //            var query = new GetAllSchedulesQuery();
-    //            var result = await mediator.Send(query);
-    //            return result.ToActionResult();
-    //        }
-
-    //        [HttpGet("Get-All-Active-Shedules")]
-    //        public async Task<IActionResult> GetActiveSchedulesForDoctor()
-    //        {
-    //            var query = new GetAllActiveScheduleQuery();
-    //            var result = await mediator.Send(query);
-    //            return result.ToActionResult();
-    //        }
-
-    //        [HttpGet("Get-All-Not-Active-Shedules")]
-    //        public async Task<IActionResult> GetNotActiveSchedulesForDoctor()
-    //        {
-    //            var query = new GetAllNotActiveScheduleQuery();
-    //            var result = await mediator.Send(query);
-    //            return result.ToActionResult();
-    //        }
-
-
-
-
-    //        [HttpGet("Get-Schedule-By-Id/{id}")]    
-    //        public async Task<IActionResult> GetScheduleById(int id)
-    //        {
-    //            var query = new GetScheduleByIdQuery(id);
-    //            var result = await mediator.Send(query);
-    //            return result.ToActionResult();
-    //        }
-
-    //        [HttpGet("Get-Schedule-Details-By-Doctor/{id}")]
-
-    //        public async Task<IActionResult> GetScheduleDetailsByDoctor(int id)
-    //        {
-    //            var query = new GetAllActiveScheduleForDoctorQuery(id);
-    //            var result = await mediator.Send(query);
-    //            return result.ToActionResult();
-    //        }
-    //        [HttpGet("by-doctor-day")]
-    //        public async Task<IActionResult> GetSchedulesByDoctorAndDay([FromQuery] int doctorId, [FromQuery] WeekDay day)
-    //        {
-    //            var query = new GetSchedulesByDoctorDayQuery(doctorId, (WeekDay)day);
-    //            var result = await mediator.Send(query);
-    //            return result.ToActionResult();
-    //        }
-    //        [HttpPost("Create-New-Schedule")]
-    //        public async Task<IActionResult> CreateSchedule([FromBody] CreateScheduleCommand createScheduleCommand)
-    //        {
-    //            var result=await mediator.Send(createScheduleCommand);
-    //            return result.ToActionResult();
-    //        }
-    //        [HttpPut("Update-Schedule/{id}")]
-    //        public async Task<IActionResult> CreateSchedule([FromBody] UpdateScheduleCommand updateScheduleCommand,int id)
-    //        {
-    //            if(id!=updateScheduleCommand.ScheduleId)
-    //            {
-    //                return BadRequest("Schedule ID mismatch between URL and body.");
-    //            }
-    //            var result = await mediator.Send(updateScheduleCommand);
-    //            return result.ToActionResult();
-    //        }
-    //        [HttpDelete("Delete-Schedule/{id}")]
-    //        public async Task<IActionResult> DeleteSchedule([FromBody] DeleteScheduleCommand deleteScheduleCommand, int id)
-    //        {
-    //            if (id != deleteScheduleCommand.ScheduleId)
-    //            {
-    //                return BadRequest("Schedule ID mismatch between URL and body.");
-    //            }
-    //            var result = await mediator.Send(deleteScheduleCommand);
-    //            return result.ToActionResult();
-    //        }
-
-    //        [HttpPatch("Make-Schedule-Active/{id}")]
-    //        public async Task<IActionResult> MakeScheduleActive(MakeAScheduleActiveCommand makeAScheduleActiveCommand,int id)
-    //        {
-    //            if(id!= makeAScheduleActiveCommand.ScheduleId)
-    //            {
-    //                return BadRequest("Schedule ID mismatch between URL and body.");
-    //            }
-    //            var result = await mediator.Send(new MakeAScheduleActiveCommand(makeAScheduleActiveCommand.ScheduleId));
-    //            return result.ToActionResult();
-    //        }
-    //        [HttpPatch("{id}/deactivate")]
-    //        [SwaggerOperation(
-    //    Summary = "Deactivate a doctor schedule",
-    //    Description = "Soft deletes (deactivates) a doctor schedule if it has no active appointments."
-    //)]
-    //        [ProducesResponseType(StatusCodes.Status200OK)]
-    //        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //        [ProducesResponseType(StatusCodes.Status404NotFound)]
-    //        public async Task<IActionResult> Deactivate(int id)
-    //        {
-    //            var result = await mediator.Send(
-    //                new DeactivateScheduleCommand (id));
-
-    //            return result.ToActionResult();
-    //        }
-    //    }
+  
     [Route("api/[controller]")]
     [ApiController]
     public class DoctorSchedulesController : ControllerBase
@@ -275,6 +165,17 @@ namespace GraduationProject.Api.Controllers
         public async Task<IActionResult> Deactivate(int id)
         {
             var result = await mediator.Send(new DeactivateScheduleCommand(id));
+            return result.ToActionResult();
+        }
+
+        [HttpPatch("{id}/restore")]
+        [SwaggerOperation(
+            Summary = "Restore schedule",
+            Description = "Reactivates a previously deactivated schedule if there are no conflicts with active schedules."
+        )]
+        public async Task<IActionResult> Restore(int id)
+        {
+            var result = await mediator.Send(new RestoreScheduleCommand(id));
             return result.ToActionResult();
         }
     }

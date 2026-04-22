@@ -1,5 +1,6 @@
 ﻿using GraduationProject.Api.Common.Responses;
 using GraduationProject.Application.Common.Results;
+using GraduationProject.Application.Features.Patients.commands.AddPatient;
 using GraduationProject.Application.Features.Patients.commands.updatepationtcommand;
 using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion;
 
@@ -9,6 +10,7 @@ using GraduationProject.Application.Features.Patients.Queries.GetAllPatients;
 using GraduationProject.Application.Features.Patients.Queries.GetPatientById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GraduationProject.Api.Controllers
 {
@@ -54,5 +56,19 @@ namespace GraduationProject.Api.Controllers
         //    Result<PagedResult<DoctorFDTO>> result = await mediator.Send(query);
         //    return result.ToActionResult();
         //}
+
+        [HttpPost("register")]
+        [SwaggerOperation(
+             Summary = "Register new patient",
+             Description = "Creates a new patient profile and links it to the authenticated user."
+         )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> RegisterPatient([FromBody] AddPatientCommand command)
+        {
+            var result = await mediator.Send(command);
+            return result.ToActionResult();
+        }
     }
 }

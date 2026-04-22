@@ -14,8 +14,8 @@
     <Folder Include="Features\AI_Report\Dtos\" />
     <Folder Include="Features\AI_Report\Queries\" />
     <Folder Include="Features\ApplicationUsers\Commands\" />
-    <Folder Include="Features\Appointment\Dtos\" />
-    <Folder Include="Features\Appointment\Queries\" />
+    <Folder Include="Features\Appointments\Dtos\" />
+    <Folder Include="Features\Appointments\Queries\" />
     <Folder Include="Features\Auth\Commands\Logout\" />
     <Folder Include="Features\Auth\Commands\RefershToken\" />
     <Folder Include="Features\Feedback\Commands\" />

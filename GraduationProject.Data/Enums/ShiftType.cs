@@ -8,9 +8,9 @@ namespace GraduationProject.Data.Enums
 {
     public enum ShiftType
     {
-        Morning = 0,
-        Evening = 1,
-        Night = 2
+        Morning = 1,
+        Evening = 2,
+        Night = 3
     }
 
 }

@@ -12,8 +12,6 @@ namespace GraduationProject.Data.Models
     {
         public int AppointmentId { get; set; }
 
-        public DateTime AppointmentTime { get; set; }
-
         public AppointmentStatus AppointmentStatus { get; set; } = AppointmentStatus.Pending;
 
         public string? Notes { get; set; }
@@ -24,12 +22,12 @@ namespace GraduationProject.Data.Models
 
         public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
 
-     
         public int PatientId { get; set; }
         public Patient Patient { get; set; } = null!;
 
-        public int DoctorScheduleId { get; set; }
-        public doctorSchedule DoctorSchedule { get; set; } = null!;
+       
+        public int ScheduleSlotId { get; set; }
+        public ScheduleSlot ScheduleSlot { get; set; } = null!;
     }
 
 }

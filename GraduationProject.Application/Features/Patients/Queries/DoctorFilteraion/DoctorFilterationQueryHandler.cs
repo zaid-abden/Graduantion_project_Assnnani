@@ -1,14 +1,10 @@
 ﻿//using GraduationProject.Application.Common.Results;
 //using GraduationProject.Application.Contracts.Repositories;
+//using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion.Enums;
 //using GraduationProject.Data.Identity;
 //using MediatR;
 //using Microsoft.AspNetCore.Identity;
 //using Microsoft.EntityFrameworkCore;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
 
 //namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion
 //{
@@ -18,12 +14,12 @@
 //        private readonly IUnitOfWork _unitOfWork;
 //        private readonly UserManager<User> _userManager;
 
-//        public DoctorFilterationQueryHandler(IUnitOfWork unitOfWork,UserManager<User> userManager )
+//        public DoctorFilterationQueryHandler(IUnitOfWork unitOfWork, UserManager<User> userManager)
 //        {
 //            _unitOfWork = unitOfWork;
 //            _userManager = userManager;
 //        }
-//        public Task<Result<PagedResult<DoctorFDTO>>> Handle(DoctorFilterationQuery request, CancellationToken cancellationToken)
+//        public async Task<Result<PagedResult<DoctorFDTO>>> Handle(DoctorFilterationQuery request, CancellationToken cancellationToken)
 //        {
 //            var query = _unitOfWork.Doctors.GetAll();
 
@@ -39,10 +35,10 @@
 //                query = query.Where(d => d.User.Gender == request.Gender);
 
 //            if (request.MinPrice.HasValue)
-//                query = query.Where(d => d.Price >= request.MinPrice);
+//                query = query.Where(d => d.price >= request.MinPrice);
 
 //            if (request.MaxPrice.HasValue)
-//                query = query.Where(d => d.Price <= request.MaxPrice);
+//                query = query.Where(d => d.price <= request.MaxPrice);
 
 //            // 🔥 RATING (SQL SUBQUERY - IMPORTANT FIX)
 //            var queryWithRating = query.Select(d => new
@@ -60,16 +56,14 @@
 //                    .Where(x => x.Rating >= request.MinRating.Value);
 //            }
 
-//            // 🔥 SORTING (STILL SQL)
-//            bool isAsc = request.SortDirection?.ToLower() == "asc";
 
-//            queryWithRating = request.SortBy?.ToLower() switch
+//            queryWithRating = request.SortBy switch
 //            {
-//                "price" => isAsc
-//                    ? queryWithRating.OrderBy(x => x.Doctor.)
-//                    : queryWithRating.OrderByDescending(x => x.Doctor.Price),
+//                DoctorSortBy.Price => request.SortDirection == SortDirection.Asc
+//                    ? queryWithRating.OrderBy(x => x.Doctor.price)
+//                    : queryWithRating.OrderByDescending(x => x.Doctor.price),
 
-//                _ => isAsc
+//                _ => request.SortDirection == SortDirection.Asc
 //                    ? queryWithRating.OrderBy(x => x.Rating)
 //                    : queryWithRating.OrderByDescending(x => x.Rating)
 //            };
@@ -81,20 +75,19 @@
 //            var items = await queryWithRating
 //                .Skip((request.PageNumber - 1) * request.PageSize)
 //                .Take(request.PageSize)
-//                .Select(x => new DoctorDto
+//                .Select(x => new DoctorFDTO
 //                {
-//                    Id = x.Doctor.DoctorID,
-//                    Name = x.Doctor.Name,
-//                    Specialization = x.Doctor.Specialization,
-//                    Price = x.Doctor.Price,
+//                    Id = x.Doctor.DoctorId,
+//                    Name = x.Doctor.User.FullName,
+//                    Price = x.Doctor.price,
 //                    City = x.Doctor.City,
-//                    Gender = x.Doctor.Gender,
-//                    YearsOfExperience = x.Doctor.YearsOfService,
+//                    Gender = x.Doctor.User.Gender,
+//                    YearsOfExperience = x.Doctor.YearsOfExperience,
 //                    Rating = x.Rating
 //                })
 //                .ToListAsync(cancellationToken);
 
-//            return Result.Success(new PagedResult<DoctorDto>
+//            return Result<PagedResult<DoctorFDTO>>.Success(new PagedResult<DoctorFDTO>
 //            {
 //                PageNumber = request.PageNumber,
 //                PageSize = request.PageSize,

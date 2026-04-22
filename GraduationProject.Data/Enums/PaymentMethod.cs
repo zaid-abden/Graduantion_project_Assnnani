@@ -8,11 +8,11 @@ namespace GraduationProject.Data.Enums
 {
     public enum PaymentMethod
     {
-        Cash = 0,           // كاش في العيادة
-        CreditCard = 1,     // فيزا/ماستر كارد
-        VodafoneCash = 2,   // تحويل محفظة
-        BankTransfer = 3,   // تحويل بنكي
-        Insurance = 4,      // تأمين طبي
-        OnlinePayment = 5
+        Cash = 1,           // كاش في العيادة
+        CreditCard = 2,     // فيزا/ماستر كارد
+        VodafoneCash = 3,   // تحويل محفظة
+        BankTransfer = 4,   // تحويل بنكي
+        Insurance = 5,      // تأمين طبي
+        OnlinePayment = 6
     }
 }

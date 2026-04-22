@@ -7,16 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GraduationProject.Application.Features.Appointment.Commands.AddAppointment
+namespace GraduationProject.Application.Features.Appointments.Commands.AddAppointment
 {
-    public class AddAppointmentCommand:IRequest<Result<int>>
+    public class AddAppointmentCommand : IRequest<Result<int>>
     {
-        public DateTime AppointmentTime { get; set; }
+        public int ScheduleSlotId { get; set; }
         public string? Notes { get; set; }
 
-       
-        public int DoctorScheduleId { get; set; }
 
-       
+
+        public PaymentMethod PaymentMethod { get; set; } = PaymentMethod.Cash;
+
+
     }
 }
