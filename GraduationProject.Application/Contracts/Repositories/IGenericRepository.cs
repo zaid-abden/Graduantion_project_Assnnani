@@ -14,6 +14,7 @@ namespace GraduationProject.Application.Contracts.Repositories
         Task AddRangeAsync(IEnumerable<T> entities);
         void Update(T entity);
         void Delete(T entity);
+        void DeleteRange(IEnumerable<T> entities);
         IQueryable<T> Query();
     }
 

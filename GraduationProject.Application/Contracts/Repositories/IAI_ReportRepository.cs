@@ -1,14 +1,9 @@
 ﻿using GraduationProject.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Contracts.Repositories
 {
-    public interface IAI_ReportRepository: IGenericRepository<AI_Report>
+    public interface IAI_ReportRepository : IGenericRepository<AI_Report>
     {
-
+        Task<int> labResultsCount(int patientId);
     }
 }

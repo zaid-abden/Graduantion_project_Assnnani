@@ -12,10 +12,14 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
 {
     public class CreateScheduleCommand:IRequest<Result<DoctorScheduleDto>>
     {
-        public WeekDay DayOfWeek { get; set; } 
+        public DateOnly Date { get; set; }
+
         public TimeSpan StartTime { get; set; }
+
         public TimeSpan EndTime { get; set; }
+
         public string? Location { get; set; }
-        public int MaxAppointments { get; set; } 
+
+        public int MaxAppointments { get; set; }
     }
 }

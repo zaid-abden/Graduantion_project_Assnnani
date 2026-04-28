@@ -1,6 +1,7 @@
 ﻿using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Application.Features.Appointments.Dtos;
 using GraduationProject.Data.Enums;
 using GraduationProject.Data.Models;
 using MediatR;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Appointments.Commands.AddAppointment
 {
-    public class AddAppointmentCommandHandler : IRequestHandler<AddAppointmentCommand, Result<int>>
+    public class AddAppointmentCommandHandler : IRequestHandler<AddAppointmentCommand, Result<AddAppointmentResponseDto>>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly ICurrentUserService currentUserService;
@@ -23,60 +24,123 @@ namespace GraduationProject.Application.Features.Appointments.Commands.AddAppoin
             this.unitOfWork = unitOfWork;
             this.currentUserService = currentUserService;
         }
-        public async Task<Result<int>> Handle(AddAppointmentCommand request, CancellationToken cancellationToken)
+        public async Task<Result<AddAppointmentResponseDto>> Handle(AddAppointmentCommand request, CancellationToken cancellationToken)
         {
             if (!currentUserService.IsAuthenticated)
-                return Result<int>.Failure(ResultStatus.Unauthorized, "You must be logged in to book an appointment.");
+                return Result<AddAppointmentResponseDto>.Failure(ResultStatus.Unauthorized, "You must be logged in to book an appointment.");
 
             var userId = currentUserService.UserId;
 
-            var patientId = await unitOfWork.Patients.Query()
+            var patient = await unitOfWork.Patients.Query()
                 .Where(x => x.UserId == userId)
-                .Select(x => x.PatientId)
+               
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (patientId == 0)
-                return Result<int>.Failure(ResultStatus.NotFound, "Patient profile not found for the current user.");
+            if (patient is null)
+                return Result<AddAppointmentResponseDto>.Failure(ResultStatus.NotFound, "Patient profile not found for the current user.");
             var slot = await unitOfWork.ScheduleSlots.Query()
+                .Include(x => x.DoctorSchedule)
                 .FirstOrDefaultAsync(x => x.Id == request.ScheduleSlotId, cancellationToken);
 
             if (slot is null)
-                return Result<int>.Failure(ResultStatus.NotFound, "The selected schedule slot does not exist.");
+                return Result<AddAppointmentResponseDto>.Failure(ResultStatus.NotFound, "The selected schedule slot does not exist.");
             if (slot.Status == SlotStatus.Booked)
-                return Result<int>.Failure(ResultStatus.Conflict, "The selected time slot is already booked");
+                return Result<AddAppointmentResponseDto>.Failure(ResultStatus.Conflict, "The selected time slot is already booked");
 
             if (slot.Status == SlotStatus.Blocked)
-                return Result<int>.Failure(ResultStatus.Conflict, "This time slot is blocked and cannot be booked.");
+                return Result<AddAppointmentResponseDto>.Failure(ResultStatus.Conflict, "Sorry, this time slot is currently unavailable due to doctor or clinic unavailability. Please choose another time.");
 
-            if (slot.Status == SlotStatus.Cancelled)
-                return Result<int>.Failure(ResultStatus.Conflict, "This slot has been cancelled and cannot be booked.");
+           
+            var doctorId = await unitOfWork.Doctors.Query()
+                .Where(x => x.DoctorId == slot.DoctorSchedule.DoctorId)
+                .Select(x => x.DoctorId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            var hasActiveAppointment = await unitOfWork.Appointments.Query()
+    .AnyAsync(x =>
+        x.PatientId == patient.PatientId &&
+        x.DoctorId == slot.DoctorSchedule.DoctorId &&
+        (x.AppointmentStatus == AppointmentStatus.Pending
+         || x.AppointmentStatus == AppointmentStatus.Confirmed),
+        cancellationToken);
+
+            if (hasActiveAppointment)
+            {
+                return Result<AddAppointmentResponseDto>.Failure(
+                    ResultStatus.Conflict,
+                    "You already have an active appointment with this doctor. Please wait until it is completed or cancel it before booking a new one.");
+            }
+
+            var schedule = await unitOfWork.DoctorSchedules.Query()
+                .FirstOrDefaultAsync(x => x.ScheduleId == slot.DoctorScheduleId, cancellationToken);
+            if (schedule == null)
+                return Result<AddAppointmentResponseDto>.Failure(
+                   ResultStatus.NotFound,
+                   "Schedule not found");
+
+            var dailyCount = await unitOfWork.Appointments.Query()
+        .CountAsync(x =>
+            x.DoctorId == doctorId &&
+            x.ScheduleSlot.DoctorScheduleId == schedule.ScheduleId &&
+            (x.AppointmentStatus == AppointmentStatus.Pending ||
+             x.AppointmentStatus == AppointmentStatus.Confirmed),
+            cancellationToken);
 
 
-
+            if (dailyCount >= schedule.MaxAppointments)
+            {
+                return Result<AddAppointmentResponseDto>.Failure(
+                    ResultStatus.Conflict,
+                    "This schedule has reached its maximum number of appointments.");
+            }
+            patient.AssignedDoctorId = doctorId;
             var appointment = new Appointment
             {
                 PaymentStatus = PaymentStatus.Pending,
                 PaymentMethod = request.PaymentMethod,
                 ScheduleSlotId = request.ScheduleSlotId,
                 Notes = request.Notes,
-                PatientId = patientId,
+                PatientId = patient.PatientId,
                 AppointmentStatus = AppointmentStatus.Pending,
                 CreatedAt = DateTime.Now,
                 CreatedBy = currentUserService.UserName,
-               
+                DoctorId = doctorId,
             };
+        
+
+            if(request.appointmentType.HasValue)
+                appointment.AppointmentType = request.appointmentType.Value;
+                else
+                    appointment.AppointmentType = AppointmentType.Emergency;
+
 
             if (currentUserService.IsInRole("Patient"))
                 appointment.BookingType = BookingType.Online;
 
             else if (currentUserService.IsInRole("Receptionist"))
-                appointment.BookingType = BookingType.WalkIn;
+                appointment.BookingType = BookingType.PhoneCall;
 
             await unitOfWork.Appointments.AddAsync(appointment);
             slot.Status = SlotStatus.Booked;
             await unitOfWork.SaveAsync();
 
-            return Result<int>.Success(appointment.AppointmentId);
+
+            var appointmentDateTime = slot.DoctorSchedule.Date.ToDateTime(slot.StartTime);
+
+            var addAppointmentResponseDto = new AddAppointmentResponseDto
+            {
+                AppointmentId = appointment.AppointmentId,
+                PatientId = appointment.PatientId,
+                ScheduleSlotId = appointment.ScheduleSlotId,
+                AppointmentStatus = appointment.AppointmentStatus,
+                BookingType = appointment.BookingType,
+                CreatedAt = appointment.CreatedAt,
+                AppointmentTime = appointmentDateTime,
+  
+                Message = "Your appointment has been booked successfully"
+            };
+            patient.AssignedDoctorId = doctorId;
+            return Result<AddAppointmentResponseDto>.Success(addAppointmentResponseDto);
 
         }
     }

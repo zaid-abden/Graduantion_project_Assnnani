@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Patients.Queries.GetAvaliableSlots
 {
-    public class GetAvaliableSlotsDto
-    {
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
-    }
+    //public class GetAvaliableSlotsDto
+    //{
+    //    public TimeSpan StartTime { get; set; }
+    //    public TimeSpan EndTime { get; set; }
+    //}
 
-    public class AvailableDayDto
-    {
-        public string Day { get; set; }
-        public List<SlotDto> Slots { get; set; } = new();
-    }
+    //public class AvailableDayDto
+    //{
+    //    public string Day { get; set; }
+    //    public List<SlotDto> Slots { get; set; } = new();
+    //}
 
 }

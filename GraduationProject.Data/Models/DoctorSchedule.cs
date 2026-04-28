@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GraduationProject.Data.Models
 {
@@ -14,12 +15,13 @@ namespace GraduationProject.Data.Models
     {
         [Key]
         public int ScheduleId { get; set; }
-        public WeekDay DayOfWeek { get; set; }= WeekDay.Saturday;
+       // public WeekDay DayOfWeek { get; set; }= WeekDay.Saturday;
+        public WeekDay DayOfWeek {  get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
         public string? Location { get; set; } 
         public bool IsActive { get; set; } = true;
-       
+      public DateOnly Date {  get; set; }
         public int MaxAppointments { get; set; } = 10;
         // FK
         [ForeignKey("Doctor")]

@@ -9,34 +9,28 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Data.Models
 {
-    public class MedicalRecord : BaseEntity
+    public class medicalRecord : BaseEntity
     {
         [Key]
         public int RecordId { get; set; }
 
-        [Required, MaxLength(200)]
-        public string Treatment { get; set; } = string.Empty;
+        public DateOnly VisitDate { get; set; }
 
-        [Required]
-        public DateTime VisitDate { get; set; }
+        public string Title { get; set; } 
+        public string? Notes { get; set; } 
 
-        [MaxLength(1000)]
-        public string? Notes { get; set; }
-
-        [MaxLength(300)]
         public string? Diagnosis { get; set; }
 
       
-        public int PatientId { get; set; }
-        public Patient Patient { get; set; } = null!;
 
-      
+        
         public int DoctorId { get; set; }
-        public doctor Doctor { get; set; } = null!;
+        public doctor Doctor { get; set; }
 
-       
-        public int? StudentDoctorId { get; set; }
-        public StudentDoctor? StudentDoctor { get; set; }
+        public int AppointmentId { get; set; }
+        public Appointment Appointment { get; set; }
+
+        public ICollection<MedicalRecordAttachment> Attachments { get; set; }
     }
 
 }

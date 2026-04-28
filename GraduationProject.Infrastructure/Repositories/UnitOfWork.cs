@@ -28,11 +28,26 @@ namespace GraduationProject.Infrastructure.Repositories
 
         public IScheduleSlotRepository ScheduleSlots {  get; }
 
+        public IScanRepository Scans { get; }
+
+        public IAllergyRepository Allergies { get; }
+
+        public IPatientAllergyRepository PatientAllergies { get; }
+
+        public IPrescriptionRepository Prescriptions { get; }
+
+        public IPrescriptionItemRepository PrescriptionItems { get; }
+		public IMedicalRecordAttachmentRepository MedicalRecordAttachments { get; }
         public UnitOfWork(
 			ApplicationDbContext context,
-			IAdminRepository adminRepository,
-			IAI_ReportRepository aiReportRepository,
-			IAppointmentRepository appointmentRepository,
+			IPrescriptionItemRepository prescriptionRepository1,
+            IAllergyRepository allergyRepository,
+            IAdminRepository adminRepository,
+			IMedicalRecordAttachmentRepository medicalRecordAttachmentRepository,
+			IPrescriptionRepository prescriptionRepository,
+            IAI_ReportRepository aiReportRepository,
+			IPatientAllergyRepository patientAllergyRepository,
+            IAppointmentRepository appointmentRepository,
 			IDoctorRepository doctorRepository,
 			IDoctorScheduleRepository doctorScheduleRepository,
 			IFeedbackRepository feedbackRepository,
@@ -44,19 +59,26 @@ namespace GraduationProject.Infrastructure.Repositories
 			IEmailVerificationRepository emailVerification,
 			IEmailVerificationRepository emailVerificationRepository,
 			IScheduleSlotRepository scheduleSlotRepository,
-			ISpecializationRepository Specialization
+			ISpecializationRepository Specialization,
+			IScanRepository scanRepository
 		)
 		{
 			_context = context;
           
             Admins = adminRepository;
-			AI_Reports = aiReportRepository;
+				MedicalRecordAttachments = medicalRecordAttachmentRepository;
+            Allergies = allergyRepository;
+            AI_Reports = aiReportRepository;
+			PatientAllergies = patientAllergyRepository;
+			PrescriptionItems = prescriptionRepository1;
 			Appointments = appointmentRepository;
 			Doctors = doctorRepository;
+			Prescriptions = prescriptionRepository;
 			DoctorSchedules = doctorScheduleRepository;
-			
+			Scans = scanRepository;
 			Feedbacks = feedbackRepository;
 			MedicalRecords = medicalRecordRepository;
+			
 			Patients = patientRepository;
 			Receptionists = receptionistRepository;
 			StudentDoctors = studentDoctorRepository;

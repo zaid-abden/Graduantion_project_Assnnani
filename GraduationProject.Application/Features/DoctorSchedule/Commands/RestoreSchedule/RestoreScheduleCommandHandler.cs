@@ -1,6 +1,7 @@
 ﻿using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Data.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -49,14 +50,14 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.Restore
             if (doctor.DoctorId != schedule.DoctorId)
                 return Result<string>.Failure(ResultStatus.Forbidden, "You are not allowed to update schedules that are not assigned to your account.");
             var hasConflict = await unitOfWork.DoctorSchedules.Query()
-             .AnyAsync(x =>
-                 x.DoctorId == schedule.DoctorId &&
-                 x.ScheduleId != schedule.ScheduleId &&
-                 x.IsActive &&
-                 x.DayOfWeek == schedule.DayOfWeek &&
-                 schedule.StartTime < x.EndTime &&
-                 schedule.EndTime > x.StartTime,
-                 cancellationToken);
+     .AnyAsync(x =>
+         x.DoctorId == schedule.DoctorId &&
+         x.ScheduleId != schedule.ScheduleId &&
+         x.IsActive &&
+         x.DayOfWeek == schedule.DayOfWeek &&
+         schedule.StartTime < x.EndTime &&
+         schedule.EndTime > x.StartTime,
+         cancellationToken);
 
             if (hasConflict)
             {
@@ -69,6 +70,13 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.Restore
             schedule.DeletedBy = null;
             schedule.UpdatedAt = DateTime.Now;
             schedule.UpdatedBy = currentUserService.UserName;
+    //        await unitOfWork.ScheduleSlots.Query()
+    //.Where(x => x.DoctorScheduleId == schedule.ScheduleId
+    //         && x.Status == SlotStatus.Cancelled)
+    //.ExecuteUpdateAsync(s =>
+    //    s.SetProperty(x => x.Status, SlotStatus.Available),
+    //    cancellationToken);
+
             await unitOfWork.SaveAsync();
             return Result<string>.Success("Schedule restored successfully.");
         }

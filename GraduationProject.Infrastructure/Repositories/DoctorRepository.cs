@@ -1,5 +1,5 @@
 ﻿using GraduationProject.Application.Contracts.Repositories;
-using GraduationProject.Application.Features.Doctors.Dtos;
+using GraduationProject.Application.Features.Patients.Queries.PatientDashborad;
 using GraduationProject.Data.Models;
 using GraduationProject.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -17,10 +17,12 @@ namespace GraduationProject.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        //public IQueryable<doctor> GetAll()
-        //{
-        //    return _dbContext.Doctors.AsQueryable().Include(ww => ww.User);
-        //}
+        public IQueryable<doctor> GetAll()
+        {
+            return _dbContext.Doctors.AsQueryable().Include(d => d.User)
+                                                    .Include(d => d.Feedbacks)
+                                                     .Include(d => d.Specialization); ;
+        }
 
         //public async Task<doctor> GetCurrentDoctor(string userId)
         //{
@@ -124,6 +126,25 @@ namespace GraduationProject.Infrastructure.Repositories
         public async Task<bool> SaveChangesAsync()
         {
             return await _dbContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<DoctorCardDto>> GetthreeDoctors()
+        {
+            var result = await _dbContext.Doctors
+                           .Include(d => d.User)
+                           .OrderByDescending(d => d.Rating)
+                             .Take(3)
+                             .Select(d => new DoctorCardDto
+                             {
+                                 DoctorId = d.DoctorId,
+                                 Rating = d.Rating,
+                                 Name = d.FullName,
+                                 ReviewsCount = d.RatingCount
+
+                             })
+                             .ToListAsync();
+            return result;
+
         }
     }
 }

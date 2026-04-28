@@ -10,7 +10,7 @@ namespace GraduationProject.Data.Enums
     {
         Available =1,
         Booked,
-        Cancelled,
+       
         Blocked
     }
 }

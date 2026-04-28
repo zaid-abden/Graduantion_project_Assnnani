@@ -13,21 +13,18 @@ namespace GraduationProject.Data.Models
     {
         [Key]
         public int ReportId { get; set; }
-        
-        public string ImageUrl { get; set; }
+
         public string PredictionResult { get; set; }
         public double? ConfidenceScore { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
         // FK
-        public int PatientId { get; set; }
-        public Patient Patient { get; set; }
+        public int ScanId { get; set; }
+        public Scan Scan { get; set; }
 
         public int DoctorId { get; set; }
         public doctor Doctor { get; set; }
-        public int? StudentDoctorId { get; set; }
-        public StudentDoctor StudentDoctor { get; set; }
     }
 
 }

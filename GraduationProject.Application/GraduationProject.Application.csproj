@@ -13,20 +13,21 @@
     <Folder Include="Features\AI_Report\Commands\" />
     <Folder Include="Features\AI_Report\Dtos\" />
     <Folder Include="Features\AI_Report\Queries\" />
+    <Folder Include="Features\Allergies\Dtos\" />
+    <Folder Include="Features\Allergies\Queries\" />
     <Folder Include="Features\ApplicationUsers\Commands\" />
-    <Folder Include="Features\Appointments\Dtos\" />
-    <Folder Include="Features\Appointments\Queries\" />
     <Folder Include="Features\Auth\Commands\Logout\" />
     <Folder Include="Features\Auth\Commands\RefershToken\" />
-    <Folder Include="Features\Feedback\Commands\" />
-    <Folder Include="Features\Feedback\Dtos\" />
-    <Folder Include="Features\Feedback\Queries\" />
-    <Folder Include="Features\MedicalRecord\Commands\" />
-    <Folder Include="Features\MedicalRecord\Dtos\" />
+    <Folder Include="Features\Doctors\Commands\" />
+    <Folder Include="Features\FeedBacks\Dtos\" />
+    <Folder Include="Features\FeedBacks\Queries\" />
+    <Folder Include="Features\MedicalRecords\Queries\" />
     <Folder Include="Features\MedicalRecord\Queries\" />
+    <Folder Include="Features\Patients\Queries\ViewPatientAppointment\" />
+    <Folder Include="Features\Prescriptions\Queries\" />
     <Folder Include="Features\Receptionist\Commands\" />
     <Folder Include="Features\Receptionist\Dtos\" />
-    <Folder Include="Features\Receptionist\Queries\" />
+    <Folder Include="Features\Receptionist\Commands\" />
     <Folder Include="Features\StudentDoctor\Commands\" />
     <Folder Include="Features\StudentDoctor\Dtos\" />
     <Folder Include="Features\StudentDoctor\Queries\" />
@@ -36,12 +37,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-    <PackageReference Include="Fluent.Infrastructure" Version="2.0.0-beta-01" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-    <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.9" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,13 +21,19 @@ namespace GraduationProject.Infrastructure.Context
         public DbSet<doctor> Doctors { get; set; }
         public DbSet<doctorSchedule> DoctorSchedules { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
-        public DbSet<MedicalRecord> MedicalRecords { get; set; }
+        public DbSet<medicalRecord> MedicalRecords { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Receptionist> Receptionists { get; set; }
+        public DbSet<MedicalRecordAttachment> MedicalRecordAttachments { get; set; }    
         public DbSet<StudentDoctor> StudentDoctors { get; set; }
         public DbSet<Verification> Verifications { get; set; }
         public DbSet<EmailVerification> EmailVerifications { get; set; }
+        public DbSet<Allergy> Allergies { get; set; }
+        public DbSet<PatientAllergy> PatientAllergies { get; set; }
+        public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<PrescriptionItem> PrescriptionItems { get; set; }
         public DbSet<Specialization> Specializations { get; set; }
+        public DbSet<Scan> Scans { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -38,12 +45,7 @@ namespace GraduationProject.Infrastructure.Context
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<doctor>()
-                .HasMany(d => d.MedicalRecords)
-                .WithOne(m => m.Doctor)
-                .HasForeignKey(m => m.DoctorId)
-                .OnDelete(DeleteBehavior.Restrict);
-
+        
             builder.Entity<doctor>()
                 .HasMany(d => d.AIReports)
                 .WithOne(r => r.Doctor)
@@ -55,6 +57,11 @@ namespace GraduationProject.Infrastructure.Context
                 .WithOne(f => f.Doctor)
                 .HasForeignKey(f => f.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<medicalRecord>()
+    .HasOne(m => m.Appointment)
+    .WithMany()
+    .HasForeignKey(m => m.AppointmentId)
+    .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<doctor>()
                 .HasMany(d => d.Verifications)
@@ -63,7 +70,7 @@ namespace GraduationProject.Infrastructure.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<doctor>()
-                .HasMany(d => d.Schedules)
+                .HasMany(d => d.DoctorSchedules)
                 .WithOne(s => s.Doctor)
                 .HasForeignKey(s => s.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -81,17 +88,8 @@ namespace GraduationProject.Infrastructure.Context
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<Patient>()
-                .HasMany(p => p.MedicalRecords)
-                .WithOne(m => m.Patient)
-                .HasForeignKey(m => m.PatientId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<Patient>()
-                .HasMany(p => p.AIReports)
-                .WithOne(r => r.Patient)
-                .HasForeignKey(r => r.PatientId)
-                .OnDelete(DeleteBehavior.Restrict);
+            
+          
 
             builder.Entity<Patient>()
                 .HasMany(p => p.Feedbacks)
@@ -141,7 +139,11 @@ namespace GraduationProject.Infrastructure.Context
                 .HasForeignKey(v => v.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
+            builder.Entity<medicalRecord>()
+    .HasOne(m => m.Appointment)
+    .WithOne(a => a.MedicalRecord)
+    .HasForeignKey<medicalRecord>(m => m.AppointmentId)
+    .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<doctor>()
     .HasOne(d => d.User)
@@ -160,23 +162,32 @@ namespace GraduationProject.Infrastructure.Context
 
 
 
-            builder.Entity<StudentDoctor>()
-    .HasMany(s => s.MedicalRecords)
-    .WithOne(m => m.StudentDoctor)
-    .HasForeignKey(m => m.StudentDoctorId)
-    .OnDelete(DeleteBehavior.SetNull);
-
-            builder.Entity<StudentDoctor>()
-                .HasMany(s => s.AIReports)
-                .WithOne(r => r.StudentDoctor)
-                .HasForeignKey(r => r.StudentDoctorId)
-                .OnDelete(DeleteBehavior.SetNull);
+          
 
             builder.Entity<StudentDoctor>()
                 .HasMany(s => s.Verifications)
                 .WithOne(v => v.StudentDoctor)
                 .HasForeignKey(v => v.StudentDoctorId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+
+            builder.Entity<PatientAllergy>()
+    .HasKey(pa => new { pa.PatientId, pa.AllergyId });
+
+            builder.Entity<PatientAllergy>()
+                .HasOne(pa => pa.Patient)
+                .WithMany(p => p.PatientAllergies)
+                .HasForeignKey(pa => pa.PatientId);
+
+            builder.Entity<PatientAllergy>()
+                .HasOne(pa => pa.Allergy)
+                .WithMany(a => a.PatientAllergies)
+                .HasForeignKey(pa => pa.AllergyId);
+
+            builder.Entity<Allergy>()
+                .Property(a => a.Name)
+                .IsRequired()
+                .HasMaxLength(100);
 
         }
     }

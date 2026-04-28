@@ -59,9 +59,16 @@ namespace GraduationProject.Application.Features.Patients.commands.AddPatient
                 Address = request.Address,
                 MedicalHistory = request.MedicalHistory ?? "No previous history",
                 Gender = request.Gender,
-            };
+                CreatedAt = DateTime.Now,
+                
 
-      await unitOfWork.Patients.AddAsync(patient);
+            };
+            if (request.BloodType.HasValue)
+            {
+                patient.BloodType = request.BloodType.Value;
+            }
+
+            await unitOfWork.Patients.AddAsync(patient);
             await unitOfWork.SaveAsync();
 
             return Result<int>.Success(patient.PatientId);

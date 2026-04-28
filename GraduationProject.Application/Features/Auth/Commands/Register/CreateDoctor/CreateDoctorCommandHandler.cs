@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿//using AutoMapper;
 using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.ExternalServices;
 using GraduationProject.Application.Contracts.Repositories;
@@ -20,18 +20,18 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
     {
         private readonly UserManager<User> userManager;
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
+       // private readonly IMapper mapper;
         private readonly IEmailService emailService;
         private readonly IHttpContextAccessor httpContextAccessor;
         public CreateDoctorCommandHandler(
             UserManager<User> userManager,
             IUnitOfWork unitOfWork,
-            IMapper mapper,
+           
             IEmailService emailService,IHttpContextAccessor httpContextAccessor)
         {
             this.userManager = userManager;
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
+          
             this.emailService = emailService;
             this.httpContextAccessor=httpContextAccessor;
         }

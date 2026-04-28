@@ -16,7 +16,8 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilterai
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
         public double? MinRating { get; set; }
-
+        public int? MinYearOfExperience { get; set; }
+        public bool IsAvailableNow { get; set; }
         public DoctorSortBy SortBy { get; set; } = DoctorSortBy.Rating;
 
         public SortDirection SortDirection { get; set; } = SortDirection.Desc;

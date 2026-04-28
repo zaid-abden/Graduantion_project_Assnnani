@@ -21,7 +21,8 @@ namespace GraduationProject.Application.Features.Patients.commands.AddPatient
         public DateTime DateOfBirth { get; set; }
         public string? Address { get; set; }
         public string? MedicalHistory { get; set; }
-        public Data.Enums.Gender Gender { get; set; }
-    }
+        public Gender Gender { get; set; }
+        public BloodType? BloodType { get; set; }
+        }
     }
 

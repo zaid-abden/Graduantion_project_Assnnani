@@ -38,14 +38,7 @@ namespace GraduationProject.Api
             builder.Services.AddEndpointsApiExplorer();
             //builder.Services.AddSwaggerGen();
 
-<<<<<<< HEAD
-         
-=======
-            // ✅ MediatR 12+
-            builder.Services.AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssembly(
-                    typeof(GetPatientProfileQuery).Assembly));
->>>>>>> 01b6955e8a596f978d2660d48e35933fc669820a
+
 
             builder.Services.AddInfrastructure(builder)
                 .AddApplicationServices();
@@ -145,31 +138,7 @@ options.JsonSerializerOptions.Converters.Add(
             }
 
 
-            //var services = Assembly.GetExecutingAssembly()
-            //    .GetTypes()
-            //    .Where(x => x.IsClass && x.Name.EndsWith("Middleware"));
-            //foreach(var service in services)
-            //{
-            //    //builder.Services.AddTransient(typeof(IValidator), service);
-            //    Console.WriteLine(service.Name);
-            //}
-
-            //var services =typeof(CreatePatientValidator).Assembly
-            //    .GetTypes()
-            //    .Where(x=>x.IsClass&&x.Name.EndsWith("Validator"));
-            //foreach(var service in services)
-            //{
-            //    //builder.Services.AddTransient(typeof(IValidator), service);
-            //    Console.WriteLine(service.Name);
-            //}
-
-            // RUN SEEDERS
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    await DatabaseSeeder.SeedAsync(services);
-            //}
-
+           
  
 
 
