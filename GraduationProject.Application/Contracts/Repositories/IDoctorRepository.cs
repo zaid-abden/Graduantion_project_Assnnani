@@ -1,4 +1,5 @@
-﻿using GraduationProject.Data.Models;
+﻿using GraduationProject.Application.Features.Patients.Queries.PatientDashborad;
+using GraduationProject.Data.Models;
 
 namespace GraduationProject.Application.Contracts.Repositories
 {
@@ -18,6 +19,7 @@ namespace GraduationProject.Application.Contracts.Repositories
         //public Task<doctor> GetDoctorWithUserAsync(int doctorId);
 
         public Task<bool> SaveChangesAsync();
+        public Task<List<DoctorCardDto>> GetthreeDoctors();
 
     }
 }

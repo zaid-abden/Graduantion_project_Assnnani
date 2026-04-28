@@ -31,7 +31,12 @@ namespace GraduationProject.Infrastructure.Repositories
 			_dbSet.Remove(entity);
 		}
 
-		public async Task<IEnumerable<T>> GetAllAsync()
+        public void DeleteRange(IEnumerable<T> entities)
+        {
+            _dbSet.RemoveRange(entities);
+        }
+
+        public async Task<IEnumerable<T>> GetAllAsync()
 		{
 			return await _dbSet.ToListAsync();
 		}

@@ -1,4 +1,4 @@
-﻿using Fluent.Infrastructure.FluentModel;
+﻿//using Fluent.Infrastructure.FluentModel;
 using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.Doctors.Dtos;
@@ -6,7 +6,7 @@ using GraduationProject.Application.Features.Doctors.Queries.GetDoctorById;
 using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion;
 using GraduationProject.Data.Identity;
 using MediatR;
-using Microsoft.AspNet.Identity;
+//using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -39,7 +39,7 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorByID
                 var doctor = await _unitOfWork.Doctors.GetByIdAsync(request.DoctorId);
 
                 if (doctor == null)
-                    return Result<DoctorById_Dto>.NotFound("Doctor not found");
+                    return Result<DoctorById_Dto>.Failure(ResultStatus.NotFound,"Doctor not found");
 
                 var dto = new DoctorById_Dto
                 {
@@ -66,7 +66,7 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorByID
             catch (Exception ex)
             {
                 // أي error unexpected
-                return Result<DoctorById_Dto>.InternalError(ex.Message);
+                return Result<DoctorById_Dto>.Failure(ResultStatus.Failure,ex.Message);
             }
         }
     }

@@ -2,6 +2,7 @@
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.DoctorSchedule.Dtos;
+using GraduationProject.Data.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -49,15 +50,34 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.DeleteS
             {
                 return Result<string>.Failure(ResultStatus.Unauthorized, "You are not authorized to delete this schedule.");
             }
+
+            var hasAppointments = await unitOfWork.Appointments.Query()
+     .AnyAsync(x => x.ScheduleSlot.DoctorScheduleId == schedule.ScheduleId,
+         cancellationToken);
+
+            if (hasAppointments)
+                return Result<string>.Failure(
+                    ResultStatus.Conflict,
+                    "Cannot delete this schedule because it already has booked appointments."
+                );
+
+
             schedule.IsActive=false;
             schedule.IsDeleted = true;
             schedule.DeletedAt = DateTime.Now;
             schedule.DeletedBy = currentUserService.UserName;
             schedule.UpdatedAt = DateTime.Now;
                 schedule.UpdatedBy = currentUserService.UserName;
-             
+
+    //        var cancelledSlotsCount = await unitOfWork.ScheduleSlots.Query()
+    //.Where(x => x.DoctorScheduleId == schedule.ScheduleId 
+    //&& x.Status == SlotStatus.Available)
+    //.ExecuteUpdateAsync(
+    //    setters => setters.SetProperty(x => x.Status, SlotStatus.Cancelled),
+    //    cancellationToken
+    //);
             await unitOfWork.SaveAsync();
-            return Result<string>.Success("Schedule deleted successfully.");
+            return Result<string>.Success("Schedule has been deactivated successfully");
         }
     }
 }

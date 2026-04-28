@@ -17,9 +17,7 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.UpdateS
                 .WithMessage("ScheduleId must be greater than zero.");
 
             
-            RuleFor(x => x.DayOfWeek)
-                .IsInEnum()
-                .WithMessage("DayOfWeek is invalid.");
+           
 
           
             RuleFor(x => x.StartTime)

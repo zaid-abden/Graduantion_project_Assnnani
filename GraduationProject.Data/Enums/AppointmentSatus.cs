@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GraduationProject.Data.Enums
+﻿namespace GraduationProject.Data.Enums
 {
     public enum AppointmentStatus
     {
@@ -13,6 +7,7 @@ namespace GraduationProject.Data.Enums
         Completed = 3,     // المريض حضر وتمت الزيارة
         Cancelled = 4,     // المريض/الدكتور لغى الموعد
         NoShow = 5,        // المريض محضرش
-        Rescheduled = 6    // تم تغيير الموعد
+        Rescheduled = 6,  // تم تغيير الموعد
+        arrived = 7
     }
 }

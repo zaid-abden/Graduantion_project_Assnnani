@@ -47,17 +47,40 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
             //{
             //    return Result<DoctorScheduleDto>.Failure(ResultStatus.Failure, "Doctor profile is not verified.");
             //}
-            if(unitOfWork.DoctorSchedules.checkOverlap(doctor.DoctorId,request.DayOfWeek, request.StartTime, request.EndTime,request.Location))
-            {
-                return Result<DoctorScheduleDto>.Failure(ResultStatus.Failure, "The schedule overlaps with an existing schedule.");
-            }
-            if(unitOfWork.DoctorSchedules.CheckClinicOverlap(request.DayOfWeek,request.StartTime,request.EndTime,request.Location))
-            {                 return Result<DoctorScheduleDto>.Failure(ResultStatus.Failure, "The schedule overlaps with another doctor's schedule at the same location.");
+            var doctorConflict = await unitOfWork.DoctorSchedules.Query()
+        .AnyAsync(x =>
+            x.DoctorId == doctor.DoctorId &&
+            x.Date == request.Date &&
+            x.IsActive &&
+            request.StartTime < x.EndTime &&
+            request.EndTime > x.StartTime,
+            cancellationToken);
 
-            }
+            if (doctorConflict)
+                return Result<DoctorScheduleDto>.Failure(ResultStatus.Conflict,
+                    "Doctor already has a conflicting schedule.");
+
+            var clinicConflict = await unitOfWork.DoctorSchedules.Query()
+                .AnyAsync(x =>
+                    x.Location == request.Location &&
+                    x.Date == request.Date &&
+                    x.IsActive &&
+                    request.StartTime < x.EndTime &&
+                    request.EndTime > x.StartTime,
+                    cancellationToken);
+
+            if (clinicConflict)
+                return Result<DoctorScheduleDto>.Failure(ResultStatus.Conflict,
+                    "Clinic already has a schedule at this time.");
+
+
+
+
+
+
             var schedule = new doctorSchedule
             {
-                DayOfWeek = request.DayOfWeek,
+                Date = request.Date,
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
                 Location = request.Location,
@@ -65,56 +88,38 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
                 DoctorId = doctor.DoctorId,
                 CreatedAt = DateTime.Now,
                 CreatedBy = currentUserService.UserName,
-              
+                DayOfWeek = (WeekDay)request.Date.DayOfWeek
             };
 
             await unitOfWork.DoctorSchedules.AddAsync(schedule);
-
-
-
             await unitOfWork.SaveAsync();
 
 
             var slots = new List<ScheduleSlot>();
 
-            var current = schedule.StartTime;
+            var current = TimeOnly.FromTimeSpan(schedule.StartTime);
+            var endTime = TimeOnly.FromTimeSpan(schedule.EndTime);
             var slotDuration = TimeSpan.FromMinutes(30);
 
-            while (current < schedule.EndTime)
+            while (current < endTime)
             {
                 var end = current.Add(slotDuration);
 
-                if (end > schedule.EndTime)
+                if (end > endTime)
                     break;
-
-                
-                var exists = await unitOfWork.ScheduleSlots.Query()
-                    .AnyAsync(s =>
-                        s.DoctorScheduleId == schedule.ScheduleId &&
-                        current < s.EndTime &&
-                        end > s.StartTime,
-                        cancellationToken);
-
-                if (exists)
-                {
-                    return Result<DoctorScheduleDto>.Failure(
-                        ResultStatus.Failure,
-                        $"Slot overlap detected at {current}");
-                }
 
                 slots.Add(new ScheduleSlot
                 {
                     DoctorScheduleId = schedule.ScheduleId,
                     StartTime = current,
                     EndTime = end,
+                    Date = schedule.Date,
                     Status = SlotStatus.Available,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.UtcNow
                 });
 
                 current = end;
             }
-
-
 
 
 

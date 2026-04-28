@@ -12,9 +12,11 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
     {
         public CreateScheduleCommandValidator()
         {
-            RuleFor(x => x.DayOfWeek)
-                .IsInEnum()
-                .WithMessage("DayOfWeek is invalid.");
+            RuleFor(x => x.Date)
+     .NotEmpty()
+     .WithMessage("Date is required")
+     .Must(date => date >= DateOnly.FromDateTime(DateTime.Today))
+     .WithMessage("Date cannot be in the past");
 
             RuleFor(x => x.StartTime)
                 .NotEmpty()

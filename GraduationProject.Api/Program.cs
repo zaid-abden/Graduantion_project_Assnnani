@@ -33,10 +33,6 @@ namespace GraduationProject.Api
             //builder.Services.AddSwaggerGen();
 
 
-            // ✅ MediatR 12+
-            builder.Services.AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssembly(
-                    typeof(GetPatientProfileQuery).Assembly));
 
             builder.Services.AddInfrastructure(builder)
                 .AddApplicationServices();
@@ -136,32 +132,8 @@ namespace GraduationProject.Api
             }
 
 
-            //var services = Assembly.GetExecutingAssembly()
-            //    .GetTypes()
-            //    .Where(x => x.IsClass && x.Name.EndsWith("Middleware"));
-            //foreach(var service in services)
-            //{
-            //    //builder.Services.AddTransient(typeof(IValidator), service);
-            //    Console.WriteLine(service.Name);
-            //}
-
-            //var services =typeof(CreatePatientValidator).Assembly
-            //    .GetTypes()
-            //    .Where(x=>x.IsClass&&x.Name.EndsWith("Validator"));
-            //foreach(var service in services)
-            //{
-            //    //builder.Services.AddTransient(typeof(IValidator), service);
-            //    Console.WriteLine(service.Name);
-            //}
-
-            // RUN SEEDERS
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    await DatabaseSeeder.SeedAsync(services);
-            //}
-
-
+           
+ 
 
 
             // Configure the HTTP request pipeline.

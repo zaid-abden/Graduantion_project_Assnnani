@@ -1,13 +1,12 @@
-﻿using GraduationProject.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GraduationProject.Application.Features.Patients.Queries.PatientDashborad;
+using GraduationProject.Data.Models;
 
 namespace GraduationProject.Application.Contracts.Repositories
 {
-    public interface IAppointmentRepository: IGenericRepository<Appointment>
+    public interface IAppointmentRepository : IGenericRepository<Appointment>
     {
+        Task<int> upcomingAppointmentsCount(int appointmentId);
+        Task<List<UpcomingAppointmentDto>> upcomingAppointment(int paitenttId);
+
     }
 }

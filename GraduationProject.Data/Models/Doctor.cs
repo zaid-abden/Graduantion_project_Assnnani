@@ -47,20 +47,23 @@ namespace GraduationProject.Data.Models
 
         // Relations
         [ForeignKey(nameof(UserId))]
-      
+
         public User User { get; set; }
-        
+
         public string UserId { get; set; }
-        public ICollection<MedicalRecord> MedicalRecords { get; set; }
+        public ICollection<medicalRecord> MedicalRecords { get; set; }
         public ICollection<Feedback> Feedbacks { get; set; }
         public ICollection<AI_Report> AIReports { get; set; }
-        public ICollection<doctorSchedule> Schedules { get; set; }
+       
         public ICollection<Verification> Verifications { get; set; }
+        public ICollection<doctorSchedule> DoctorSchedules { get; set; } = new List<doctorSchedule>();
+        public ICollection<Appointment> Appointments { get; set; } = new HashSet<Appointment>();
         public Receptionist Receptionist { get; set; }
-
-        public int price { get; set; }
-        public decimal? Price { get; set; }
+        public ICollection<Patient> Patients { get; set; } = new HashSet<Patient>();
+        public int? price { get; set; }
+        //public decimal? Price { get; set; }
         public int YearsOfService { get; set; }
+        public ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
     }
 
 }

@@ -1,4 +1,3 @@
-
 using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion.Enums;
@@ -15,6 +14,7 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilterai
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
+
 
         public DoctorFilterationQueryHandler(IUnitOfWork unitOfWork, UserManager<User> userManager)
         {
@@ -42,11 +42,23 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilterai
             if (request.MaxPrice.HasValue)
                 query = query.Where(d => d.price <= request.MaxPrice);
 
+            if (request.MinYearOfExperience.HasValue)
+            {
+                query = query.Where(d => d.YearsOfExperience >= request.MinYearOfExperience);
+            }
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            var nowTime = TimeOnly.FromDateTime(DateTime.Now).ToTimeSpan();
+
+            query = query.Where(d => d.DoctorSchedules.Any(s =>
+                s.Date == today &&
+                s.StartTime > nowTime
+            ));
+
+            // 🔥 RATING (SQL SUBQUERY - IMPORTANT FIX)
             var queryWithRating = query.Select(d => new
             {
                 Doctor = d,
-                Rating =
-                    d.Feedbacks.Any()
+                Rating = d.Feedbacks.Any()
                         ? d.Feedbacks.Average(f => f.Rating)
                         : 0
             });
@@ -64,6 +76,12 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilterai
                 DoctorSortBy.Price => request.SortDirection == SortDirection.Asc
                     ? queryWithRating.OrderBy(x => x.Doctor.price)
                     : queryWithRating.OrderByDescending(x => x.Doctor.price),
+
+                DoctorSortBy.Experience =>
+                     request.SortDirection == SortDirection.Asc
+                    ? queryWithRating.OrderBy(x => x.Doctor.YearsOfExperience)
+                    : queryWithRating.OrderByDescending(x => x.Doctor.YearsOfExperience),
+
 
                 _ => request.SortDirection == SortDirection.Asc
                     ? queryWithRating.OrderBy(x => x.Rating)
@@ -83,7 +101,7 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilterai
                 {
                     Id = x.Doctor.DoctorId,
                     Name = x.Doctor.User.FullName,
-                    Price = x.Doctor.price,
+                    Price = x.Doctor.price.Value,
                     City = x.Doctor.City,
                     Gender = x.Doctor.User.Gender,
                     YearsOfExperience = x.Doctor.YearsOfExperience,
@@ -102,4 +120,3 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilterai
         }
     }
 }
-

@@ -20,7 +20,7 @@ namespace GraduationProject.Data.Models
         public User User { get; set; }
 
         // Relationsip
-        public ICollection<MedicalRecord> MedicalRecords { get; set; }
+        public ICollection<medicalRecord> MedicalRecords { get; set; }
         
         public ICollection<AI_Report> AIReports { get; set; }
       

@@ -19,7 +19,7 @@ namespace GraduationProject.Data.Identity
         public string FullName => $"{FirstName} {LastName}";
        
         public DateTime? BirthDate { get; set; }
-
+        public string? ImageUrl { get; set; }
        public bool IsActive { get; set; }
         public bool EmailVerified { get; set; } = false;
         public string? Gender { get; set; }

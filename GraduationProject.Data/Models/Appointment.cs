@@ -1,9 +1,4 @@
 ﻿using GraduationProject.Data.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GraduationProject.Data.Models
 {
@@ -24,10 +19,14 @@ namespace GraduationProject.Data.Models
 
         public int PatientId { get; set; }
         public Patient Patient { get; set; } = null!;
-
-       
+        public AppointmentType AppointmentType { get; set; }
+        public int DoctorId { get; set; }
+        public doctor Doctor { get; set; } = null!;
         public int ScheduleSlotId { get; set; }
         public ScheduleSlot ScheduleSlot { get; set; } = null!;
+        public PatientStatus PatientStatus { get; set; }
+        public TimeOnly ArrivelTime { get; set; }
+        public medicalRecord? MedicalRecord { get; set; }
     }
 
 }

@@ -1,5 +1,5 @@
 ﻿
-using AutoMapper;
+
 using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.Patients.commands.updatepationtcommand;
@@ -12,13 +12,13 @@ public class UpdatePatientProfileHandler
     : IRequestHandler<updatepationtcommand, Result<string>>
 {
     private readonly IUnitOfWork unitOfWork;
-    private readonly IMapper _mapper;
+   
     private readonly UserManager<User> _userManager;
 
-    public UpdatePatientProfileHandler(IUnitOfWork patientRepository, IMapper mapper, UserManager<User> userManager)
+    public UpdatePatientProfileHandler(IUnitOfWork patientRepository, UserManager<User> userManager)
     {
         unitOfWork = patientRepository;
-        _mapper = mapper;
+      
         _userManager = userManager;
     }
 
