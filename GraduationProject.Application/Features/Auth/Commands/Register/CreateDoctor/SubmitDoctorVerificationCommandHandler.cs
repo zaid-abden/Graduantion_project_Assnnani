@@ -49,6 +49,10 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
             doctor.ClinicName = request.ClinicName;
             doctor.Details = "";
             doctor.About = "";
+            doctor.ClinicLocation = request.ClinicAddress;
+            doctor.Languages = request.Languages;
+            doctor.price = request.ConsultationPrice;
+        
            doctor.FullName=user.FullName;
 
             var certResult = await SaveCertificateAsync(request.Certificate);

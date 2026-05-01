@@ -11,6 +11,7 @@ namespace GraduationProject.Data.Models
         public string? FullName { get; set; }
         public string MedicalLicenseNumber { get; set; } = null!;
         public string? ClinicName { get; set; }
+        public string? ClinicLocation { get; set; }
         // Profile
         public string? About { get; set; }
         public string? ImageUrl { get; set; }
@@ -40,7 +41,8 @@ namespace GraduationProject.Data.Models
 
         public string? ClinicPhoneNumber { get; set; }
 
-
+        public string? Education { get; set; }
+        public List<string>? Languages { get; set; }
         public int? SpecializationId { get; set; }
         public Specialization Specialization { get; set; }
 
@@ -60,7 +62,7 @@ namespace GraduationProject.Data.Models
         public ICollection<Appointment> Appointments { get; set; } = new HashSet<Appointment>();
         public Receptionist Receptionist { get; set; }
         public ICollection<Patient> Patients { get; set; } = new HashSet<Patient>();
-        public int? price { get; set; }
+        public decimal? price { get; set; }
         //public decimal? Price { get; set; }
         public int YearsOfService { get; set; }
         public ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();

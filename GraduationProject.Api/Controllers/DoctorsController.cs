@@ -4,6 +4,7 @@ using GraduationProject.Application.Features.Doctors.Commands.UpdateDoctorProfil
 using GraduationProject.Application.Features.Doctors.Dtos;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorDashboard;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorProfile;
+using GraduationProject.Application.Features.Doctors.Queries.GetDoctorProfileForPatient;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorStatistics;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorTodaySummary;
 using GraduationProject.Application.Features.Doctors.Queries.GetPatientInfo;
@@ -146,6 +147,21 @@ namespace GraduationProject.Api.Controllers
         public async Task<IActionResult> GetWeeklySchedule()
         {
             var result = await mediator.Send(new GetWeeklyScheduleQuery());
+            return result.ToActionResult();
+        }
+
+        [HttpGet("{doctorId}")]
+        [SwaggerOperation(
+    Summary = "Get doctor profile",
+    Description = "Returns full doctor profile details for patient view."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetDoctorProfileForPatient(int doctorId)
+        {
+            var result = await mediator.Send(new GetDoctorProfileForPatientQuery(doctorId));
             return result.ToActionResult();
         }
     }

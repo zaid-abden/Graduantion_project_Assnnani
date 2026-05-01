@@ -1,8 +1,10 @@
 ﻿using GraduationProject.Api.Common.Responses;
 using GraduationProject.Application.Features.Auth.Commands.ConfirmEmail;
 using GraduationProject.Application.Features.Auth.Commands.ForgetPassword;
+using GraduationProject.Application.Features.Auth.Commands.LockUser;
 using GraduationProject.Application.Features.Auth.Commands.Login;
 using GraduationProject.Application.Features.Auth.Commands.ResetPassword;
+using GraduationProject.Application.Features.Auth.Commands.UnlockUser;
 using GraduationProject.Application.Features.Doctors.Commands.CreateDoctor;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -107,5 +109,43 @@ namespace GraduationProject.Api.Controllers
             return result.ToActionResult();
         }
 
+        [HttpPost("{userId}/lock")]
+        [SwaggerOperation(
+  Summary = "Lock a user account",
+  Description = "Locks the specified user account, preventing the user from logging in. Accessible only by Admins or Librarians."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> LockUser(
+  [SwaggerParameter(Description = "The unique identifier of the user to lock.")]
+    string userId)
+        {
+            var result = await mediator.Send(new LockUserCommand(userId));
+
+            return result.ToActionResult();
+        }
+
+
+        [HttpPost("{userId}/unlock")]
+        [SwaggerOperation(
+  Summary = "Unlock a user account",
+  Description = "Unlocks the specified user account, allowing the user to log in again. Accessible only by Admins or Librarians."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UnlockUser(
+  [SwaggerParameter(Description = "The unique identifier of the user to unlock.")]
+    string userId)
+        {
+            var result = await mediator.Send(new UnlockUserCommand(userId));
+
+            return result.ToActionResult();
+        }
     }
+
+
 }

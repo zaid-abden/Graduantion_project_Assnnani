@@ -19,7 +19,8 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateDoctor
         public string ClinicName { get; set; } = null!;
         public string ClinicAddress { get; set; } = null!;
         public string ClinicPhone { get; set; } = null!;
-
+        public decimal ConsultationPrice { get; set; }
+        public List<string>? Languages { get; set; } = null!;
         public IFormFile Certificate { get; set; } = null!;
     }
 }

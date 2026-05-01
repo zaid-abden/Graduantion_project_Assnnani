@@ -28,6 +28,12 @@ namespace GraduationProject.Application.Features.Auth.Commands.Login
             var user = await userManager.FindByEmailAsync(request.Email);
             if (user == null || !await userManager.CheckPasswordAsync(user, request.Password))
                 return Result<AuthDto>.Failure(ResultStatus.Failure, "Invalid email or password.");
+            if (await userManager.IsLockedOutAsync(user))
+                return Result<AuthDto>.Failure(ResultStatus.Failure, "User is locked");
+            if (user.IsDeleted)
+                return Result<AuthDto>.Failure(
+                    ResultStatus.Unauthorized,
+                    "Invalid email or password.");
             var token = await authService.GenerateToken(user);
             var userRoles = await userManager.GetRolesAsync(user);
             var authDto = new AuthDto

@@ -1,0 +1,20 @@
+﻿using GraduationProject.Application.Common.Results;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace GraduationProject.Application.Features.ApplicationUsers.Commands.UpdateImageProfile
+{
+    public class UpdateImageProfileCommand : IRequest<Result<string>>
+    {
+        public IFormFile? ProfileImage { get; set; }
+        public UpdateImageProfileCommand(IFormFile formFile)
+        {
+            ProfileImage = formFile;
+        }
+    }
+}

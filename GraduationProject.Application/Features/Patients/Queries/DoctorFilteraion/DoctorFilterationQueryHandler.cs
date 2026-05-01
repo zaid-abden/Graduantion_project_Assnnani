@@ -101,7 +101,7 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilterai
                 {
                     Id = x.Doctor.DoctorId,
                     Name = x.Doctor.User.FullName,
-                    Price = x.Doctor.price.Value,
+                    Price =(int) x.Doctor.price.Value,
                     City = x.Doctor.City,
                     Gender = x.Doctor.User.Gender,
                     YearsOfExperience = x.Doctor.YearsOfExperience,

@@ -4,6 +4,7 @@ using GraduationProject.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraduationProject.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260501172207_asaaaaaaa")]
+    partial class asaaaaaaa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -826,8 +829,8 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<int>("YearsOfService")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("price")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int?>("price")
+                        .HasColumnType("int");
 
                     b.HasKey("DoctorId");
 
