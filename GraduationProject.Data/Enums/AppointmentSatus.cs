@@ -8,6 +8,7 @@
         Cancelled = 4,     // المريض/الدكتور لغى الموعد
         NoShow = 5,        // المريض محضرش
         Rescheduled = 6,  // تم تغيير الموعد
-        arrived = 7
+        arrived = 7,
+        UPcoming
     }
 }

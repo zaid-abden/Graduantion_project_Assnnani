@@ -7,6 +7,8 @@ using GraduationProject.Application.Features.Patients.commands.ChangePatientStat
 using GraduationProject.Application.Features.Patients.commands.updatepationtcommand;
 using GraduationProject.Application.Features.Patients.Queries.DoctorByID;
 using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion;
+using GraduationProject.Application.Features.Patients.Queries.GetAllAppointment;
+
 
 //using GraduationProject.Application.Features.Patients.Queries.GetAvaliableSlots;
 using GraduationProject.Application.Features.Patients.Queries.GetPatientProfile;
@@ -136,6 +138,15 @@ namespace GraduationProject.Api.Controllers
         public async Task<IActionResult> AddPatientAllergy([FromBody] AddPatientAllergyCommand command)
         {
             var result = await _mediator.Send(command);
+            return result.ToActionResult();
+        }
+
+        [HttpGet("appointments")]
+        public async Task<IActionResult> GetAppointments(
+            [FromQuery] GetPatientAppointmentsQuery query)
+        {
+            var result = await _mediator.Send(query);
+
             return result.ToActionResult();
         }
     }

@@ -35,9 +35,6 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
                 .MaximumLength(200)
                 .WithMessage("Location must not exceed 200 characters.");
 
-            RuleFor(x => x.MaxAppointments)
-                .GreaterThan(0)
-                .WithMessage("Max appointments must be greater than zero.");
         }
     }
     }

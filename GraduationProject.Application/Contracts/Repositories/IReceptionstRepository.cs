@@ -14,5 +14,6 @@ namespace GraduationProject.Application.Contracts.Repositories
         Task<PatientInfoDto> GetPatientInfo(int PaientId);
         Task<List<PatientListDtoForReceptionist>> patientListDtoForReceptionist(int ReceptionistId, int? DoctorId, string? Search, string? status);
 
+        IQueryable<Appointment> GetAllAppointmentForReceptioist(int ReceptionistId);
     }
 }

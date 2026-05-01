@@ -19,23 +19,47 @@ namespace GraduationProject.Infrastructure.Repositories
 		{
 			return _dbContext.DoctorSchedules.Any(s =>
 			s.DayOfWeek == dayOfWeek &&
-			 (startTime < s.EndTime && endTime > s.StartTime) &&
+			 
 			s.Location == location &&
 			s.ScheduleId != scheduleId &&
 			s.IsActive
 			);
 		}
 
-		public bool checkOverlap(int doctorId, WeekDay dayOfWeek, TimeSpan startTime, TimeSpan endTime, string location, int? scheduleId = null)
-		{
-			return _dbContext.DoctorSchedules.Any(s =>
-				 s.DoctorId == doctorId &&
-				  s.ScheduleId != scheduleId &&
-				 s.DayOfWeek == (WeekDay)dayOfWeek &&
-				 s.IsActive &&
-				 ((startTime < s.EndTime) && (endTime > s.StartTime))
-			 );
+        //public bool checkOverlap(int doctorId, WeekDay dayOfWeek, TimeSpan startTime, TimeSpan endTime, string location, int? scheduleId = null)
+        //{
+        //	return _dbContext.DoctorSchedules.Any(s =>
+        //		 s.DoctorId == doctorId &&
+        //		  s.ScheduleId != scheduleId &&
+        //		 s.DayOfWeek == (WeekDay)dayOfWeek &&
+        //		 s.IsActive);
+        //	 );
 
-		}
-	}
+        //}
+        //public bool CheckOverlap(int doctorId, WeekDay dayOfWeek, TimeSpan startTime, TimeSpan endTime, string location, int? scheduleId = null)
+        //{
+        //    return _dbContext.DoctorSchedules.Any(s =>
+        //        s.DoctorId == doctorId &&
+        //        s.ScheduleId != scheduleId &&
+        //        s.DayOfWeek == dayOfWeek &&
+        //        s.IsActive &&
+        //        s.Location == location 
+
+              
+        //    );
+        //}
+
+        public bool checkOverlap(int doctorId, WeekDay dayOfWeek, TimeSpan startTime, TimeSpan endTime, string location, int? scheduleId = null)
+        {
+            return _dbContext.DoctorSchedules.Any(s =>
+                s.DoctorId == doctorId &&
+                s.ScheduleId != scheduleId &&
+                s.DayOfWeek == dayOfWeek &&
+                s.IsActive &&
+                s.Location == location
+
+
+                );
+        }
+    }
 }

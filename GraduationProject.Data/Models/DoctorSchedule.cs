@@ -15,20 +15,37 @@ namespace GraduationProject.Data.Models
     {
         [Key]
         public int ScheduleId { get; set; }
-       // public WeekDay DayOfWeek { get; set; }= WeekDay.Saturday;
-        public WeekDay DayOfWeek {  get; set; }
-        public TimeSpan StartTime { get; set; }
-        public TimeSpan EndTime { get; set; }
-        public string? Location { get; set; } 
+        public WeekDay DayOfWeek { get; set; }
+        public DateOnly Date { get; set; }
+
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
+
+        public string? Location { get; set; }
+
         public bool IsActive { get; set; } = true;
-      public DateOnly Date {  get; set; }
-        public int MaxAppointments { get; set; } = 10;
-        // FK
+
         [ForeignKey("Doctor")]
         public int DoctorId { get; set; }
-        public doctor Doctor { get; set; }=null!;
-        public ICollection<Appointment> Appointments { get; set; }
+        public doctor Doctor { get; set; } = null!;
+
         public ICollection<ScheduleSlot> Slots { get; set; } = new List<ScheduleSlot>();
+        //  [Key]
+        //  public int ScheduleId { get; set; }
+        // // public WeekDay DayOfWeek { get; set; }= WeekDay.Saturday;
+        //  public WeekDay DayOfWeek {  get; set; }
+        //  public TimeSpan StartTime { get; set; }
+        //  public TimeSpan EndTime { get; set; }
+        //  public string? Location { get; set; } 
+        //  public bool IsActive { get; set; } = true;
+        //public DateOnly Date {  get; set; }
+        //  public int MaxAppointments { get; set; } = 10;
+        //  // FK
+        //  [ForeignKey("Doctor")]
+        //  public int DoctorId { get; set; }
+        //  public doctor Doctor { get; set; }=null!;
+        //  public ICollection<Appointment> Appointments { get; set; }
+        //  public ICollection<ScheduleSlot> Slots { get; set; } = new List<ScheduleSlot>();
     }
 
 }

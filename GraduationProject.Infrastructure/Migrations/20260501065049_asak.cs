@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GraduationProject.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class dsadassslkdaladd : Migration
+    public partial class asak : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -317,12 +317,11 @@ namespace GraduationProject.Infrastructure.Migrations
                     ScheduleId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     DayOfWeek = table.Column<int>(type: "int", nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    StartTime = table.Column<TimeOnly>(type: "time", nullable: false),
+                    EndTime = table.Column<TimeOnly>(type: "time", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    MaxAppointments = table.Column<int>(type: "int", nullable: false),
                     DoctorId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -463,9 +462,9 @@ namespace GraduationProject.Infrastructure.Migrations
                     DoctorScheduleId = table.Column<int>(type: "int", nullable: false),
                     StartTime = table.Column<TimeOnly>(type: "time", nullable: false),
                     EndTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -619,7 +618,6 @@ namespace GraduationProject.Infrastructure.Migrations
                     ScheduleSlotId = table.Column<int>(type: "int", nullable: false),
                     PatientStatus = table.Column<int>(type: "int", nullable: false),
                     ArrivelTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    doctorScheduleScheduleId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -631,11 +629,6 @@ namespace GraduationProject.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Appointments", x => x.AppointmentId);
-                    table.ForeignKey(
-                        name: "FK_Appointments_DoctorSchedules_doctorScheduleScheduleId",
-                        column: x => x.doctorScheduleScheduleId,
-                        principalTable: "DoctorSchedules",
-                        principalColumn: "ScheduleId");
                     table.ForeignKey(
                         name: "FK_Appointments_Doctors_DoctorId",
                         column: x => x.DoctorId,
@@ -769,7 +762,7 @@ namespace GraduationProject.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "MedicalRecordAttachment",
+                name: "MedicalRecordAttachments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -780,9 +773,9 @@ namespace GraduationProject.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MedicalRecordAttachment", x => x.Id);
+                    table.PrimaryKey("PK_MedicalRecordAttachments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MedicalRecordAttachment_MedicalRecords_MedicalRecordId",
+                        name: "FK_MedicalRecordAttachments_MedicalRecords_MedicalRecordId",
                         column: x => x.MedicalRecordId,
                         principalTable: "MedicalRecords",
                         principalColumn: "RecordId",
@@ -821,11 +814,6 @@ namespace GraduationProject.Infrastructure.Migrations
                 column: "DoctorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Appointments_doctorScheduleScheduleId",
-                table: "Appointments",
-                column: "doctorScheduleScheduleId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Appointments_PatientId",
                 table: "Appointments",
                 column: "PatientId");
@@ -833,8 +821,7 @@ namespace GraduationProject.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Appointments_ScheduleSlotId",
                 table: "Appointments",
-                column: "ScheduleSlotId",
-                unique: true);
+                column: "ScheduleSlotId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -914,8 +901,8 @@ namespace GraduationProject.Infrastructure.Migrations
                 column: "PatientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MedicalRecordAttachment_MedicalRecordId",
-                table: "MedicalRecordAttachment",
+                name: "IX_MedicalRecordAttachments_MedicalRecordId",
+                table: "MedicalRecordAttachments",
                 column: "MedicalRecordId");
 
             migrationBuilder.CreateIndex(
@@ -1065,7 +1052,7 @@ namespace GraduationProject.Infrastructure.Migrations
                 name: "Feedbacks");
 
             migrationBuilder.DropTable(
-                name: "MedicalRecordAttachment");
+                name: "MedicalRecordAttachments");
 
             migrationBuilder.DropTable(
                 name: "PatientAllergies");

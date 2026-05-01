@@ -10,16 +10,16 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateSchedule
 {
-    public class CreateScheduleCommand:IRequest<Result<DoctorScheduleDto>>
+    public class CreateScheduleCommand : IRequest<Result<DoctorScheduleDto>>
     {
+
         public DateOnly Date { get; set; }
 
-        public TimeSpan StartTime { get; set; }
-
-        public TimeSpan EndTime { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
 
         public string? Location { get; set; }
 
-        public int MaxAppointments { get; set; }
+        public int SlotDurationInMinutes { get; set; }
     }
 }

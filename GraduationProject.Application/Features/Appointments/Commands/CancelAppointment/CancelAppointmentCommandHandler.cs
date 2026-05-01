@@ -54,25 +54,21 @@ namespace GraduationProject.Application.Features.Appointments.Commands.CancelApp
                 .FirstOrDefaultAsync(x => x.Id == appointment.ScheduleSlotId
                 , cancellationToken);
 
-
+            var slotDateTime = scheduleSlots.Date.ToDateTime(scheduleSlots.StartTime);
             if (scheduleSlots is null)
                 return Result<string>.Failure(
         ResultStatus.NotFound,
         "Schedule slot not found.");
 
-            var slotDateTime = scheduleSlots.Date.ToDateTime(scheduleSlots.StartTime);
-
-            if (slotDateTime <= DateTime.Now.AddHours(2))
-            {
-                return Result<string>.Failure(
-                  ResultStatus.Failure,
-                  "You cannot cancel within 2 hours of the appointment."
-              );
-            }
             if (appointment.AppointmentStatus == AppointmentStatus.Confirmed)
             {
-                if (DateTime.Now > slotDateTime)
-                    return Result<string>.Failure(ResultStatus.Conflict, "You cannot cancel a confirmed appointment within 2 hours of its scheduled time.");
+                if (slotDateTime <= DateTime.Now.AddHours(2))
+                {
+                    return Result<string>.Failure(
+                        ResultStatus.Conflict,
+                        "You cannot cancel a confirmed appointment within 2 hours of its scheduled time."
+                    );
+                }
             }
             appointment.AppointmentStatus = AppointmentStatus.Cancelled;
 

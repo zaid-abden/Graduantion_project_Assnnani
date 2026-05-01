@@ -50,11 +50,11 @@ namespace GraduationProject.Application.Features.Patients.Queries.DoctorFilterai
             var nowTime = TimeOnly.FromDateTime(DateTime.Now).ToTimeSpan();
 
             query = query.Where(d => d.DoctorSchedules.Any(s =>
-                s.Date == today &&
-                s.StartTime > nowTime
+                s.Date == today 
+              
             ));
 
-            // 🔥 RATING (SQL SUBQUERY - IMPORTANT FIX)
+            
             var queryWithRating = query.Select(d => new
             {
                 Doctor = d,

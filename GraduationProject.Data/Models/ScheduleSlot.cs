@@ -9,18 +9,38 @@ namespace GraduationProject.Data.Models
 {
     public class ScheduleSlot
     {
+
+
+
         public int Id { get; set; }
 
         public int DoctorScheduleId { get; set; }
-        public doctorSchedule DoctorSchedule { get; set; }
+        public doctorSchedule DoctorSchedule { get; set; } = null!;
 
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
-        public DateOnly Date { get; set; }
+
         public SlotStatus Status { get; set; } = SlotStatus.Available;
 
-        public Appointment? Appointment { get; set; }  
+        public DateOnly Date { get; set; }  
+        public DateOnly CreatedAt { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+
+
+
+        //public int Id { get; set; }
+
+        //public int DoctorScheduleId { get; set; }
+        //public doctorSchedule DoctorSchedule { get; set; }
+
+        //public TimeOnly StartTime { get; set; }
+        //public TimeOnly EndTime { get; set; }
+        //public DateOnly Date { get; set; }
+        //public SlotStatus Status { get; set; } = SlotStatus.Available;
+
+        //public Appointment? Appointment { get; set; }  
+
+        //public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

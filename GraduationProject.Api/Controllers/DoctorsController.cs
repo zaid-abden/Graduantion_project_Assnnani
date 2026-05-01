@@ -12,6 +12,7 @@ using GraduationProject.Application.Features.Doctors.Queries.GetPatients;
 using GraduationProject.Application.Features.Doctors.Queries.GetPendingScans;
 using GraduationProject.Application.Features.Doctors.Queries.GetRecentPatients;
 using GraduationProject.Application.Features.Doctors.Queries.GetTodayAppointments;
+using GraduationProject.Application.Features.Doctors.Queries.GetWeeklySchedule;
 using GraduationProject.Application.Features.Patients.Dtos;
 using GraduationProject.Application.Features.Scans.Dtos;
 using MediatR;
@@ -130,6 +131,21 @@ namespace GraduationProject.Api.Controllers
         {
             var query = new GetPatientMedicalHistoryQuery { PatientId = patientId };
             var result = await mediator.Send(query);
+            return result.ToActionResult();
+        }
+
+        [HttpGet("weekly-schedule")]
+        [SwaggerOperation(
+    Summary = "Get doctor's weekly schedule",
+    Description = "Retrieves the weekly schedule for the current doctor."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetWeeklySchedule()
+        {
+            var result = await mediator.Send(new GetWeeklyScheduleQuery());
             return result.ToActionResult();
         }
     }

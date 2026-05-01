@@ -1,4 +1,5 @@
 ﻿using GraduationProject.Api.Common.Responses;
+using GraduationProject.Application.Features.Receptionist.Queries.GetAllappointmentForReceptionist;
 using GraduationProject.Application.Features.Receptionist.Queries.GetAllPatients;
 using GraduationProject.Application.Features.Receptionist.Queries.PatientInfo;
 using GraduationProject.Application.Features.Receptionist.Queries.ReceptionistDashboard;
@@ -42,6 +43,14 @@ namespace GraduationProject.Api.Controllers
                 Search = search
             });
             return result.ToActionResult();
+        }
+        [HttpGet("AppointmentsForReceptionist/{id}")]
+        public async Task<IActionResult> AppointmentsForReceptionist(
+            [FromQuery] GetAppointmentsDashboardReceptionistQuery query)
+        {
+            var result = await _mediator.Send(query);
+
+            return Ok(result);
         }
     }
 }

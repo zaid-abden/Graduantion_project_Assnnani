@@ -20,12 +20,12 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly ICurrentUserService currentUserService;
-      
-        public CreateScheduleCommandHandler(IUnitOfWork unitOfWork,ICurrentUserService currentUserService)
+
+        public CreateScheduleCommandHandler(IUnitOfWork unitOfWork, ICurrentUserService currentUserService)
         {
             this.unitOfWork = unitOfWork;
             this.currentUserService = currentUserService;
-           
+
         }
         public async Task<Result<DoctorScheduleDto>> Handle(CreateScheduleCommand request, CancellationToken cancellationToken)
         {
@@ -37,8 +37,8 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
             }
             var userId = currentUserService.UserId;
             var doctor = await unitOfWork.Doctors.Query()
-                .FirstOrDefaultAsync(x => x.UserId == userId,cancellationToken);
-           
+                .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+
             if (doctor == null)
             {
                 return Result<DoctorScheduleDto>.Failure(ResultStatus.Failure, "Doctor profile not found.");
@@ -84,9 +84,10 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
                 StartTime = request.StartTime,
                 EndTime = request.EndTime,
                 Location = request.Location,
-                MaxAppointments = request.MaxAppointments,
+
                 DoctorId = doctor.DoctorId,
                 CreatedAt = DateTime.Now,
+                IsActive = true,
                 CreatedBy = currentUserService.UserName,
                 DayOfWeek = (WeekDay)request.Date.DayOfWeek
             };
@@ -95,34 +96,33 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
             await unitOfWork.SaveAsync();
 
 
+
+
+
+
+
+
             var slots = new List<ScheduleSlot>();
 
-            var current = TimeOnly.FromTimeSpan(schedule.StartTime);
-            var endTime = TimeOnly.FromTimeSpan(schedule.EndTime);
-            var slotDuration = TimeSpan.FromMinutes(30);
+            var current = request.StartTime;
 
-            while (current < endTime)
+            while (current.AddMinutes(request.SlotDurationInMinutes) <= request.EndTime)
             {
-                var end = current.Add(slotDuration);
-
-                if (end > endTime)
-                    break;
+                var end = current.AddMinutes(request.SlotDurationInMinutes);
 
                 slots.Add(new ScheduleSlot
                 {
+
                     DoctorScheduleId = schedule.ScheduleId,
                     StartTime = current,
                     EndTime = end,
-                    Date = schedule.Date,
                     Status = SlotStatus.Available,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
+                    Date = schedule.Date
                 });
 
                 current = end;
             }
-
-
-
             await unitOfWork.ScheduleSlots.AddRangeAsync(slots);
 
             await unitOfWork.SaveAsync();
@@ -137,7 +137,7 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
                 EndTime = schedule.EndTime,
                 Location = schedule.Location,
                 IsActive = schedule.IsActive,
-                MaxAppointments = schedule.MaxAppointments
+
             };
             return Result<DoctorScheduleDto>.Success(scheduleDto);
         }

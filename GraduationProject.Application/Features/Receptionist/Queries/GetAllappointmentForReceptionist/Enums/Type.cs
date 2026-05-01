@@ -1,6 +1,6 @@
 ﻿namespace GraduationProject.Application.Features.Receptionist.Queries.GetAllappointmentForReceptionist.Enums
 {
-    public enum BookingType
+    public enum Types
     {
         InPerson,
         VideoCall,

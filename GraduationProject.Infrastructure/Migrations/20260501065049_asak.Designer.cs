@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraduationProject.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260427143349_dsadassslkdaladdx")]
-    partial class dsadassslkdaladdx
+    [Migration("20260501065049_asak")]
+    partial class asak
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -256,19 +256,13 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("doctorScheduleScheduleId")
-                        .HasColumnType("int");
-
                     b.HasKey("AppointmentId");
 
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
 
-                    b.HasIndex("ScheduleSlotId")
-                        .IsUnique();
-
-                    b.HasIndex("doctorScheduleScheduleId");
+                    b.HasIndex("ScheduleSlotId");
 
                     b.ToTable("Appointments");
                 });
@@ -619,8 +613,8 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
@@ -869,7 +863,7 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
-                    b.Property<TimeSpan>("EndTime")
+                    b.Property<TimeOnly>("EndTime")
                         .HasColumnType("time");
 
                     b.Property<bool>("IsActive")
@@ -881,10 +875,7 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MaxAppointments")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("StartTime")
+                    b.Property<TimeOnly>("StartTime")
                         .HasColumnType("time");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -1154,14 +1145,10 @@ namespace GraduationProject.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("GraduationProject.Data.Models.ScheduleSlot", "ScheduleSlot")
-                        .WithOne("Appointment")
-                        .HasForeignKey("GraduationProject.Data.Models.Appointment", "ScheduleSlotId")
+                        .WithMany()
+                        .HasForeignKey("ScheduleSlotId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("GraduationProject.Data.Models.doctorSchedule", null)
-                        .WithMany("Appointments")
-                        .HasForeignKey("doctorScheduleScheduleId");
 
                     b.Navigation("Doctor");
 
@@ -1542,11 +1529,6 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Navigation("AIReport");
                 });
 
-            modelBuilder.Entity("GraduationProject.Data.Models.ScheduleSlot", b =>
-                {
-                    b.Navigation("Appointment");
-                });
-
             modelBuilder.Entity("GraduationProject.Data.Models.Specialization", b =>
                 {
                     b.Navigation("Doctors");
@@ -1585,8 +1567,6 @@ namespace GraduationProject.Infrastructure.Migrations
 
             modelBuilder.Entity("GraduationProject.Data.Models.doctorSchedule", b =>
                 {
-                    b.Navigation("Appointments");
-
                     b.Navigation("Slots");
                 });
 

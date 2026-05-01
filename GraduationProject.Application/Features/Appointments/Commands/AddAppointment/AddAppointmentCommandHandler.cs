@@ -87,12 +87,7 @@ namespace GraduationProject.Application.Features.Appointments.Commands.AddAppoin
             cancellationToken);
 
 
-            if (dailyCount >= schedule.MaxAppointments)
-            {
-                return Result<AddAppointmentResponseDto>.Failure(
-                    ResultStatus.Conflict,
-                    "This schedule has reached its maximum number of appointments.");
-            }
+           
             patient.AssignedDoctorId = doctorId;
             var appointment = new Appointment
             {

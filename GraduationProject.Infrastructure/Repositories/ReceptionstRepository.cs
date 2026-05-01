@@ -34,8 +34,9 @@ namespace GraduationProject.Infrastructure.Repositories
                            on d.DoctorId equals a.DoctorId
 
                        join sc in _dbContext.ScheduleSlots
+                       .Include(x => x.DoctorSchedule)
                            on a.ScheduleSlotId equals sc.Id
-                       where sc.Date == DateOnly.FromDateTime(DateTime.Now)
+                       where sc.DoctorSchedule.Date == DateOnly.FromDateTime(DateTime.Now)
 
                        join pa in _dbContext.Patients
                        on a.PatientId equals pa.PatientId
@@ -71,8 +72,9 @@ namespace GraduationProject.Infrastructure.Repositories
                        || a.PatientStatus == PatientStatus.CheckedIn
 
                        join sc in _dbContext.ScheduleSlots
+                       .Include(x => x.DoctorSchedule)
                            on a.ScheduleSlotId equals sc.Id
-                       where sc.Date == DateOnly.FromDateTime(DateTime.Now)
+                       where sc.DoctorSchedule.Date == DateOnly.FromDateTime(DateTime.Now)
 
                        join pa in _dbContext.Patients
                        on a.PatientId equals pa.PatientId
@@ -122,7 +124,7 @@ namespace GraduationProject.Infrastructure.Repositories
             .Select(m => new MedicalHistoryDtoo
             {
                 Condition = m.Diagnosis,        // Hypertension / Diabetes
-                   // أو تعتبرها diagnosis date
+                                                // أو تعتبرها diagnosis date
                 Status = m.Notes ?? "Ongoing"   // fallback لو مفيش notes
             })
             .ToListAsync();
@@ -237,6 +239,19 @@ namespace GraduationProject.Infrastructure.Repositories
                     .ToListAsync();
 
             return result;
+
+        }
+
+        public IQueryable<Appointment> GetAllAppointmentForReceptioist(int ReceptionistId)
+        {
+            return _dbContext.Appointments
+                .Where(a => a.Doctor.Receptionist.ReceptionistId
+                            == ReceptionistId)
+                .Include(a => a.Patient)
+                .Include(a => a.ScheduleSlot)
+                .Include(a => a.Doctor);
+
+
 
         }
     }

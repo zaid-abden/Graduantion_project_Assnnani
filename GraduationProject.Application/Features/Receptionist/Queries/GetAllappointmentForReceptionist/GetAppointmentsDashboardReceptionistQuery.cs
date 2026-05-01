@@ -1,4 +1,4 @@
-﻿using GraduationProject.Application.Features.Receptionist.Queries.GetAllappointmentForReceptionist.Enums;
+﻿using GraduationProject.Data.Enums;
 using MediatR;
 
 namespace GraduationProject.Application.Features.Receptionist.Queries.GetAllappointmentForReceptionist
@@ -7,7 +7,7 @@ namespace GraduationProject.Application.Features.Receptionist.Queries.GetAllappo
     {
         public int ReceptionistId { get; set; }
         public string? Search { get; set; }
-        public Status? Status { get; set; }
+        public AppointmentStatus? Status { get; set; }
         public BookingType? Type { get; set; }
     }
 }

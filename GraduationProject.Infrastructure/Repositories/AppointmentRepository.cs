@@ -34,7 +34,7 @@ namespace GraduationProject.Infrastructure.Repositories
                                {
                                    DoctorName = p.FullName,
                                    Specialty = d.Specialization.Name,
-                                   Date = s.Date,
+                                   Date = s.DoctorSchedule.Date,
                                    Starttime = s.StartTime,
                                    Status = s.Status.ToString(),
 
@@ -49,5 +49,6 @@ namespace GraduationProject.Infrastructure.Repositories
         {
             return await _dbContext.Appointments.Where(ww => ww.PatientId == appointmentId && ww.CreatedAt >= DateTime.Now).CountAsync();
         }
+
     }
 }
