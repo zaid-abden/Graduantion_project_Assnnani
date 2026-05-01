@@ -1,9 +1,13 @@
 ﻿using GraduationProject.Api.Common.Responses;
+using GraduationProject.Application.Features.Auth.Commands.ConfirmEmail;
+using GraduationProject.Application.Features.Auth.Commands.ForgetPassword;
 using GraduationProject.Application.Features.Auth.Commands.Login;
+using GraduationProject.Application.Features.Auth.Commands.ResetPassword;
 using GraduationProject.Application.Features.Doctors.Commands.CreateDoctor;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GraduationProject.Api.Controllers
 {
@@ -42,5 +46,66 @@ namespace GraduationProject.Api.Controllers
             var result=await mediator.Send(loginUserCommand);
             return result.ToActionResult();
         }
+        [HttpPost("forget-password")]
+        [SwaggerOperation(
+      Summary = "Send password reset link",
+      Description = "Send a password reset link to the user's email if the account exists."
+  )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordCommand command)
+        {
+            if (command == null || string.IsNullOrWhiteSpace(command.Email))
+                return BadRequest("Email is required.");
+
+            var result = await mediator.Send(command);
+
+            return result.ToActionResult();
+        }
+
+        [HttpPost("reset-password")]
+        [SwaggerOperation(
+          Summary = "Reset user password",
+          Description = "Reset the user's password using the token sent by email."
+      )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommand command)
+        {
+            if (command == null || string.IsNullOrWhiteSpace(command.Email))
+                return BadRequest("Email is required.");
+
+            if (string.IsNullOrWhiteSpace(command.Token))
+                return BadRequest("Reset token is required.");
+
+            if (string.IsNullOrWhiteSpace(command.NewPassword))
+                return BadRequest("New password is required.");
+
+            var result = await mediator.Send(command);
+
+            return result.ToActionResult();
+        }
+
+        [HttpGet("confirm-email")]
+        [SwaggerOperation(
+   Summary = "Confirm user email",
+   Description = "Confirms the user's email address using the provided userId and confirmation token."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string userId,
+ [FromQuery] string token)
+        {
+            var result = await mediator.Send(
+        new ConfirmEmailCommand
+        {
+            UserId = userId,
+            Token = token
+        });
+            return result.ToActionResult();
+        }
+
     }
 }
