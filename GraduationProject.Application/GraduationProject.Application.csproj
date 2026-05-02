@@ -7,9 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Admin\Commands\" />
-    <Folder Include="Features\Admin\Dtos\" />
-    <Folder Include="Features\Admin\Queries\" />
     <Folder Include="Features\AI_Report\Commands\" />
     <Folder Include="Features\AI_Report\Dtos\" />
     <Folder Include="Features\AI_Report\Queries\" />
