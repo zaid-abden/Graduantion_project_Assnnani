@@ -1,6 +1,6 @@
-﻿namespace GraduationProject.Application.Features.Admin.DTOs;
-
-public record RejectedDoctorDetailsDto(
+﻿namespace GraduationProject.Application.Features.Admin.DTOs
+{
+	public record PendingDoctorDetailsDto(
 	string DoctorId,
 	string FullName,
 	string Email,
@@ -8,7 +8,6 @@ public record RejectedDoctorDetailsDto(
 	string Gender,
 	DateTime? BirthDate,
 	string MedicalLicenseNumber,
-	string RejectionReason, // الحقل ده أساسي هنا
 	string? ClinicName,
 	string? ClinicLocation,
 	string? ClinicPhoneNumber,
@@ -18,11 +17,12 @@ public record RejectedDoctorDetailsDto(
 	string City,
 	string Street,
 	string Details,
-	int Degree,
+	int Degree, // إينام الدرجة العلمية
 	string? Education,
 	string? Languages,
 	decimal? Price,
 	string FullProfileImageUrl,
 	string FullCertificateUrl,
-	DateTime? RejectedAt
+	DateTime CreatedAt
 );
+}

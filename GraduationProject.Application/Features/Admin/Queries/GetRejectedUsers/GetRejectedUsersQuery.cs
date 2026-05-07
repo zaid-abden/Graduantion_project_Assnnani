@@ -2,7 +2,6 @@
 using GraduationProject.Application.Features.Admin.DTOs;
 using MediatR;
 
-namespace GraduationProject.Application.Features.Admin.Queries.GetRejectedUsers
-{
-	public record GetRejectedUsersQuery : IRequest<Result<List<RejectedUserDto>>>;
-}
+namespace GraduationProject.Application.Features.Admin.Queries.GetRejectedUsers;
+
+public record GetRejectedUsersQuery : IRequest<Result<List<RejectedDoctorDetailsDto>>>;

@@ -1,4 +1,5 @@
 ﻿using GraduationProject.Api.Common.Responses;
+using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Features.Admin.Commands.RejectUser;
 using GraduationProject.Application.Features.Admin.Commands.SendEmail;
@@ -7,13 +8,15 @@ using GraduationProject.Application.Features.Admin.DTOs;
 using GraduationProject.Application.Features.Admin.Queries.GetAllUsers;
 using GraduationProject.Application.Features.Admin.Queries.GetDoctorsByStatus;
 using GraduationProject.Application.Features.Admin.Queries.GetDoctorsOnly;
+using GraduationProject.Application.Features.Admin.Queries.GetFilteredPendingDoctors;
 using GraduationProject.Application.Features.Admin.Queries.GetPatients;
+using GraduationProject.Application.Features.Admin.Queries.GetPendingDoctorById;
 using GraduationProject.Application.Features.Admin.Queries.GetPendingUsers;
 using GraduationProject.Application.Features.Admin.Queries.GetReceptionists;
 using GraduationProject.Application.Features.Admin.Queries.GetRejectedUsers;
 using GraduationProject.Application.Features.Admin.Queries.GetStats;
 using GraduationProject.Application.Features.Admin.Queries.GetStudents;
-using GraduationProject.Data.Enums;
+using GraduationProject.Application.Features.Admin.Queries.GetUserById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -55,6 +58,23 @@ namespace GraduationProject.Api.Controllers
 			return result.ToActionResult();
 		}
 
+		[HttpGet("pendingById/{id}")]
+		public async Task<IActionResult> GetPendingDoctorById(int id)
+		{
+			var result = await _mediator.Send(new GetPendingDoctorByIdQuery(id));
+
+			if (result.Status == ResultStatus.NotFound) return NotFound(result);
+
+			return Ok(result);
+		}
+
+		[HttpPost("pending-doctors/filter")]
+		public async Task<IActionResult> FilterPendingDoctors([FromBody] FilterPendingDoctorsQuery query)
+		{
+			var result = await _mediator.Send(query);
+			return Ok(result);
+		}
+
 		[HttpPost("doctors/{id}/verify")]
 		public async Task<IActionResult> Verify(string id, [FromBody] VerifyUserRequest request)
 		{
@@ -88,20 +108,31 @@ namespace GraduationProject.Api.Controllers
 			return result.ToActionResult();
 		}
 
-		[HttpGet("users/doctors")]
-		public async Task<IActionResult> GetDoctors()
+		[HttpGet("users/{id}")]
+		public async Task<IActionResult> GetUserById(string id)
 		{
-			var result = await _mediator.Send(new GetDoctorsQuery());
-			return result.ToActionResult();
+			var result = await _mediator.Send(new GetUserByIdQuery(id));
+
+			return result.Status switch
+			{
+				ResultStatus.Success => Ok(result),
+				ResultStatus.NotFound => NotFound(result),
+				_ => BadRequest(result)
+			};
 		}
 
-		[HttpGet("doctors/status")]
-		public async Task<IActionResult> GetDoctorsByStatus([FromQuery] DoctorVerificationStatus? status)
+		[HttpGet("doctors-only")]
+		public async Task<IActionResult> GetDoctorsOnly()
 		{
-			// مثال للاستدعاء: /api/admin/doctors?status=2 (لجلب الـ Pending)
-			// أو: /api/admin/doctors (لجلب الكل)
-			var result = await _mediator.Send(new GetDoctorsByStatusQuery(status));
-			return result.ToActionResult();
+			var result = await _mediator.Send(new GetDoctorsQuery());
+			return Ok(result);
+		}
+
+		[HttpPost("doctors/status")] // POST مش GET عشان نبعت Body
+		public async Task<IActionResult> GetDoctorsByStatus([FromBody] GetDoctorsByStatusQuery request)
+		{
+			var result = await _mediator.Send(request);
+			return Ok(result);
 		}
 
 		[HttpGet("users/patients")]

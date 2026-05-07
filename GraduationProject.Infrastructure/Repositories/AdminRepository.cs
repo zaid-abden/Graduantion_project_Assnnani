@@ -2,6 +2,7 @@
 using GraduationProject.Application.Features.Admin.DTOs;
 using GraduationProject.Application.Features.Admin.Queries.GetAllUsers;
 using GraduationProject.Data.Enums;
+using GraduationProject.Data.Identity;
 using GraduationProject.Data.Models;
 using GraduationProject.Infrastructure.Context;
 using Microsoft.AspNetCore.Http;
@@ -21,34 +22,53 @@ namespace GraduationProject.Infrastructure.Repositories
 			_httpContextAccessor = httpContextAccessor;
 		}
 
-		public async Task<List<PendingUserDto>> GetPendingUsersAsync()
+		public async Task<List<doctor>> GetPendingDoctorsOnlyAsync()
 		{
-			// هنجيب الـ Base URL (مثلاً https://localhost:7000)
-			var request = _httpContextAccessor.HttpContext.Request;
-			var baseUrl = $"{request.Scheme}://{request.Host}";
-
 			return await _context.Doctors
 				.Include(d => d.User)
-				.Where(d => d.VerificationStatus == DoctorVerificationStatus.Pending)
-				.Select(d => new PendingUserDto(
-					d.DoctorId.ToString(),
-					d.User.FirstName + " " + d.User.LastName,
-					d.User.Email,
-					"Doctor",
-					d.User.Gender,
-					null,
-					null,
-					d.MedicalLicenseNumber,
-					// دمج الرابط الكامل لصورة البروفايل
-					!string.IsNullOrEmpty(d.User.ImageUrl)
-						? $"{baseUrl}/uploads/images/{d.User.ImageUrl}"
-						: null,
-					// دمج الرابط الكامل لصورة الشهادة
-					!string.IsNullOrEmpty(d.DoctorCertificate)
-						? $"{baseUrl}/uploads/certificates/{d.DoctorCertificate}"
-						: null,
-					d.User.CreatedAt
-				)).ToListAsync();
+				.Where(d => d.VerificationStatus == DoctorVerificationStatus.Pending && !d.User.IsDeleted)
+				.AsNoTracking()
+				.ToListAsync();
+		}
+
+		public async Task<doctor?> GetPendingDoctorByIdAsync(int doctorId)
+		{
+			return await _context.Doctors
+				.Include(d => d.User)
+				.FirstOrDefaultAsync(d => d.DoctorId == doctorId
+									 && d.VerificationStatus == DoctorVerificationStatus.Pending
+									 && !d.User.IsDeleted);
+		}
+
+		public async Task<(List<doctor> Doctors, int TotalCount)> FilterPendingDoctorsAsync(string? searchTerm, int pageNumber, int pageSize)
+		{
+			// 1. استرجاع الدكاترة الـ Pending فقط (بدون طلاب)
+			var query = _context.Doctors
+				.Include(d => d.User)
+				.Where(d => d.VerificationStatus == DoctorVerificationStatus.Pending && !d.User.IsDeleted)
+				.AsNoTracking();
+
+			// 2. هندلة الـ SearchTerm (null, "", أو مسافات)
+			if (!string.IsNullOrWhiteSpace(searchTerm))
+			{
+				var term = searchTerm.Trim().ToLower();
+				query = query.Where(d =>
+					(d.User.FirstName + " " + d.User.LastName).ToLower().Contains(term) ||
+					d.User.Email.ToLower().Contains(term) ||
+					(d.User.PhoneNumber != null && d.User.PhoneNumber.Contains(term)) ||
+					d.MedicalLicenseNumber.Contains(term)
+				);
+			}
+
+			var totalCount = await query.CountAsync();
+
+			var doctors = await query
+				.OrderByDescending(d => d.User.CreatedAt)
+				.Skip((pageNumber - 1) * pageSize)
+				.Take(pageSize)
+				.ToListAsync();
+
+			return (doctors, totalCount);
 		}
 
 		public async Task<string?> ApproveUserAsync(string id)
@@ -104,42 +124,16 @@ namespace GraduationProject.Infrastructure.Repositories
 			return doctor.User.Email;
 		}
 
-		public async Task<List<RejectedUserDto>> GetRejectedUsersAsync()
+		public async Task<List<doctor>> GetRejectedDoctorsOnlyAsync()
 		{
-			// جلب المرفوضين من جدول الأطباء
-			var rejectedDoctors = await _context.Doctors
-				.Where(d => d.VerificationStatus == DoctorVerificationStatus.Rejected)
-				.Select(d => new RejectedUserDto(
-					d.UserId,
-					d.User.FirstName + " " + d.User.LastName,
-					d.User.Email,
-					"Doctor",
-					d.RejectionReason ?? "No reason provided",
-					d.VerifiedAt, // نستخدم VerifiedAt كتاريخ للرفض أيضاً
-					null,
-					d.MedicalLicenseNumber
-				)).ToListAsync();
-
-			// جلب المرفوضين من جدول الطلاب
-			var rejectedStudents = await _context.StudentDoctors
-				.Where(s => s.VerificationStatus == DoctorVerificationStatus.Rejected)
-				.Select(s => new RejectedUserDto(
-					s.UserId,
-					s.User.FirstName + " " + s.User.LastName,
-					s.User.Email,
-					"StudentDoctor",
-					s.RejectionReason ?? "No reason provided",
-					s.VerifiedAt,
-					s.University,
-					null
-				)).ToListAsync();
-
-			// دمج القائمتين وترتيبهم من الأحدث للأقدم
-			return rejectedDoctors.Concat(rejectedStudents)
-				.OrderByDescending(x => x.RejectedAt)
-				.ToList();
+			// بنجيب الدكاترة المرفوضين بس
+			return await _context.Doctors
+				.Include(d => d.User)
+				.Where(d => d.VerificationStatus == DoctorVerificationStatus.Rejected && !d.User.IsDeleted)
+				.OrderByDescending(d => d.VerifiedAt) // تاريخ الرفض
+				.AsNoTracking()
+				.ToListAsync();
 		}
-
 		public async Task<DashboardStatsDto> GetDashboardStatsAsync()
 		{
 			// 1. تحويل التاريخ الحالي إلى DateOnly
@@ -240,44 +234,35 @@ namespace GraduationProject.Infrastructure.Repositories
 			return new PagedUsersDto(users, totalCount);
 		}
 
-		public async Task<List<DoctorStatusDto>> GetDoctorsByStatusAsync(DoctorVerificationStatus? status)
+		public async Task<User?> GetUserByIdAsync(string id)
+		{
+			return await _context.Users
+				.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+		}
+
+		public async Task<List<doctor>> GetDoctorsByStatusAsync(DoctorVerificationStatus? status)
 		{
 			var query = _context.Doctors
 				.Include(d => d.User)
-				.AsQueryable();
+				.Where(d => !d.User.IsDeleted)
+				.AsNoTracking();
 
-			// الفلترة بناءً على الحالة إذا تم إرسالها
 			if (status.HasValue)
 			{
 				query = query.Where(d => d.VerificationStatus == status.Value);
 			}
 
-			return await query
-				.Select(d => new DoctorStatusDto(
-					d.DoctorId,
-					d.FullName ?? (d.User.FirstName + " " + d.User.LastName),
-					d.User.Email,
-					d.MedicalLicenseNumber,
-					d.YearsOfExperience,
-					(int)d.VerificationStatus,
-					d.VerifiedAt
-				))
-				.ToListAsync();
+			return await query.ToListAsync(); // هيرجع List من doctor
 		}
 
 		// جلب الأطباء مع التخصص ورقم الرخصة
-		public async Task<List<DoctorListDto>> GetDoctorsOnlyAsync()
+		public async Task<List<doctor>> GetDoctorsOnlyAsync()
 		{
 			return await _context.Doctors
+				.Include(d => d.User)
+				.Where(d => !d.User.IsDeleted)
 				.AsNoTracking()
-				.Select(d => new DoctorListDto(
-					d.UserId,
-					d.User.FirstName + " " + d.User.LastName,
-					d.User.Email,
-					d.Specialization.Name,
-					d.MedicalLicenseNumber,
-					d.User.IsActive
-				)).ToListAsync();
+				.ToListAsync();
 		}
 
 		// جلب المرضى مع ملخص التاريخ الطبي

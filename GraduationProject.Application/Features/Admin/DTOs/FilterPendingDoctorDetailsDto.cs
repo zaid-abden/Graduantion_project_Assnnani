@@ -1,6 +1,6 @@
 ﻿namespace GraduationProject.Application.Features.Admin.DTOs;
 
-public record RejectedDoctorDetailsDto(
+public record FilterPendingDoctorDetailsDto(
 	string DoctorId,
 	string FullName,
 	string Email,
@@ -8,7 +8,6 @@ public record RejectedDoctorDetailsDto(
 	string Gender,
 	DateTime? BirthDate,
 	string MedicalLicenseNumber,
-	string RejectionReason, // الحقل ده أساسي هنا
 	string? ClinicName,
 	string? ClinicLocation,
 	string? ClinicPhoneNumber,
@@ -24,5 +23,11 @@ public record RejectedDoctorDetailsDto(
 	decimal? Price,
 	string FullProfileImageUrl,
 	string FullCertificateUrl,
-	DateTime? RejectedAt
+	DateTime CreatedAt
+);
+
+// الـ DTO الخاص بالنتيجة النهائية (القائمة + العدد)
+public record FilterPendingDoctorsResultDto(
+	List<FilterPendingDoctorDetailsDto> Doctors,
+	int TotalCount
 );

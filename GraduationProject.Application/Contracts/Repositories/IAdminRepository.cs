@@ -1,13 +1,18 @@
 ﻿using GraduationProject.Application.Features.Admin.DTOs;
 using GraduationProject.Application.Features.Admin.Queries.GetAllUsers;
 using GraduationProject.Data.Enums;
+using GraduationProject.Data.Identity;
 using GraduationProject.Data.Models;
 
 namespace GraduationProject.Application.Contracts.Repositories
 {
 	public interface IAdminRepository : IGenericRepository<Admin>
 	{
-		Task<List<PendingUserDto>> GetPendingUsersAsync();
+		Task<List<doctor>> GetPendingDoctorsOnlyAsync();
+
+		Task<doctor?> GetPendingDoctorByIdAsync(int doctorId);
+
+		Task<(List<doctor> Doctors, int TotalCount)> FilterPendingDoctorsAsync(string? searchTerm, int pageNumber, int pageSize);
 
 		Task<string?> ApproveUserAsync(string userId);
 
@@ -15,13 +20,15 @@ namespace GraduationProject.Application.Contracts.Repositories
 
 		Task<DashboardStatsDto> GetDashboardStatsAsync();
 
-		Task<List<RejectedUserDto>> GetRejectedUsersAsync();
+		Task<List<doctor>> GetRejectedDoctorsOnlyAsync();
 
 		Task<PagedUsersDto> GetAllUsersAsync(GetAllUsersQuery filter);
 
-		Task<List<DoctorStatusDto>> GetDoctorsByStatusAsync(DoctorVerificationStatus? status);
+		Task<User?> GetUserByIdAsync(string id);
 
-		Task<List<DoctorListDto>> GetDoctorsOnlyAsync();
+		Task<List<doctor>> GetDoctorsByStatusAsync(DoctorVerificationStatus? status);
+
+		Task<List<doctor>> GetDoctorsOnlyAsync();
 
 		Task<List<PatientListDto>> GetPatientsOnlyAsync();
 

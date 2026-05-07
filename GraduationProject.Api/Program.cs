@@ -28,123 +28,115 @@ namespace GraduationProject.Api
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
-			// Add services to the container.
-
+			// ✅ 1. أول حاجة: إضافة الـ Services الأساسية
 			builder.Services.AddControllers();
-			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
-			//builder.Services.AddSwaggerGen();
 
+			builder.Services.AddHttpContextAccessor();
 
+			// ✅ 2. Hangfire
 			builder.Services.AddHangfire(config =>
-	config.UseSqlServerStorage(
-		builder.Configuration.GetConnectionString("DBConn")
-	));
-
-
+				config.UseSqlServerStorage(builder.Configuration.GetConnectionString("DBConn")));
 			builder.Services.AddHangfireServer();
 
-
-
-
+			// ✅ 3. Services بتاعتك (تأكد إنهم مش بيضيفوا حاجة بعد Build)
 			builder.Services.AddInfrastructure(builder)
-				.AddApplicationServices();
+							.AddApplicationServices();
 
+			builder.Services.AddScoped<IFileServices, FileStorageService>();
+			builder.Services.AddScoped<IEmailService, EmailService>();
+			builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
+
+			builder.Services.AddApiServices(builder.Configuration);
+
+			// ✅ 4. FluentValidation settings
 			ValidatorOptions.Global.DefaultClassLevelCascadeMode = CascadeMode.Stop;
 
-
+			// ✅ 5. API Behavior
 			builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 			{
 				options.SuppressModelStateInvalidFilter = true;
 			});
 
-			builder.Services.AddHttpContextAccessor();
-			builder.Services.AddScoped<IFileServices, FileStorageService>();
-			builder.Services.AddApiServices(builder.Configuration);
+			// ✅ 6. JSON Options
+			builder.Services.AddControllers()
+				.AddJsonOptions(options =>
+				{
+					options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+				});
 
+			// ✅ 7. Swagger
 			builder.Services.AddSwaggerGen(options =>
 			{
 				options.EnableAnnotations();
 				options.AddSecurityDefinition(name: JwtBearerDefaults.AuthenticationScheme,
-	securityScheme: new OpenApiSecurityScheme
-	{
-		Name = "Authorization",
-		Description = "Enter the Bearer Authorization : `Bearer Genreated-JWT-Token`",
-		In = ParameterLocation.Header,
-		Type = SecuritySchemeType.ApiKey,
-		Scheme = "Bearer"
-	});
+					securityScheme: new OpenApiSecurityScheme
+					{
+						Name = "Authorization",
+						Description = "Enter the Bearer Authorization : `Bearer Genreated-JWT-Token`",
+						In = ParameterLocation.Header,
+						Type = SecuritySchemeType.ApiKey,
+						Scheme = "Bearer"
+					});
 
 				options.AddSecurityRequirement(new OpenApiSecurityRequirement
-{
-	{
-		new OpenApiSecurityScheme
 		{
-			Reference = new OpenApiReference
 			{
-				Type = ReferenceType.SecurityScheme,
-				Id = JwtBearerDefaults.AuthenticationScheme
+				new OpenApiSecurityScheme
+				{
+					Reference = new OpenApiReference
+					{
+						Type = ReferenceType.SecurityScheme,
+						Id = JwtBearerDefaults.AuthenticationScheme
+					}
+				},
+				new string[] { }
 			}
-		},
-		new string[] { }
-	}
-});
-
+		});
 			});
 
-			builder.Services.AddControllers()
-.AddJsonOptions(options =>
-{
-	options.JsonSerializerOptions.Converters.Add(
-	 new JsonStringEnumConverter());
-});
-
-
+			// ✅ 8. Authentication & JWT
 			builder.Services.AddAuthentication(options =>
 			{
 				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-
 			}).AddJwtBearer(o =>
 			{
 				o.RequireHttpsMetadata = false;
 				o.SaveToken = false;
 				o.TokenValidationParameters = new TokenValidationParameters
 				{
-
 					ValidateIssuerSigningKey = true,
-
 					ValidateIssuer = true,
 					ValidateAudience = true,
 					ValidateLifetime = true,
 					ValidIssuer = builder.Configuration["JwtSetting:Issuer"],
 					ValidAudience = builder.Configuration["JwtSetting:Audience"],
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.
-					Configuration["JwtSetting:Key"]))
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSetting:Key"]))
 				};
 			});
 
+			// ✅ 9. CORS (قبل Build)
 			builder.Services.AddCors(options =>
 			{
 				options.AddPolicy("mypolicy1", policy =>
 				{
 					policy.AllowAnyOrigin()
-					.AllowAnyMethod()
-					.AllowAnyHeader();
+						  .AllowAnyMethod()
+						  .AllowAnyHeader();
 				});
-
 			});
 
-
-			builder.Services.AddScoped<IEmailService, EmailService>();
-			builder.Services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
+			// ✅ 10. Build (هنا بتتجمد الخدمات)
 			var app = builder.Build();
 
+			// ✅ 11. بعد Build: Middleware بس، مش إضافة خدمات جديدة
 			app.UseHangfireDashboard("/hangfire");
+
+			// ✅ 12. Seed data
 			using (var scope = app.Services.CreateScope())
 			{
 				var serviceProvider = scope.ServiceProvider;
-
 				try
 				{
 					await DatabaseSeeder.SeedAsync(serviceProvider);
@@ -155,39 +147,29 @@ namespace GraduationProject.Api
 				}
 			}
 
-
-
-
-
-
-			// Configure the HTTP request pipeline.
-			//if (app.Environment.IsDevelopment())
-			//{
-
-			//}
+			// ✅ 13. Middleware pipeline
 			app.UseStaticFiles();
 			app.UseSwagger();
 			app.UseSwaggerUI();
 			app.UseCors("mypolicy1");
-
-			//  app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 			app.UseHttpsRedirection();
 			app.UseAuthentication();
 			app.UseAuthorization();
-
-
 			app.MapControllers();
 
+			// ✅ 14. Recurring jobs
 			RecurringJob.AddOrUpdate<IPatientStatusService>(
-	"inactive-patients-job",
-	x => x.UpdateInactivePatients(CancellationToken.None),
-	Cron.Minutely
-);
+				"inactive-patients-job",
+				x => x.UpdateInactivePatients(CancellationToken.None),
+				Cron.Minutely
+			);
+
 			RecurringJob.AddOrUpdate<IAppointmentJobService>(
-	"mark-no-show",
-	x => x.MarkNoShowAppointments(CancellationToken.None),
-	Cron.Minutely
-);
+				"mark-no-show",
+				x => x.MarkNoShowAppointments(CancellationToken.None),
+				Cron.Minutely
+			);
+
 			app.Run();
 		}
 	}
