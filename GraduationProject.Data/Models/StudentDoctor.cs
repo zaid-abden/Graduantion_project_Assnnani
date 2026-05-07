@@ -8,34 +8,39 @@ namespace GraduationProject.Data.Models
 	{
 		public int StudentDoctorId { get; set; }
 
-		// 🔹 من كودك
+		
 		public string University { get; set; }
 
-		// 🔹 من كوده
+		
 		public string NationalId { get; set; }
-
-		public string ImageUrl { get; set; }
+		public string ? CertificationDocument { get; set; }
+		public string ? Note { get; set; }
+        public string? ImageUrl { get; set; }
 		public int YearsOfStudy { get; set; }
 
-		// 🔹 العلاقة مع الدكتور (من كوده)
-		public int? DoctorId { get; set; }
+
+	public string? ClinicName { get; set; }
+		public string? ClinicLocation { get; set; }
+		public string? Notes { get; set; }
+        public int? DoctorId { get; set; }
 		public doctor? Doctor { get; set; }
 
-		// 🔹 User (خليناها Required عشان الأمان)
+		
 		public string UserId { get; set; }
 
 		[ForeignKey(nameof(UserId))]
 		public User User { get; set; }
 
-		// 🔹 Verification (دمج بين الاتنين)
+		
 		public DoctorVerificationStatus VerificationStatus { get; set; } = DoctorVerificationStatus.NotSubmitted;
-
-		public DateTime? VerifiedAt { get; set; }   // استخدمنا DateTime عشان أشمل
+        public StudentDoctorStatus Status { get; set; }
+            = StudentDoctorStatus.PendingReview;
+        public DateTime? VerifiedAt { get; set; } 
 		public string? VerifiedBy { get; set; }
 		public string? RejectionReason { get; set; }
 
-		// 🔹 Relationships
-		public ICollection<medicalRecord> MedicalRecords { get; set; } = new List<medicalRecord>();
+		  public string ? SupervisingNumber { get; set; }
+        public ICollection<medicalRecord> MedicalRecords { get; set; } = new List<medicalRecord>();
 
 		public ICollection<AI_Report> AIReports { get; set; } = new List<AI_Report>();
 

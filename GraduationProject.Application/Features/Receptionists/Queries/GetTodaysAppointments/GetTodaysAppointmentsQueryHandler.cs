@@ -61,10 +61,16 @@ namespace GraduationProject.Application.Features.Receptionists.Queries.GetTodays
                     Specialty = x.Doctor.Specialization.Name.ToString(),
                     Time = x.ScheduleSlot.StartTime.ToString("hh\\:mm"),
                     Status = x.AppointmentStatus == AppointmentStatus.Confirmed
-                        ? "confirmed"
-                        : x.AppointmentStatus == AppointmentStatus.Pending
-                            ? "pending"
-                            : "completed"
+    ? "confirmed"
+    : x.AppointmentStatus == AppointmentStatus.Pending
+        ? "pending"
+        : x.AppointmentStatus == AppointmentStatus.Completed
+            ? "completed"
+            : x.AppointmentStatus == AppointmentStatus.Cancelled
+                ? "cancelled"
+                : x.AppointmentStatus == AppointmentStatus.NoShow
+                    ? "noshow"
+                    : "unknown"
                 })
                 .ToListAsync(cancellationToken);
 

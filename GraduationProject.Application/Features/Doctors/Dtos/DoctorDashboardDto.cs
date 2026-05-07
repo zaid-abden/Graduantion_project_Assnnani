@@ -12,6 +12,7 @@ namespace GraduationProject.Application.Features.Doctors.Dtos
         public int TodayAppointments { get; set; }
         public int TotalPatients { get; set; }
         public int PendingScans { get; set; }
+        public string SuperVisingNumber{ get; set; }
         public double SatisfactionRate { get; set; }
     }
 }

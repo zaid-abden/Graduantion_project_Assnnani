@@ -1,5 +1,6 @@
 ﻿using GraduationProject.Api.Common.Responses;
 using GraduationProject.Application.Common.Results;
+using GraduationProject.Application.Features.Doctors.Commands.AssignSupervisor;
 using GraduationProject.Application.Features.Doctors.Commands.CreateReceptionist;
 using GraduationProject.Application.Features.Doctors.Commands.UpdateDoctorProfile;
 using GraduationProject.Application.Features.Doctors.Dtos;
@@ -9,6 +10,7 @@ using GraduationProject.Application.Features.Doctors.Queries.GetDoctorProfileFor
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorStatistics;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorTodaySummary;
 using GraduationProject.Application.Features.Doctors.Queries.GetInsights;
+using GraduationProject.Application.Features.Doctors.Queries.GetMyStudentDoctors;
 using GraduationProject.Application.Features.Doctors.Queries.GetPatientGrowth;
 using GraduationProject.Application.Features.Doctors.Queries.GetPatientInfo;
 using GraduationProject.Application.Features.Doctors.Queries.GetPatientMedicalHistory;
@@ -16,6 +18,7 @@ using GraduationProject.Application.Features.Doctors.Queries.GetPatients;
 using GraduationProject.Application.Features.Doctors.Queries.GetPendingScans;
 using GraduationProject.Application.Features.Doctors.Queries.GetRecentPatients;
 using GraduationProject.Application.Features.Doctors.Queries.GetRecentReports;
+using GraduationProject.Application.Features.Doctors.Queries.GetSupervisingRequestById;
 using GraduationProject.Application.Features.Doctors.Queries.GetTodayAppointments;
 using GraduationProject.Application.Features.Doctors.Queries.GetWeeklySchedule;
 using GraduationProject.Application.Features.Patients.Dtos;
@@ -222,6 +225,54 @@ namespace GraduationProject.Api.Controllers
         public async Task<IActionResult> GetRecentReports()
         {
             var result = await mediator.Send(new GetRecentReportsQuery());
+            return result.ToActionResult();
+        }
+        [HttpGet("my-students")]
+        [SwaggerOperation(
+    Summary = "Get my student doctors",
+    Description = "Retrieves all student doctors assigned to the currently authenticated doctor."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetMyStudentDoctors()
+        {
+            var query = new GetMyStudentDoctorsQuery();
+
+            var result = await mediator.Send(query);
+
+            return result.ToActionResult();
+        }
+        [HttpGet("supervising-requests/{id}")]
+        [SwaggerOperation(
+    Summary = "Get supervising request by id",
+    Description = "Retrieves supervising request details by request id."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetSupervisingRequestById([FromRoute] int id)
+        {
+            var query = new GetSupervisingRequestByIdQuery(id);
+
+            var result = await mediator.Send(query);
+
+            return result.ToActionResult();
+        }
+        [HttpPost("assign-supervisor")]
+        [SwaggerOperation(
+    Summary = "Assign supervisor",
+    Description = "Assigns a supervisor to a student doctor."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> AssignSupervisor([FromBody] AssignSupervisorCommand command)
+        {
+            var result = await mediator.Send(command);
+
             return result.ToActionResult();
         }
     }

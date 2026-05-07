@@ -44,9 +44,7 @@ namespace GraduationProject.Application.Features.StudentDoctors.Commands.CreateS
                 .Equal(x => x.Password)
                 .WithMessage("Password and ConfirmPassword do not match");
 
-           
-            RuleFor(x => x.File)
-                .NotNull().WithMessage("File is required");
+        
         }
     }
 }

@@ -15,8 +15,9 @@ namespace GraduationProject.Application.Features.StudentDoctors.Commands.Complet
         public string Email { get; set; }
         public string NationalId { get; set; }
         public int YearsOfStudy { get; set; }
-
+        public string University { get; set; }
         public string SupervisingNumber { get; set; }
-        public IFormFile File { get; set; }
+        public IFormFile CertificateFile { get; set; }
+        public IFormFile Image { get; set; }
     }
 }

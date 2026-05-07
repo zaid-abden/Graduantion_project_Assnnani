@@ -57,23 +57,32 @@ namespace GraduationProject.Application.Features.StudentDoctors.Commands.Complet
             if (existingStudent != null)
                 return Result<string>.Failure(ResultStatus.Conflict, "Profile already completed");
 
-            var uploadResult = await fileServices.UploadImageAsync(request.File);
-         if(!uploadResult.IsSuccess)
-                return Result<string>.Failure(ResultStatus.Failure, uploadResult.Error);
+            var uploadImageResult = await fileServices.UploadImageAsync(request.Image);
+         if(!uploadImageResult.IsSuccess)
+                return Result<string>.Failure(ResultStatus.Failure, uploadImageResult.Error);
+
+            var uploadCertificateResult = await fileServices.UploadImageAsync(request.CertificateFile);
+            if (!uploadCertificateResult.IsSuccess)
+                return Result<string>.Failure(ResultStatus.Failure, uploadCertificateResult.Error);
             var studentDoctor = new StudentDoctor
             {
                 UserId = user.Id,
-                DoctorId = doctor.DoctorId,
-
+              
                 NationalId = request.NationalId,
-                YearsOfStudy = request.YearsOfStudy
-               
+                YearsOfStudy = request.YearsOfStudy,
+                ImageUrl = uploadImageResult.Value!.FileUrl,
+                CertificationDocument = uploadCertificateResult.Value!.FileUrl,
+                 University = request.University,
+                 VerificationStatus = Data.Enums.DoctorVerificationStatus.NotSubmitted,
+                SupervisingNumber = request.SupervisingNumber
             };
 
             await unitOfWork.StudentDoctors.AddAsync(studentDoctor);
             await unitOfWork.SaveAsync();
 
-            return Result<string>.Success("Student Doctor profile completed successfully");
+            return Result<string>.Success(
+     "Student Doctor profile completed successfully. Please wait for the doctor's approval email."
+ );
         }
     }
 }

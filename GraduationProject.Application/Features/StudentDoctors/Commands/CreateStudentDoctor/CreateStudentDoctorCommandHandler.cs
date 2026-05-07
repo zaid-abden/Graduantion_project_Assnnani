@@ -37,9 +37,7 @@ namespace GraduationProject.Application.Features.StudentDoctors.Commands.CreateS
             var existing = await userManager.FindByEmailAsync(request.Email);
             if (existing != null)
                 return Result<string>.Failure(ResultStatus.Conflict, "Email already used");
-            var uploadResult = await fileServices.UploadImageAsync(request.File);
-            if(!uploadResult.IsSuccess)
-                return Result<string>.Failure(ResultStatus.Failure, uploadResult.Error);
+         
             var user = new User
             {
                 FirstName = request.FirstName,
@@ -49,16 +47,16 @@ namespace GraduationProject.Application.Features.StudentDoctors.Commands.CreateS
                 PhoneNumber = request.PhoneNumber,
                 EmailVerified = false,
                 IsActive = true,
-                ImageUrl = uploadResult.Value!.FileUrl
+               
             };
 
             var result = await userManager.CreateAsync(user, request.Password);
-            if( !result.Succeeded)
+            if (!result.Succeeded)
             {
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 return Result<string>.Failure(ResultStatus.ValidationError, errors);
             }
-            await userManager.AddToRoleAsync(user, "StudentDoctor");
+            await userManager.AddToRoleAsync(user, "Patient");
             var code = new Random().Next(100000, 999999).ToString();
 
             var emailVerification = new EmailVerification
@@ -68,7 +66,7 @@ namespace GraduationProject.Application.Features.StudentDoctors.Commands.CreateS
                 ExpireAt = DateTime.UtcNow.AddMinutes(15),
                 IsUsed = false
             };
-
+           
             await unitOfWork.EmailVerificationRepository.AddVerification(emailVerification);
 
             await unitOfWork.SaveAsync();

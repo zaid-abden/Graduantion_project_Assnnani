@@ -6,15 +6,91 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GraduationProject.Infrastructure.Migrations
 {
     /// <inheritdoc />
+    //public partial class update_student_doctor : Migration
+    //{
+    //    /// <inheritdoc />
+    //    protected override void Up(MigrationBuilder migrationBuilder)
+    //    {
+    //        migrationBuilder.DropForeignKey(
+    //            name: "FK_StudentDoctors_Doctors_DoctorId",
+    //            table: "StudentDoctors");
+
+    //        migrationBuilder.AlterColumn<DateTime>(
+    //            name: "VerifiedAt",
+    //            table: "StudentDoctors",
+    //            type: "datetime2",
+    //            nullable: true,
+    //            oldClrType: typeof(DateOnly),
+    //            oldType: "date",
+    //            oldNullable: true);
+
+    //        migrationBuilder.AlterColumn<int>(
+    //            name: "DoctorId",
+    //            table: "StudentDoctors",
+    //            type: "int",
+    //            nullable: true,
+    //            oldClrType: typeof(int),
+    //            oldType: "int");
+
+    //        migrationBuilder.AddColumn<string>(
+    //            name: "University",
+    //            table: "StudentDoctors",
+    //            type: "nvarchar(max)",
+    //            nullable: false,
+    //            defaultValue: "");
+
+    //        migrationBuilder.AddForeignKey(
+    //            name: "FK_StudentDoctors_Doctors_DoctorId",
+    //            table: "StudentDoctors",
+    //            column: "DoctorId",
+    //            principalTable: "Doctors",
+    //            principalColumn: "DoctorId");
+    //    }
+
+    //    /// <inheritdoc />
+    //    protected override void Down(MigrationBuilder migrationBuilder)
+    //    {
+    //        migrationBuilder.DropForeignKey(
+    //            name: "FK_StudentDoctors_Doctors_DoctorId",
+    //            table: "StudentDoctors");
+
+    //        migrationBuilder.DropColumn(
+    //            name: "University",
+    //            table: "StudentDoctors");
+
+    //        migrationBuilder.AlterColumn<DateOnly>(
+    //            name: "VerifiedAt",
+    //            table: "StudentDoctors",
+    //            type: "date",
+    //            nullable: true,
+    //            oldClrType: typeof(DateTime),
+    //            oldType: "datetime2",
+    //            oldNullable: true);
+
+    //        migrationBuilder.AlterColumn<int>(
+    //            name: "DoctorId",
+    //            table: "StudentDoctors",
+    //            type: "int",
+    //            nullable: false,
+    //            defaultValue: 0,
+    //            oldClrType: typeof(int),
+    //            oldType: "int",
+    //            oldNullable: true);
+
+    //        migrationBuilder.AddForeignKey(
+    //            name: "FK_StudentDoctors_Doctors_DoctorId",
+    //            table: "StudentDoctors",
+    //            column: "DoctorId",
+    //            principalTable: "Doctors",
+    //            principalColumn: "DoctorId",
+    //            onDelete: ReferentialAction.Cascade);
+    //    }
+    //}
     public partial class update_student_doctor : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_StudentDoctors_Doctors_DoctorId",
-                table: "StudentDoctors");
-
+            // تعديل VerifiedAt
             migrationBuilder.AlterColumn<DateTime>(
                 name: "VerifiedAt",
                 table: "StudentDoctors",
@@ -24,6 +100,7 @@ namespace GraduationProject.Infrastructure.Migrations
                 oldType: "date",
                 oldNullable: true);
 
+            // تعديل DoctorId
             migrationBuilder.AlterColumn<int>(
                 name: "DoctorId",
                 table: "StudentDoctors",
@@ -32,13 +109,16 @@ namespace GraduationProject.Infrastructure.Migrations
                 oldClrType: typeof(int),
                 oldType: "int");
 
-            migrationBuilder.AddColumn<string>(
-                name: "University",
-                table: "StudentDoctors",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+            // 🔥 University (Safe check عشان مايحصلش duplicate)
+            migrationBuilder.Sql(@"
+                IF COL_LENGTH('StudentDoctors', 'University') IS NULL
+                BEGIN
+                    ALTER TABLE StudentDoctors 
+                    ADD University NVARCHAR(MAX) NOT NULL DEFAULT ''
+                END
+            ");
 
+            // إعادة إنشاء FK بشكل آمن (بدون Drop باسم غلط)
             migrationBuilder.AddForeignKey(
                 name: "FK_StudentDoctors_Doctors_DoctorId",
                 table: "StudentDoctors",
@@ -47,16 +127,18 @@ namespace GraduationProject.Infrastructure.Migrations
                 principalColumn: "DoctorId");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_StudentDoctors_Doctors_DoctorId",
                 table: "StudentDoctors");
 
-            migrationBuilder.DropColumn(
-                name: "University",
-                table: "StudentDoctors");
+            migrationBuilder.Sql(@"
+                IF COL_LENGTH('StudentDoctors', 'University') IS NOT NULL
+                BEGIN
+                    ALTER TABLE StudentDoctors DROP COLUMN University
+                END
+            ");
 
             migrationBuilder.AlterColumn<DateOnly>(
                 name: "VerifiedAt",
@@ -76,14 +158,6 @@ namespace GraduationProject.Infrastructure.Migrations
                 oldClrType: typeof(int),
                 oldType: "int",
                 oldNullable: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_StudentDoctors_Doctors_DoctorId",
-                table: "StudentDoctors",
-                column: "DoctorId",
-                principalTable: "Doctors",
-                principalColumn: "DoctorId",
-                onDelete: ReferentialAction.Cascade);
         }
     }
 }

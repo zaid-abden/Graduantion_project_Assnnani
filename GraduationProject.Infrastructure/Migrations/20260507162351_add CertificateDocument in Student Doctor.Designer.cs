@@ -4,6 +4,7 @@ using GraduationProject.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraduationProject.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260507162351_add CertificateDocument in Student Doctor")]
+    partial class addCertificateDocumentinStudentDoctor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -722,12 +725,6 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<string>("CertificationDocument")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ClinicLocation")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClinicName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("DoctorId")
                         .HasColumnType("int");
 
@@ -738,19 +735,7 @@ namespace GraduationProject.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("RejectionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SupervisingNumber")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("University")

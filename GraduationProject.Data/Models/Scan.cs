@@ -38,6 +38,7 @@ namespace GraduationProject.Data.Models
 
         public int DoctorId { get; set; }
         public doctor Doctor { get; set; } = null!;
+      
 
         // AI
         public AIStatus AIStatus { get; set; } = AIStatus.Pending;

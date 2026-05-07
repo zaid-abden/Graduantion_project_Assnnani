@@ -21,6 +21,6 @@ namespace GraduationProject.Application.Features.StudentDoctors.Commands.CreateS
 
 
       
-        public IFormFile File { get; set; }
+       
     }
 }

@@ -68,7 +68,8 @@ namespace GraduationProject.Application.Features.Doctors.Queries.GetDoctorDashbo
                 TodayAppointments = todayAppointments,
                 TotalPatients = patientsSeen,
                 PendingScans = pendingScans,
-                SatisfactionRate = Math.Round(satisfactionRate * 20, 2) 
+                SatisfactionRate = Math.Round(satisfactionRate * 20, 2) ,
+                SuperVisingNumber = doctor.SupervisingNumber,
             };
 
             return Result<DoctorDashboardDto>.Success(dto);

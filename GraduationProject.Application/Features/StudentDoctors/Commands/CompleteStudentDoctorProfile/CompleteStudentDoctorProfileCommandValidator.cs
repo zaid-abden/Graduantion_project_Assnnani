@@ -34,8 +34,10 @@ namespace GraduationProject.Application.Features.StudentDoctors.Commands.Complet
                 .MinimumLength(3).WithMessage("Supervising number is too short");
 
            
-            RuleFor(x => x.File)
+            RuleFor(x => x.Image)
                 .NotNull().WithMessage("File is required");
+            RuleFor(x => x.CertificateFile)
+              .NotNull().WithMessage("Certificate is required");
         }
     }
 }
