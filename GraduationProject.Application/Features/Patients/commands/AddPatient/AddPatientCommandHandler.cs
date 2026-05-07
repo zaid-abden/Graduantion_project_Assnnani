@@ -2,6 +2,7 @@
 using GraduationProject.Application.Contracts.ExternalServices;
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Data.Enums;
 using GraduationProject.Data.Identity;
 using GraduationProject.Data.Models;
 using MediatR;
@@ -64,7 +65,7 @@ namespace GraduationProject.Application.Features.Patients.commands.AddPatient
                 UserId = user.Id,
                 DateOfBirth = request.DateOfBirth,
                 Address = request.Address,
-                MedicalHistory = request.MedicalHistory ?? "No previous history",
+              
                 Gender = request.Gender,
                 CreatedAt = DateTime.Now,
                 
@@ -74,6 +75,7 @@ namespace GraduationProject.Application.Features.Patients.commands.AddPatient
             {
                 patient.BloodType = request.BloodType.Value;
             }
+            patient.Status = PatientStatus.Pending;
 
             await unitOfWork.Patients.AddAsync(patient);
             await unitOfWork.SaveAsync();

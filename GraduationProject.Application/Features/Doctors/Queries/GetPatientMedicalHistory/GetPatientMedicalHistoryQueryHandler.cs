@@ -1,7 +1,9 @@
 ﻿using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Application.Contracts.Services;
 using GraduationProject.Application.Features.MedicalRecords.Commands.Dtos;
+using GraduationProject.Data.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -16,11 +18,13 @@ namespace GraduationProject.Application.Features.Doctors.Queries.GetPatientMedic
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly ICurrentUserService currentUserService;
+        private readonly INotificationService notificationService;
 
-        public GetPatientMedicalHistoryQueryHandler(IUnitOfWork unitOfWork,ICurrentUserService currentUserService)
+        public GetPatientMedicalHistoryQueryHandler(IUnitOfWork unitOfWork,ICurrentUserService currentUserService,INotificationService notificationService)
         {
             this.unitOfWork = unitOfWork;
             this.currentUserService = currentUserService;
+            this.notificationService = notificationService;
         }
         public async Task<Result<List<MedicalRecordForDoctorDashboardDto>>> Handle(GetPatientMedicalHistoryQuery request, CancellationToken cancellationToken)
         {
@@ -33,6 +37,7 @@ namespace GraduationProject.Application.Features.Doctors.Queries.GetPatientMedic
             if (doctor is null)
                 return Result<List<MedicalRecordForDoctorDashboardDto>>.Failure(ResultStatus.NotFound, "Doctor profile not found");
             var patient = await unitOfWork.Patients.Query()
+                .Include(x => x.User)
                 .FirstOrDefaultAsync(x => x.PatientId == request.PatientId
                 , cancellationToken);
 
@@ -40,6 +45,10 @@ namespace GraduationProject.Application.Features.Doctors.Queries.GetPatientMedic
                 return Result<List<MedicalRecordForDoctorDashboardDto>>.Failure(ResultStatus.NotFound, "Patient profile not found");
             if(patient.AssignedDoctorId != doctor.DoctorId)
                 return Result<List<MedicalRecordForDoctorDashboardDto>>.Failure(ResultStatus.Forbidden, "You are not assigned to this patient");
+
+
+
+
 
             var medicalRecords = await unitOfWork.MedicalRecords.Query()
        .AsNoTracking()

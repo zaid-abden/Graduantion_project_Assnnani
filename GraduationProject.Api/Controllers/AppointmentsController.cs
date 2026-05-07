@@ -3,9 +3,12 @@ using GraduationProject.Application.Common.PaginatedResults;
 using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Features.Appointments.Commands.AddAppointment;
 using GraduationProject.Application.Features.Appointments.Commands.CancelAppointment;
-using GraduationProject.Application.Features.Appointments.Commands.ConfirmAppointment;
-using GraduationProject.Application.Features.Appointments.Commands.MarkAsArrived;
+//using GraduationProject.Application.Features.Appointments.Commands.CheckInAppointment;
+//using GraduationProject.Application.Features.Appointments.Commands.CompleteAppointment;
+//using GraduationProject.Application.Features.Appointments.Commands.ConfirmAppointment;
+//using GraduationProject.Application.Features.Appointments.Commands.MarkAsArrived;
 using GraduationProject.Application.Features.Appointments.Commands.RescheduleAppointment;
+//using GraduationProject.Application.Features.Appointments.Commands.StartConsultation;
 using GraduationProject.Application.Features.Appointments.Commands.UpdateAppointment;
 using GraduationProject.Application.Features.Appointments.Dtos;
 using GraduationProject.Application.Features.Appointments.Queries.GetAllApointmentsWithPagination;
@@ -53,7 +56,7 @@ namespace GraduationProject.Api.Controllers
     Summary = "Get appointment by ID (Admin)",
     Description = "Returns appointment details for the given ID."
 )]
-        [ProducesResponseType(typeof(Result<AppointmentDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<AppointmentDtto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -72,7 +75,7 @@ namespace GraduationProject.Api.Controllers
     Summary = "Get all appointments with pagination (Admin)",
     Description = "Returns paginated list of appointments with patient and doctor details."
 )]
-        [ProducesResponseType(typeof(Result<PaginatedResult<AppointmentDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Result<PaginatedResult<AppointmentDtto>>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetAllPaginated(
@@ -192,23 +195,7 @@ namespace GraduationProject.Api.Controllers
             return result.ToActionResult();
         }
 
-        [HttpPatch("{id}/confirm")]
-        //[Authorize(Roles = "Doctor,Admin")]
-        [SwaggerOperation(
-    Summary = "Confirm appointment",
-    Description = "Allows doctor or admin to confirm a pending appointment."
-)]
-        [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Confirm(int id)
-        {
-           
-
-            var result = await mediator.Send(new ConfirmAppointmentCommand(id));
-
-            return result.ToActionResult();
-        }
+       
 
         [HttpPatch("{id}/reschedule")]
         [Authorize(Roles = "Patient")]
@@ -231,23 +218,26 @@ namespace GraduationProject.Api.Controllers
             return result.ToActionResult();
         }
 
-        [HttpPatch("{id}/arrive")]
-        //[Authorize(Roles = "Receptionist,Doctor")] 
-        [SwaggerOperation(
-    Summary = "Mark appointment as arrived",
-    Description = "Marks the appointment as arrived when the patient checks in."
-)]
-        [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> MarkAsArrived(int id)
-        {
-            var command = new MarkAsArrivedCommand(id);
+        //        [HttpPatch("{id}/arrive")]
+        //        //[Authorize(Roles = "Receptionist,Doctor")] 
+        //        [SwaggerOperation(
+        //    Summary = "Mark appointment as arrived",
+        //    Description = "Marks the appointment as arrived when the patient checks in."
+        //)]
+        //        [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
+        //        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        //        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        //        public async Task<IActionResult> MarkAsArrived(int id)
+        //        {
+        //            var command = new MarkAsArrivedCommand(id);
 
-            var result = await mediator.Send(command);
+        //            var result = await mediator.Send(command);
 
-            return result.ToActionResult();
-        }
+        //            return result.ToActionResult();
+        //        }
+
+      
+
     }
 }

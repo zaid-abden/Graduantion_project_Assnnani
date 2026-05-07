@@ -8,6 +8,7 @@
 	int PendingRequests,
 	int TotalVerified,           // إجمالي المقبولين تاريخياً
 	int TotalRejected,           // إجمالي المرفوضين تاريخياً
-	int TotalActionedToday       // إجمالي (مقبول + مرفوض) اليوم
+	int TotalActionedToday,     // إجمالي (مقبول + مرفوض) اليوم
+	int AppointmentsToday // الحقل الجديد
 );
 }

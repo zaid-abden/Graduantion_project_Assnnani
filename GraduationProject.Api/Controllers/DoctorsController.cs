@@ -1,5 +1,6 @@
 ﻿using GraduationProject.Api.Common.Responses;
 using GraduationProject.Application.Common.Results;
+using GraduationProject.Application.Features.Doctors.Commands.CreateReceptionist;
 using GraduationProject.Application.Features.Doctors.Commands.UpdateDoctorProfile;
 using GraduationProject.Application.Features.Doctors.Dtos;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorDashboard;
@@ -7,19 +8,24 @@ using GraduationProject.Application.Features.Doctors.Queries.GetDoctorProfile;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorProfileForPatient;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorStatistics;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorTodaySummary;
+using GraduationProject.Application.Features.Doctors.Queries.GetInsights;
+using GraduationProject.Application.Features.Doctors.Queries.GetPatientGrowth;
 using GraduationProject.Application.Features.Doctors.Queries.GetPatientInfo;
 using GraduationProject.Application.Features.Doctors.Queries.GetPatientMedicalHistory;
 using GraduationProject.Application.Features.Doctors.Queries.GetPatients;
 using GraduationProject.Application.Features.Doctors.Queries.GetPendingScans;
 using GraduationProject.Application.Features.Doctors.Queries.GetRecentPatients;
+using GraduationProject.Application.Features.Doctors.Queries.GetRecentReports;
 using GraduationProject.Application.Features.Doctors.Queries.GetTodayAppointments;
 using GraduationProject.Application.Features.Doctors.Queries.GetWeeklySchedule;
 using GraduationProject.Application.Features.Patients.Dtos;
 using GraduationProject.Application.Features.Scans.Dtos;
+using GraduationProject.Data.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace GraduationProject.Api.Controllers
 {
@@ -152,7 +158,7 @@ namespace GraduationProject.Api.Controllers
 
         [HttpGet("{doctorId}")]
         [SwaggerOperation(
-    Summary = "Get doctor profile",
+    Summary = "Get doctor profile for patient",
     Description = "Returns full doctor profile details for patient view."
 )]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -162,6 +168,60 @@ namespace GraduationProject.Api.Controllers
         public async Task<IActionResult> GetDoctorProfileForPatient(int doctorId)
         {
             var result = await mediator.Send(new GetDoctorProfileForPatientQuery(doctorId));
+            return result.ToActionResult();
+        }
+
+        [HttpPost("add-receptionist")]
+        [Authorize(Roles = "Doctor")]
+        [SwaggerOperation(
+   Summary = "Add receptionist",
+   Description = "Creates a new receptionist account for the logged-in doctor."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AddReceptionist([FromForm] CreateReceptionistCommand command)
+        {
+
+            var result = await mediator.Send(command);
+            return result.ToActionResult();
+        }
+        [HttpGet("insights")]
+        [SwaggerOperation(
+    Summary = "Get doctor insights",
+    Description = "Returns dashboard statistics for the logged-in doctor (patients, appointments, scans, revenue)."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetInsights()
+        {
+            var result = await mediator.Send(new GetInsightsQuery());
+            return result.ToActionResult();
+        }
+
+        [HttpGet("patient-growth")]
+        [SwaggerOperation(
+    Summary = "Get patient growth",
+    Description = "Returns monthly patient growth for dashboard charts."
+)]
+        public async Task<IActionResult> GetPatientGrowth()
+        {
+            var result = await mediator.Send(new GetPatientGrowthQuery());
+            return result.ToActionResult();
+        }
+
+        [HttpGet("recent-reports")]
+        [SwaggerOperation(
+            Summary = "Get recent medical reports",
+            Description = "Returns the latest medical reports for the authenticated doctor including scans, medical records, and AI reports in a unified timeline sorted by most recent first."
+        )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetRecentReports()
+        {
+            var result = await mediator.Send(new GetRecentReportsQuery());
             return result.ToActionResult();
         }
     }

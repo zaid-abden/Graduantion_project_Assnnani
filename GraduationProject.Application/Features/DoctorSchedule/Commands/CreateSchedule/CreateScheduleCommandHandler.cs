@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateSchedule
 {
-    public class CreateScheduleCommandHandler : IRequestHandler<CreateScheduleCommand, Result<DoctorScheduleDto>>
+    public class CreateScheduleCommandHandler : IRequestHandler<CreateScheduleCommand, Result<string>>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly ICurrentUserService currentUserService;
@@ -27,13 +27,13 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
             this.currentUserService = currentUserService;
 
         }
-        public async Task<Result<DoctorScheduleDto>> Handle(CreateScheduleCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(CreateScheduleCommand request, CancellationToken cancellationToken)
         {
 
 
             if (!currentUserService.IsAuthenticated)
             {
-                return Result<DoctorScheduleDto>.Failure(ResultStatus.Unauthorized, "You are not authorized to perform this action.");
+                return Result<string>.Failure(ResultStatus.Unauthorized, "You are not authorized to perform this action.");
             }
             var userId = currentUserService.UserId;
             var doctor = await unitOfWork.Doctors.Query()
@@ -41,7 +41,7 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
 
             if (doctor == null)
             {
-                return Result<DoctorScheduleDto>.Failure(ResultStatus.Failure, "Doctor profile not found.");
+                return Result<string>.Failure(ResultStatus.Failure, "Doctor profile not found.");
             }
             //if (doctor.VerificationStatus != Data.Enums.DoctorVerificationStatus.Approved)
             //{
@@ -57,7 +57,7 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
             cancellationToken);
 
             if (doctorConflict)
-                return Result<DoctorScheduleDto>.Failure(ResultStatus.Conflict,
+                return Result<string>.Failure(ResultStatus.Conflict,
                     "Doctor already has a conflicting schedule.");
 
             var clinicConflict = await unitOfWork.DoctorSchedules.Query()
@@ -70,7 +70,7 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
                     cancellationToken);
 
             if (clinicConflict)
-                return Result<DoctorScheduleDto>.Failure(ResultStatus.Conflict,
+                return Result<string>.Failure(ResultStatus.Conflict,
                     "Clinic already has a schedule at this time.");
 
 
@@ -129,17 +129,7 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateS
 
 
 
-            var scheduleDto = new DoctorScheduleDto
-            {
-                ScheduleId = schedule.ScheduleId,
-                DayOfWeek = schedule.DayOfWeek,
-                StartTime = schedule.StartTime,
-                EndTime = schedule.EndTime,
-                Location = schedule.Location,
-                IsActive = schedule.IsActive,
-
-            };
-            return Result<DoctorScheduleDto>.Success(scheduleDto);
+          return   Result<string>.Success("Schedule created successfully.");
         }
     }
 }

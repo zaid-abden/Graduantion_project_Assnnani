@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Appointments.Dtos
 {
-    public class AppointmentDto
+    public class AppointmentDtto
     {
         public int AppointmentId { get; set; }
         public TimeOnly StartTime { get; set; }

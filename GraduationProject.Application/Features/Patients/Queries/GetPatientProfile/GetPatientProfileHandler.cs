@@ -36,7 +36,7 @@ public class GetPatientProfileHandler
                 Email = patient.User.Email,
                 Phone = patient.User.PhoneNumber,
                 Address = patient.Address,
-                MedicalHistory = patient.MedicalHistory
+              
             };
 
             return Result<PatientProfileDto>.Success(dto);

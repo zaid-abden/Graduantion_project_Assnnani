@@ -80,6 +80,7 @@ namespace GraduationProject.Application.Features.Doctors.Queries.GetDoctorProfil
                                 .OrderBy(s => s.StartTime)
                                 .Select(s => new SlotTimeDto
                                 {
+                                    Id = s.Id,
                                     StartTime = s.StartTime,
                                     EndTime = s.EndTime,
                                     IsAvailable = s.Status == SlotStatus.Available

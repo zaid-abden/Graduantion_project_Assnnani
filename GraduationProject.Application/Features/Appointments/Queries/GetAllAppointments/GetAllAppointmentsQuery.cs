@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Appointments.Queries.GetAllAppointments
 {
-    public class GetAllAppointmentsQuery : IRequest<Result<List<AppointmentDto>>>
+    public class GetAllAppointmentsQuery : IRequest<Result<List<AppointmentDtto>>>
     {
     }
 }

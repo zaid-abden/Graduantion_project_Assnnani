@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Appointments.Queries.GetAppointmentById
 {
-    public class GetAppointmentByIdQuery:IRequest<Result<AppointmentDto>>
+    public class GetAppointmentByIdQuery:IRequest<Result<AppointmentDtto>>
     {
         public int AppointmentId { get; set; }
 

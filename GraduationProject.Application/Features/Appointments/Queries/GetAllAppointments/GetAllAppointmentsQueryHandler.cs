@@ -1,6 +1,8 @@
 ﻿using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
+
+//using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.Appointments.Dtos;
 using GraduationProject.Data.Identity;
 using MediatR;
@@ -13,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Appointments.Queries.GetAllAppointments
 {
-    public class GetAllAppointmentsQueryHandler : IRequestHandler<GetAllAppointmentsQuery, Result<List<AppointmentDto>>>
+    public class GetAllAppointmentsQueryHandler : IRequestHandler<GetAllAppointmentsQuery, Result<List<AppointmentDtto>>>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly ICurrentUserService currentUserService;
@@ -23,7 +25,7 @@ namespace GraduationProject.Application.Features.Appointments.Queries.GetAllAppo
             this.unitOfWork = unitOfWork;
             this.currentUserService = currentUserService;
         }
-        public async Task<Result<List<AppointmentDto>>> Handle(GetAllAppointmentsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<AppointmentDtto>>> Handle(GetAllAppointmentsQuery request, CancellationToken cancellationToken)
         {
             var appointments = await unitOfWork.Appointments.Query()
     .Include(a => a.Patient)
@@ -31,7 +33,7 @@ namespace GraduationProject.Application.Features.Appointments.Queries.GetAllAppo
     .Include(a => a.Doctor)
         .ThenInclude(d => d.User)
     .Include(a => a.ScheduleSlot)
-    .Select(a => new AppointmentDto
+    .Select(a => new AppointmentDtto
     {
         AppointmentId = a.AppointmentId,
         StartTime = a.ScheduleSlot.StartTime,
@@ -42,7 +44,7 @@ namespace GraduationProject.Application.Features.Appointments.Queries.GetAllAppo
     })
     .ToListAsync();
 
-            return Result<List<AppointmentDto>>.Success(appointments);
+            return Result<List<AppointmentDtto>>.Success(appointments);
         }
     }
 }

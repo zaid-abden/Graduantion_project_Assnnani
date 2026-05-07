@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.DoctorSchedule.Commands.CreateSchedule
 {
-    public class CreateScheduleCommand : IRequest<Result<DoctorScheduleDto>>
+    public class CreateScheduleCommand : IRequest<Result<string>>
     {
 
         public DateOnly Date { get; set; }

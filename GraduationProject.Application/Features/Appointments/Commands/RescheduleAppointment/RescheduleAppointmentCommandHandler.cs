@@ -1,8 +1,10 @@
-﻿using GraduationProject.Application.Common.Results;
+﻿using GraduationProject.Application.BackgroundJobs.Appointments;
+using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.Appointments.Dtos;
 using GraduationProject.Data.Enums;
+using Hangfire;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -74,8 +76,14 @@ namespace GraduationProject.Application.Features.Appointments.Commands.Reschedul
             appointment.DoctorId = newSlot.DoctorSchedule.DoctorId;
 
             newSlot.Status = SlotStatus.Booked;
+            appointment.AppointmentStatus = AppointmentStatus.Pending;
             var newDateTime = newSlot.DoctorSchedule.Date.ToDateTime(newSlot.StartTime);
             await unitOfWork.SaveAsync();
+
+            BackgroundJob.Schedule<IAppointmentJobService>(
+  x => x.AutoConfirm(appointment.AppointmentId),
+  TimeSpan.FromMinutes(10));
+
             return Result<AddAppointmentResponseDto>.Success(new AddAppointmentResponseDto
             {
                 AppointmentId = appointment.AppointmentId,

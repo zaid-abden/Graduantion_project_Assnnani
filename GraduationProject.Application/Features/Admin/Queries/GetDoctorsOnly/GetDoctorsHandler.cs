@@ -12,8 +12,21 @@ namespace GraduationProject.Application.Features.Admin.Queries.GetDoctorsOnly
 
 		public async Task<Result<List<DoctorListDto>>> Handle(GetDoctorsQuery request, CancellationToken cancellationToken)
 		{
-			var data = await _adminRepository.GetDoctorsOnlyAsync();
-			return Result<List<DoctorListDto>>.Success(data, "Doctors retrieved successfully.");
+			try
+			{
+				var data = await _adminRepository.GetDoctorsOnlyAsync();
+
+				if (data == null || !data.Any())
+				{
+					return Result<List<DoctorListDto>>.Success(new List<DoctorListDto>(), "No doctors found.");
+				}
+
+				return Result<List<DoctorListDto>>.Success(data, "Doctors retrieved successfully.");
+			}
+			catch (Exception ex)
+			{
+				return Result<List<DoctorListDto>>.Failure(ResultStatus.Failure, "An error occurred while fetching doctors.");
+			}
 		}
 	}
 }

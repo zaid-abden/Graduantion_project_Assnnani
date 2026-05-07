@@ -20,7 +20,7 @@ namespace GraduationProject.Data.Models
 
         public string? Address { get; set; }
 
-        public string? MedicalHistory { get; set; }
+        //public string? MedicalHistory { get; set; }
 
         public Gender Gender { get; set; } = Gender.Male;
 

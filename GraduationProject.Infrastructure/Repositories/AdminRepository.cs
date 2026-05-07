@@ -4,6 +4,7 @@ using GraduationProject.Application.Features.Admin.Queries.GetAllUsers;
 using GraduationProject.Data.Enums;
 using GraduationProject.Data.Models;
 using GraduationProject.Infrastructure.Context;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace GraduationProject.Infrastructure.Repositories
@@ -12,90 +13,95 @@ namespace GraduationProject.Infrastructure.Repositories
 		 : GenericRepository<Admin>, IAdminRepository
 	{
 		private readonly ApplicationDbContext _context;
+		private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public AdminRepository(ApplicationDbContext dbContext) : base(dbContext)
+		public AdminRepository(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor) : base(dbContext)
 		{
 			_context = dbContext;
+			_httpContextAccessor = httpContextAccessor;
 		}
 
 		public async Task<List<PendingUserDto>> GetPendingUsersAsync()
 		{
-			return await _context.Users
-				.Where(u => !u.IsActive)
-				.Select(u => new PendingUserDto(
-					u.Id,
-					u.FirstName + " " + u.LastName,
-					u.Email,
-					_context.UserRoles.Where(ur => ur.UserId == u.Id)
-						.Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
-						.FirstOrDefault() ?? "Unknown",
-					u.StudentDoctor != null ? u.StudentDoctor.University : null,
-					u.StudentDoctor != null ? u.StudentDoctor.YearsOfStudy : null,
-					u.Doctor != null ? u.Doctor.MedicalLicenseNumber : null,
-					u.Doctor != null ? u.Doctor.Specialization.Name : null,
-					u.ImageUrl,
-					null // You can map a CreatedAt property if it exists in AspNetUsers
+			// هنجيب الـ Base URL (مثلاً https://localhost:7000)
+			var request = _httpContextAccessor.HttpContext.Request;
+			var baseUrl = $"{request.Scheme}://{request.Host}";
+
+			return await _context.Doctors
+				.Include(d => d.User)
+				.Where(d => d.VerificationStatus == DoctorVerificationStatus.Pending)
+				.Select(d => new PendingUserDto(
+					d.DoctorId.ToString(),
+					d.User.FirstName + " " + d.User.LastName,
+					d.User.Email,
+					"Doctor",
+					d.User.Gender,
+					null,
+					null,
+					d.MedicalLicenseNumber,
+					// دمج الرابط الكامل لصورة البروفايل
+					!string.IsNullOrEmpty(d.User.ImageUrl)
+						? $"{baseUrl}/uploads/images/{d.User.ImageUrl}"
+						: null,
+					// دمج الرابط الكامل لصورة الشهادة
+					!string.IsNullOrEmpty(d.DoctorCertificate)
+						? $"{baseUrl}/uploads/certificates/{d.DoctorCertificate}"
+						: null,
+					d.User.CreatedAt
 				)).ToListAsync();
 		}
 
-		public async Task<string?> ApproveUserAsync(string userId)
+		public async Task<string?> ApproveUserAsync(string id)
 		{
-			var user = await _context.Users
-				.Include(u => u.Doctor)
-				.Include(u => u.StudentDoctor)
-				.FirstOrDefaultAsync(u => u.Id == userId);
-
-			if (user == null || user.IsActive) return null;
-
-			// 1. تحديث الحالة في جدول الهوية الأساسي
-			user.IsActive = true;
-			user.UpdatedAt = DateTime.UtcNow;
-
-			// 2. تحديث الحالة في جدول الطبيب أو الطالب
-			if (user.Doctor != null)
+			// 1. التحقق من أن الـ id المرسل هو رقم صحيح (int)
+			if (!int.TryParse(id, out int doctorId))
 			{
-				user.Doctor.VerificationStatus = DoctorVerificationStatus.Approved;
-				user.Doctor.VerifiedAt = DateTime.UtcNow;
+				return null; // أو يمكنك رمي Exception إذا كنت تفضل ذلك
 			}
-			else if (user.StudentDoctor != null)
-			{
-				user.StudentDoctor.VerificationStatus = DoctorVerificationStatus.Approved;
-				user.StudentDoctor.VerifiedAt = DateTime.UtcNow;
-			}
+
+			// 2. البحث باستخدام الـ doctorId بعد تحويله
+			var doctor = await _context.Doctors
+				.Include(d => d.User)
+				.FirstOrDefaultAsync(d => d.DoctorId == doctorId);
+
+			if (doctor == null || doctor.User == null) return null;
+
+			// 3. تحديث البيانات
+			doctor.VerificationStatus = DoctorVerificationStatus.Approved;
+			doctor.VerifiedAt = DateTime.UtcNow;
+
+			doctor.User.IsActive = true;
+			doctor.User.UpdatedAt = DateTime.UtcNow;
 
 			await _context.SaveChangesAsync();
-			return user.Email;
+			return doctor.User.Email;
 		}
 
-		public async Task<string?> RejectUserAsync(string userId, string reason)
+		public async Task<string?> RejectUserAsync(string id, string reason)
 		{
-			var user = await _context.Users
-				.Include(u => u.Doctor)
-				.Include(u => u.StudentDoctor)
-				.FirstOrDefaultAsync(u => u.Id == userId);
-
-			if (user == null) return null;
-
-			// تحديث الحالة في جدول الطبيب أو الطالب
-			if (user.Doctor != null)
+			// 1. التحقق من صحة الـ id
+			if (!int.TryParse(id, out int doctorId))
 			{
-				user.Doctor.VerificationStatus = DoctorVerificationStatus.Rejected;
-				user.Doctor.RejectionReason = reason;
-				user.Doctor.VerifiedAt = DateTime.UtcNow; // تاريخ اتخاذ القرار
-			}
-			else if (user.StudentDoctor != null)
-			{
-				user.StudentDoctor.VerificationStatus = DoctorVerificationStatus.Rejected;
-				user.StudentDoctor.RejectionReason = reason;
-				user.StudentDoctor.VerifiedAt = DateTime.UtcNow;
+				return null;
 			}
 
-			// لا نحذف المستخدم، فقط نغلق الحساب ونحدث التوقيت
-			user.IsActive = false;
-			user.UpdatedAt = DateTime.UtcNow;
+			// 2. البحث في جدول الدكاترة
+			var doctor = await _context.Doctors
+				.Include(d => d.User)
+				.FirstOrDefaultAsync(d => d.DoctorId == doctorId);
+
+			if (doctor == null || doctor.User == null) return null;
+
+			// 3. تحديث الحالة وسبب الرفض
+			doctor.VerificationStatus = DoctorVerificationStatus.Rejected;
+			doctor.RejectionReason = reason;
+			doctor.VerifiedAt = DateTime.UtcNow;
+
+			doctor.User.IsActive = false;
+			doctor.User.UpdatedAt = DateTime.UtcNow;
 
 			await _context.SaveChangesAsync();
-			return user.Email; // نرجع الإيميل عشان الـ Handler يبعت الرسالة
+			return doctor.User.Email;
 		}
 
 		public async Task<List<RejectedUserDto>> GetRejectedUsersAsync()
@@ -136,89 +142,81 @@ namespace GraduationProject.Infrastructure.Repositories
 
 		public async Task<DashboardStatsDto> GetDashboardStatsAsync()
 		{
-			var today = DateTime.UtcNow.Date;
+			// 1. تحويل التاريخ الحالي إلى DateOnly
+			var todayDateTime = DateTime.UtcNow;
+			var todayDateOnly = DateOnly.FromDateTime(todayDateTime);
+			var todayDate = todayDateTime.Date; // بنحتاجه للـ VerifiedAt لأنه DateTime
 
-			// إحصائيات من جدول الأطباء مباشرة باستخدام الـ Enum بتاعك
+			// إحصائيات الأطباء
 			var totalVerifiedDoctors = await _context.Doctors
 				.CountAsync(d => d.VerificationStatus == DoctorVerificationStatus.Approved);
 
 			var totalRejectedDoctors = await _context.Doctors
 				.CountAsync(d => d.VerificationStatus == DoctorVerificationStatus.Rejected);
 
-			// العمليات اللي تمت النهاردة
 			var verifiedToday = await _context.Doctors
-				.CountAsync(d => d.VerifiedAt.HasValue && d.VerifiedAt.Value.Date == today);
+				.CountAsync(d => d.VerifiedAt.HasValue && d.VerifiedAt.Value.Date == todayDate);
 
-			// ملاحظة: لو مفيش جدول طلبات مرفوضة مستقل، الـ RejectionReason 
-			// هو اللي هيعرفنا مين اترفض النهاردة (لو ضفت حقل RejectedAt)
+			// 2. المقارنة باستخدام DateOnly
+			var appointmentsToday = await _context.Appointments
+				.Where(a => !a.IsDeleted)
+				.CountAsync(a => _context.ScheduleSlots
+					.Any(s => s.Id == a.ScheduleSlotId && s.Date == todayDateOnly)); // هنا التعديل
 
 			return new DashboardStatsDto(
 				TotalDoctors: await _context.Doctors.CountAsync(),
 				TotalPatients: await _context.Patients.CountAsync(),
 				TotalStudents: await _context.StudentDoctors.CountAsync(),
 				TotalReceptionists: await _context.Receptionists.CountAsync(),
-
-				// المستخدمين اللي حالتهم Pending في جدول الطبيب
 				PendingRequests: await _context.Doctors.CountAsync(d => d.VerificationStatus == DoctorVerificationStatus.Pending),
-
 				TotalVerified: totalVerifiedDoctors,
 				TotalRejected: totalRejectedDoctors,
-				TotalActionedToday: verifiedToday // + مرفوضين اليوم لو ضفت RejectedAt
+				TotalActionedToday: verifiedToday,
+				AppointmentsToday: appointmentsToday
 			);
 		}
 
 		public async Task<PagedUsersDto> GetAllUsersAsync(GetAllUsersQuery filter)
 		{
-			var query = _context.Users
-		.Include(u => u.Doctor)
-		.Include(u => u.StudentDoctor)
-		.Include(u => u.Patient)
-		.AsQueryable();
+			var request = _httpContextAccessor.HttpContext.Request;
+			var baseUrl = $"{request.Scheme}://{request.Host}";
 
-			// 1. Search Filter (Name, Email, Phone)
-			if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+			// تنظيف بسيط للمسافات فقط لأن الـ JSON بيحمي الداتا من رموز الـ URL
+			string? searchTerm = string.IsNullOrWhiteSpace(filter.SearchTerm) ? null : filter.SearchTerm.Trim().ToLower();
+			string? role = string.IsNullOrWhiteSpace(filter.Role) ? null : filter.Role.Trim().ToLower();
+			string? gender = string.IsNullOrWhiteSpace(filter.Gender) ? null : filter.Gender.Trim().ToLower();
+
+			var query = _context.Users.AsNoTracking().AsQueryable();
+
+			// استبعاد الأدمن
+			query = query.Where(u => !_context.UserRoles
+				.Any(ur => ur.UserId == u.Id &&
+					 _context.Roles.Any(r => r.Id == ur.RoleId && r.Name == "Admin")));
+
+			// فلتر البحث النصي
+			if (!string.IsNullOrEmpty(searchTerm))
 			{
-				var term = filter.SearchTerm.ToLower();
-				query = query.Where(u => u.FirstName.ToLower().Contains(term) ||
-										 u.LastName.ToLower().Contains(term) ||
-										 u.Email.ToLower().Contains(term) ||
-										 u.PhoneNumber.Contains(term));
+				query = query.Where(u =>
+					(u.FirstName + " " + u.LastName).ToLower().Contains(searchTerm) ||
+					u.Email.ToLower().Contains(searchTerm) ||
+					(u.PhoneNumber != null && u.PhoneNumber.Contains(searchTerm)));
 			}
 
-			// 2. Role Filter
-			if (!string.IsNullOrWhiteSpace(filter.Role))
+			// فلتر الـ Role
+			if (!string.IsNullOrEmpty(role))
 			{
 				query = query.Where(u => _context.UserRoles
-					.Any(ur => ur.UserId == u.Id && _context.Roles.Any(r => r.Id == ur.RoleId && r.Name == filter.Role)));
+					.Any(ur => ur.UserId == u.Id && _context.Roles.Any(r => r.Id == ur.RoleId && r.Name.ToLower() == role)));
 			}
 
-			// 3. Gender Filter
-			if (!string.IsNullOrWhiteSpace(filter.Gender))
+			// فلتر الـ Gender
+			if (!string.IsNullOrEmpty(gender))
 			{
-				query = query.Where(u => u.Gender == filter.Gender);
+				query = query.Where(u => u.Gender != null && u.Gender.ToLower() == gender);
 			}
 
-			// 4. Status Filter (بناءً على التعديلات الأخيرة في كلاس الـ User)
-			if (!string.IsNullOrWhiteSpace(filter.Status))
-			{
-				// إذا كان المستخدم يبحث عن حالة "Approved" أو "Pending" للأطباء/الطلاب
-				if (Enum.TryParse<DoctorVerificationStatus>(filter.Status, true, out var docStatus))
-				{
-					query = query.Where(u =>
-						(u.Doctor != null && u.Doctor.VerificationStatus == docStatus) ||
-						(u.StudentDoctor != null && u.StudentDoctor.VerificationStatus == docStatus));
-				}
-				// أو إذا كان يبحث عن حالة المريض
-				else if (Enum.TryParse<PatientStatus>(filter.Status, true, out var patStatus))
-				{
-					query = query.Where(u => u.Patient != null && u.Patient.Status == patStatus);
-				}
-			}
-
-			// حساب العدد الإجمالي قبل الـ Pagination
 			var totalCount = await query.CountAsync();
 
-			// تطبيق الـ Pagination والـ Projection
 			var users = await query
 				.OrderByDescending(u => u.CreatedAt)
 				.Skip((filter.PageNumber - 1) * filter.PageSize)
@@ -230,20 +228,48 @@ namespace GraduationProject.Infrastructure.Repositories
 					u.PhoneNumber,
 					_context.UserRoles.Where(ur => ur.UserId == u.Id)
 						.Join(_context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name)
-						.FirstOrDefault() ?? "Unknown",
+						.FirstOrDefault() ?? "No Role",
 					u.IsActive,
-					u.Gender,
+					u.Gender ?? "Not Specified",
 					u.CreatedAt,
-					u.ImageUrl
+					!string.IsNullOrEmpty(u.ImageUrl)
+						? $"{baseUrl}/uploads/images/{u.ImageUrl}"
+						: $"{baseUrl}/uploads/images/default-user-image.png"
 				)).ToListAsync();
 
 			return new PagedUsersDto(users, totalCount);
+		}
+
+		public async Task<List<DoctorStatusDto>> GetDoctorsByStatusAsync(DoctorVerificationStatus? status)
+		{
+			var query = _context.Doctors
+				.Include(d => d.User)
+				.AsQueryable();
+
+			// الفلترة بناءً على الحالة إذا تم إرسالها
+			if (status.HasValue)
+			{
+				query = query.Where(d => d.VerificationStatus == status.Value);
+			}
+
+			return await query
+				.Select(d => new DoctorStatusDto(
+					d.DoctorId,
+					d.FullName ?? (d.User.FirstName + " " + d.User.LastName),
+					d.User.Email,
+					d.MedicalLicenseNumber,
+					d.YearsOfExperience,
+					(int)d.VerificationStatus,
+					d.VerifiedAt
+				))
+				.ToListAsync();
 		}
 
 		// جلب الأطباء مع التخصص ورقم الرخصة
 		public async Task<List<DoctorListDto>> GetDoctorsOnlyAsync()
 		{
 			return await _context.Doctors
+				.AsNoTracking()
 				.Select(d => new DoctorListDto(
 					d.UserId,
 					d.User.FirstName + " " + d.User.LastName,
@@ -258,11 +284,12 @@ namespace GraduationProject.Infrastructure.Repositories
 		public async Task<List<PatientListDto>> GetPatientsOnlyAsync()
 		{
 			return await _context.Patients
+				.AsNoTracking() // <--- إضافة مهمة جداً للـ Queries
 				.Select(p => new PatientListDto(
 					p.UserId,
 					p.User.FirstName + " " + p.User.LastName,
 					p.User.Email,
-					p.MedicalHistory,
+					//p.MedicalHistory,
 					p.User.IsActive
 				)).ToListAsync();
 		}
@@ -271,6 +298,7 @@ namespace GraduationProject.Infrastructure.Repositories
 		public async Task<List<StudentListDto>> GetStudentsOnlyAsync()
 		{
 			return await _context.StudentDoctors
+				.AsNoTracking() // لتحسين الأداء وسرعة القراءة
 				.Select(s => new StudentListDto(
 					s.UserId,
 					s.User.FirstName + " " + s.User.LastName,
@@ -285,11 +313,15 @@ namespace GraduationProject.Infrastructure.Repositories
 		public async Task<List<ReceptionistListDto>> GetReceptionistsOnlyAsync()
 		{
 			return await _context.Receptionists
+				.AsNoTracking()
 				.Select(r => new ReceptionistListDto(
 					r.UserId,
 					r.User.FirstName + " " + r.User.LastName,
 					r.User.Email,
-					r.Doctor.User.FirstName + " " + r.Doctor.User.LastName, // اسم الدكتور من جدول اليوزر المرتبط بجدول الدكتور
+					// حماية في حالة لو الـ Doctor أو الـ User بتاعه مش موجودين
+					(r.Doctor != null && r.Doctor.User != null)
+						? r.Doctor.User.FirstName + " " + r.Doctor.User.LastName
+						: "Not Assigned",
 					r.Shift.ToString(),
 					r.User.IsActive
 				)).ToListAsync();

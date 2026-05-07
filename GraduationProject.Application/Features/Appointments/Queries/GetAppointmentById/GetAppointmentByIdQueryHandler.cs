@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Appointments.Queries.GetAppointmentById
 {
-    public class GetAppointmentByIdQueryHandler : IRequestHandler<GetAppointmentByIdQuery, Result<AppointmentDto>>
+    public class GetAppointmentByIdQueryHandler : IRequestHandler<GetAppointmentByIdQuery, Result<AppointmentDtto>>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -19,11 +19,11 @@ namespace GraduationProject.Application.Features.Appointments.Queries.GetAppoint
         {
             this.unitOfWork = unitOfWork;
         }
-        public async Task<Result<AppointmentDto>> Handle(GetAppointmentByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<AppointmentDtto>> Handle(GetAppointmentByIdQuery request, CancellationToken cancellationToken)
         {
             var appointment = await unitOfWork.Appointments.Query()
                 .Where(x => x.AppointmentId == request.AppointmentId)
-                .Select(i => new AppointmentDto
+                .Select(i => new AppointmentDtto
                 {
                     AppointmentId = i.AppointmentId,
                     DoctorName = i.Doctor.User.FullName,
@@ -36,10 +36,10 @@ namespace GraduationProject.Application.Features.Appointments.Queries.GetAppoint
 
             if(appointment is null)
 
-                return Result<AppointmentDto>.Failure(
+                return Result<AppointmentDtto>.Failure(
        ResultStatus.NotFound,
        $"Appointment with ID {request.AppointmentId} does not exist.");
-            return Result<AppointmentDto>.Success(appointment);
+            return Result<AppointmentDtto>.Success(appointment);
 
 
            

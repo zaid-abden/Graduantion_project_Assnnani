@@ -1,5 +1,6 @@
 ﻿using GraduationProject.Application.Features.Admin.DTOs;
 using GraduationProject.Application.Features.Admin.Queries.GetAllUsers;
+using GraduationProject.Data.Enums;
 using GraduationProject.Data.Models;
 
 namespace GraduationProject.Application.Contracts.Repositories
@@ -17,6 +18,8 @@ namespace GraduationProject.Application.Contracts.Repositories
 		Task<List<RejectedUserDto>> GetRejectedUsersAsync();
 
 		Task<PagedUsersDto> GetAllUsersAsync(GetAllUsersQuery filter);
+
+		Task<List<DoctorStatusDto>> GetDoctorsByStatusAsync(DoctorVerificationStatus? status);
 
 		Task<List<DoctorListDto>> GetDoctorsOnlyAsync();
 

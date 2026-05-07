@@ -214,6 +214,9 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<int>("AppointmentType")
                         .HasColumnType("int");
 
+                    b.Property<TimeOnly?>("ArrivedAt")
+                        .HasColumnType("time");
+
                     b.Property<TimeOnly>("ArrivelTime")
                         .HasColumnType("time");
 
@@ -235,7 +238,13 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsCheckedIn")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsReminderSent")
                         .HasColumnType("bit");
 
                     b.Property<string>("Notes")
@@ -251,6 +260,12 @@ namespace GraduationProject.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("QueueNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("QueueStatus")
                         .HasColumnType("int");
 
                     b.Property<int>("ScheduleSlotId")
@@ -326,11 +341,16 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
+                    b.Property<int?>("StudentDoctorId")
+                        .HasColumnType("int");
+
                     b.HasKey("FeedbackId");
 
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId");
+
+                    b.HasIndex("StudentDoctorId");
 
                     b.ToTable("Feedbacks");
                 });
@@ -361,6 +381,42 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.ToTable("MedicalRecordAttachments");
                 });
 
+            modelBuilder.Entity("GraduationProject.Data.Models.Notification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Notifications");
+                });
+
             modelBuilder.Entity("GraduationProject.Data.Models.Patient", b =>
                 {
                     b.Property<int>("PatientId")
@@ -389,9 +445,6 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<string>("MedicalHistory")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -509,9 +562,6 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Shift")
                         .HasColumnType("int");
@@ -669,7 +719,14 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudentDoctorId"));
 
+                    b.Property<int?>("DoctorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NationalId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -693,10 +750,15 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<DateTime?>("VerifiedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("VerifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("YearsOfStudy")
                         .HasColumnType("int");
 
                     b.HasKey("StudentDoctorId");
+
+                    b.HasIndex("DoctorId");
 
                     b.HasIndex("UserId");
 
@@ -819,6 +881,10 @@ namespace GraduationProject.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupervisingNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1206,6 +1272,10 @@ namespace GraduationProject.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("GraduationProject.Data.Models.StudentDoctor", null)
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("StudentDoctorId");
+
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
@@ -1347,6 +1417,10 @@ namespace GraduationProject.Infrastructure.Migrations
 
             modelBuilder.Entity("GraduationProject.Data.Models.StudentDoctor", b =>
                 {
+                    b.HasOne("GraduationProject.Data.Models.doctor", "Doctor")
+                        .WithMany("StudentDoctors")
+                        .HasForeignKey("DoctorId");
+
                     b.HasOne("GraduationProject.Data.Identity.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -1356,6 +1430,8 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.HasOne("GraduationProject.Data.Identity.User", null)
                         .WithOne("StudentDoctor")
                         .HasForeignKey("GraduationProject.Data.Models.StudentDoctor", "UserId1");
+
+                    b.Navigation("Doctor");
 
                     b.Navigation("User");
                 });
@@ -1562,6 +1638,8 @@ namespace GraduationProject.Infrastructure.Migrations
                 {
                     b.Navigation("AIReports");
 
+                    b.Navigation("Feedbacks");
+
                     b.Navigation("MedicalRecords");
 
                     b.Navigation("Verifications");
@@ -1585,6 +1663,8 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Navigation("Receptionist")
                         .IsRequired();
+
+                    b.Navigation("StudentDoctors");
 
                     b.Navigation("Verifications");
                 });

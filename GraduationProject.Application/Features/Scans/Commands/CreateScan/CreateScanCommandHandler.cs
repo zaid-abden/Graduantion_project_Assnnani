@@ -14,51 +14,53 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Scans.Commands.CreateScan
 {
-    public class CreateScanCommandHandler : IRequestHandler<CreateScanCommand, Result<int>>
+    public class CreateScanCommandHandler : IRequestHandler<CreateScanCommand, Result<string>>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly ICurrentUserService currentUserService;
         private readonly IFileServices fileServices;
+        private readonly INotificationService notificationService;
 
         public CreateScanCommandHandler(IUnitOfWork unitOfWork
             ,ICurrentUserService currentUserService
-            ,IFileServices fileServices)
+            ,IFileServices fileServices
+            ,INotificationService notificationService)
         {
             this.unitOfWork = unitOfWork;
             this.currentUserService = currentUserService;
             this.fileServices = fileServices;
+            this.notificationService = notificationService;
         }
-        public async Task<Result<int>> Handle(CreateScanCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(CreateScanCommand request, CancellationToken cancellationToken)
         {
             if (!currentUserService.IsAuthenticated)
-                return Result<int>.Failure(ResultStatus.Unauthorized, "Unauthorized access. Please log in");
+                return Result<string>.Failure(ResultStatus.Unauthorized, "Unauthorized access. Please log in");
             var userId = currentUserService.UserId;
             var doctor = await unitOfWork.Doctors.Query()
                 .FirstOrDefaultAsync(x => x.UserId == userId
                 ,cancellationToken);
             if (doctor is null)
-                return Result<int>.Failure(ResultStatus.NotFound, "Doctor profile not found");
+                return Result<string>.Failure(ResultStatus.NotFound, "Doctor profile not found");
             var patient = await unitOfWork.Patients.Query()
                 .FirstOrDefaultAsync(x => x.PatientId == request.PatientId
                 ,cancellationToken);
 
             if(patient is null)
-                return Result<int>.Failure(ResultStatus.NotFound, "Patient profile not found");
+                return Result<string>.Failure(ResultStatus.NotFound, "Patient profile not found");
 
-            var hasVisitedBefore = await unitOfWork.Appointments.Query()
-     .AnyAsync(x =>
-         x.DoctorId == doctor.DoctorId &&
-         x.PatientId == patient.PatientId &&
-         (
-             x.AppointmentStatus == AppointmentStatus.Completed ||
-             x.AppointmentStatus == AppointmentStatus.arrived
-         ),
-     cancellationToken);
-            if (!hasVisitedBefore)
-                return Result<int>.Failure(ResultStatus.Forbidden, "This patient has no previous appointments with the selected doctor.");
+     //       var hasVisitedBefore = await unitOfWork.Appointments.Query()
+     //.AnyAsync(x =>
+     //    x.DoctorId == doctor.DoctorId &&
+     //    x.PatientId == patient.PatientId &&
+     //    (
+     //        x.AppointmentStatus == AppointmentStatus.Completed
+     //    ),
+     //cancellationToken);
+     //       if (!hasVisitedBefore)
+     //           return Result<string>.Failure(ResultStatus.Forbidden, "This patient has no previous appointments with the selected doctor.");
             var uploadResult = await fileServices.UploadImageAsync (request.File);
             if(!uploadResult.IsSuccess)
-                return Result<int>.Failure(ResultStatus.Failure, uploadResult.Message);
+                return Result<string>.Failure(ResultStatus.Failure, uploadResult.Message);
 
             var scan = new Scan
             {
@@ -79,10 +81,15 @@ namespace GraduationProject.Application.Features.Scans.Commands.CreateScan
               
 
             };
+      //      await notificationService.SendToUserAsync(
+      //doctor.UserId,
+      //"Scan Uploaded",
+      //"Your scan result is ready",
+      //NotificationType.Scan);
 
             await unitOfWork.Scans.AddAsync(scan);
             await unitOfWork.SaveAsync();
-            return Result<int>.Success(scan.Id);
+           return Result<string>.Success("Scan uploaded successfully and is pending review.");
 
         }
     }

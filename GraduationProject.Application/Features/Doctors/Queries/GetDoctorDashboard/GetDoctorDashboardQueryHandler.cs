@@ -34,35 +34,39 @@ namespace GraduationProject.Application.Features.Doctors.Queries.GetDoctorDashbo
                 return Result<DoctorDashboardDto>.Failure(ResultStatus.NotFound, "Doctor profile not found");
             var today = DateOnly.FromDateTime(DateTime.Today);
             var todayAppointments = await unitOfWork.Appointments.Query()
-                .Include(c => c.ScheduleSlot)
-                .Where(x => x.DoctorId == doctor.DoctorId
-                && !x.IsDeleted && x.ScheduleSlot.Date == today)
-                
-                .CountAsync(cancellationToken);
-           
-            var totalPatients = await unitOfWork.Appointments.Query()
-      .Where(c => c.DoctorId == doctor.DoctorId
-        && c.AppointmentStatus == AppointmentStatus.Completed
-          )
-      .Select(c => c.PatientId)
-      .Distinct()
-      .CountAsync(cancellationToken);
+          .Include(c => c.ScheduleSlot)
+          .Where(x => x.DoctorId == doctor.DoctorId
+              && !x.IsDeleted
+              && x.ScheduleSlot.Date == today
+              && x.AppointmentStatus != AppointmentStatus.Cancelled)
+          .CountAsync(cancellationToken);
 
+           
+            var patientsSeen = await unitOfWork.Appointments.Query()
+                .Where(c => c.DoctorId == doctor.DoctorId
+                    && c.AppointmentStatus == AppointmentStatus.Completed)
+                .Select(c => c.PatientId)
+                .Distinct()
+                .CountAsync(cancellationToken);
+
+          
             var pendingScans = await unitOfWork.Scans.Query()
                 .Where(c => c.DoctorId == doctor.DoctorId
-                && c.Status == ScanStatus.Pending)
+                    && c.Status == ScanStatus.Pending)
                 .CountAsync(cancellationToken);
 
+          
             var ratings = unitOfWork.Feedbacks.Query()
-      .Where(r => r.DoctorId == doctor.DoctorId);
+                .Where(r => r.DoctorId == doctor.DoctorId);
 
             var satisfactionRate = await ratings.AnyAsync(cancellationToken)
-                ? await ratings.AverageAsync(r => (double)r.Rating, cancellationToken)
+                ? Math.Round((await ratings.AverageAsync(r => (double)r.Rating, cancellationToken) / 5) * 100, 2)
                 : 0;
+
             var dto = new DoctorDashboardDto
             {
                 TodayAppointments = todayAppointments,
-                TotalPatients = totalPatients,
+                TotalPatients = patientsSeen,
                 PendingScans = pendingScans,
                 SatisfactionRate = Math.Round(satisfactionRate * 20, 2) 
             };

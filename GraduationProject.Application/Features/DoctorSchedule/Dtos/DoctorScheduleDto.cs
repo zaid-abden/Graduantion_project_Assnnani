@@ -9,16 +9,15 @@ namespace GraduationProject.Application.Features.DoctorSchedule.Dtos
 {
     public class DoctorScheduleDto
     {
-        public int ScheduleId { get; set; }
-        public WeekDay DayOfWeek { get; set; }
-
-        public TimeOnly StartTime { get; set; }
-        public TimeOnly EndTime { get; set; }
-
-        public string? Location { get; set; }
-        public bool IsActive { get; set; }
-
-      
+        public string Day { get; set; }
+        public List<TimeSlotDto> Slots { get; set; }
+    }
+    public class TimeSlotDto
+    {
+        public int Id { get; set; }
+        public TimeOnly Start { get; set; }
+        public TimeOnly End { get; set; }
+        public string Status { get; set; }
     }
 
 }

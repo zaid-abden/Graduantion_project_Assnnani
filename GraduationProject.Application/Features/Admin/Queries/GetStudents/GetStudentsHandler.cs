@@ -12,8 +12,25 @@ namespace GraduationProject.Application.Features.Admin.Queries.GetStudents
 
 		public async Task<Result<List<StudentListDto>>> Handle(GetStudentsQuery request, CancellationToken cancellationToken)
 		{
-			var data = await _adminRepository.GetStudentsOnlyAsync();
-			return Result<List<StudentListDto>>.Success(data, "Student doctors retrieved successfully.");
+			try
+			{
+				// جلب الداتا من الريبوزيتوري
+				var data = await _adminRepository.GetStudentsOnlyAsync();
+
+				// حالة عدم وجود طلاب (List فاضية)
+				if (data == null || !data.Any())
+				{
+					return Result<List<StudentListDto>>.Success(new List<StudentListDto>(), "No student doctors found.");
+				}
+
+				// حالة النجاح
+				return Result<List<StudentListDto>>.Success(data, "Student doctors retrieved successfully.");
+			}
+			catch (Exception ex)
+			{
+				// هندلة الأخطاء غير المتوقعة (زي انقطاع الداتابيز مثلاً)
+				return Result<List<StudentListDto>>.Failure(ResultStatus.Failure, "An error occurred while fetching student doctors.");
+			}
 		}
 	}
 }

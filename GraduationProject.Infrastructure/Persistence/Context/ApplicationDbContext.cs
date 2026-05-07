@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace GraduationProject.Infrastructure.Context
         public DbSet<Prescription> Prescriptions { get; set; }
         public DbSet<PrescriptionItem> PrescriptionItems { get; set; }
         public DbSet<Specialization> Specializations { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         public DbSet<Scan> Scans { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -44,8 +46,10 @@ namespace GraduationProject.Infrastructure.Context
                 .WithMany()
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+       //     builder.Entity<doctor>()
+       //.HasIndex(d => d.SupervisingNumber)
+       //.IsUnique();
 
-        
             builder.Entity<doctor>()
                 .HasMany(d => d.AIReports)
                 .WithOne(r => r.Doctor)

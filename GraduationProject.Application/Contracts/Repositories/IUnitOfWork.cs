@@ -11,7 +11,8 @@ namespace GraduationProject.Application.Contracts.Repositories
     {
         IAdminRepository Admins { get; }
         IAI_ReportRepository AI_Reports { get; }
-       IMedicalRecordAttachmentRepository MedicalRecordAttachments { get; }
+            INotificationRepository Notifications { get; }
+        IMedicalRecordAttachmentRepository MedicalRecordAttachments { get; }
         IAppointmentRepository Appointments { get; }
         IDoctorRepository Doctors { get; }
         IDoctorScheduleRepository DoctorSchedules { get; }

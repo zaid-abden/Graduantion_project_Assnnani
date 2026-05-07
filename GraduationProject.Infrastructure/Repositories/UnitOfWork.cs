@@ -38,9 +38,13 @@ namespace GraduationProject.Infrastructure.Repositories
 
         public IPrescriptionItemRepository PrescriptionItems { get; }
 		public IMedicalRecordAttachmentRepository MedicalRecordAttachments { get; }
+
+        public INotificationRepository Notifications { get; }	
+
         public UnitOfWork(
 			ApplicationDbContext context,
-			IPrescriptionItemRepository prescriptionRepository1,
+			INotificationRepository notificationRepository,
+            IPrescriptionItemRepository prescriptionRepository1,
             IAllergyRepository allergyRepository,
             IAdminRepository adminRepository,
 			IMedicalRecordAttachmentRepository medicalRecordAttachmentRepository,
@@ -64,7 +68,8 @@ namespace GraduationProject.Infrastructure.Repositories
 		)
 		{
 			_context = context;
-          
+			Notifications = notificationRepository;
+
             Admins = adminRepository;
 				MedicalRecordAttachments = medicalRecordAttachmentRepository;
             Allergies = allergyRepository;

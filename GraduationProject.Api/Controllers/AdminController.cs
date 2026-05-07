@@ -5,6 +5,7 @@ using GraduationProject.Application.Features.Admin.Commands.SendEmail;
 using GraduationProject.Application.Features.Admin.Commands.ToggleUserStatus;
 using GraduationProject.Application.Features.Admin.DTOs;
 using GraduationProject.Application.Features.Admin.Queries.GetAllUsers;
+using GraduationProject.Application.Features.Admin.Queries.GetDoctorsByStatus;
 using GraduationProject.Application.Features.Admin.Queries.GetDoctorsOnly;
 using GraduationProject.Application.Features.Admin.Queries.GetPatients;
 using GraduationProject.Application.Features.Admin.Queries.GetPendingUsers;
@@ -12,6 +13,7 @@ using GraduationProject.Application.Features.Admin.Queries.GetReceptionists;
 using GraduationProject.Application.Features.Admin.Queries.GetRejectedUsers;
 using GraduationProject.Application.Features.Admin.Queries.GetStats;
 using GraduationProject.Application.Features.Admin.Queries.GetStudents;
+using GraduationProject.Data.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -79,10 +81,10 @@ namespace GraduationProject.Api.Controllers
 
 		#region User Management (All Roles)
 
-		[HttpGet("users")]
-		public async Task<IActionResult> GetAllUsers([FromQuery] GetAllUsersQuery query)
+		[HttpPost("users/all")] // غيرنا المسار والنوع لـ Post
+		public async Task<IActionResult> GetAllUsers([FromBody] GetAllUsersQuery filter)
 		{
-			var result = await _mediator.Send(query);
+			var result = await _mediator.Send(filter);
 			return result.ToActionResult();
 		}
 
@@ -90,6 +92,15 @@ namespace GraduationProject.Api.Controllers
 		public async Task<IActionResult> GetDoctors()
 		{
 			var result = await _mediator.Send(new GetDoctorsQuery());
+			return result.ToActionResult();
+		}
+
+		[HttpGet("doctors/status")]
+		public async Task<IActionResult> GetDoctorsByStatus([FromQuery] DoctorVerificationStatus? status)
+		{
+			// مثال للاستدعاء: /api/admin/doctors?status=2 (لجلب الـ Pending)
+			// أو: /api/admin/doctors (لجلب الكل)
+			var result = await _mediator.Send(new GetDoctorsByStatusQuery(status));
 			return result.ToActionResult();
 		}
 

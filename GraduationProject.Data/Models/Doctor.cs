@@ -1,10 +1,12 @@
 ﻿using GraduationProject.Data.Enums;
 using GraduationProject.Data.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GraduationProject.Data.Models
 {
     [Table("Doctors")]
+    //[Index(nameof(SupervisingNumber), IsUnique = true)]
     public class doctor
     {
         public int DoctorId { get; set; }
@@ -45,7 +47,8 @@ namespace GraduationProject.Data.Models
         public List<string>? Languages { get; set; }
         public int? SpecializationId { get; set; }
         public Specialization Specialization { get; set; }
-
+     
+        public string SupervisingNumber { get; set; } = null!;
 
         // Relations
         [ForeignKey(nameof(UserId))]
@@ -56,7 +59,7 @@ namespace GraduationProject.Data.Models
         public ICollection<medicalRecord> MedicalRecords { get; set; }
         public ICollection<Feedback> Feedbacks { get; set; }
         public ICollection<AI_Report> AIReports { get; set; }
-       
+       public ICollection<StudentDoctor> StudentDoctors { get; set; }
         public ICollection<Verification> Verifications { get; set; }
         public ICollection<doctorSchedule> DoctorSchedules { get; set; } = new List<doctorSchedule>();
         public ICollection<Appointment> Appointments { get; set; } = new HashSet<Appointment>();

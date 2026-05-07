@@ -1,9 +1,11 @@
-﻿using GraduationProject.Application.Common.Results;
+﻿using GraduationProject.Application.BackgroundJobs.Appointments;
+using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
 using GraduationProject.Application.Features.Appointments.Dtos;
 using GraduationProject.Data.Enums;
 using GraduationProject.Data.Models;
+using Hangfire;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -89,6 +91,19 @@ namespace GraduationProject.Application.Features.Appointments.Commands.AddAppoin
 
            
             patient.AssignedDoctorId = doctorId;
+
+            if (patient.Status == PatientStatus.Pending)
+            {
+                patient.Status = PatientStatus.Active;
+            }
+
+            if (patient.Status == PatientStatus.InActive)
+            {
+                patient.Status = PatientStatus.Active;
+            }
+
+
+
             var appointment = new Appointment
             {
                 PaymentStatus = PaymentStatus.Pending,
@@ -100,6 +115,10 @@ namespace GraduationProject.Application.Features.Appointments.Commands.AddAppoin
                 CreatedAt = DateTime.Now,
                 CreatedBy = currentUserService.UserName,
                 DoctorId = doctorId,
+                QueueStatus = null,
+                IsCheckedIn = false,
+                ArrivedAt = null,
+               
             };
         
 
@@ -131,10 +150,14 @@ namespace GraduationProject.Application.Features.Appointments.Commands.AddAppoin
                 BookingType = appointment.BookingType,
                 CreatedAt = appointment.CreatedAt,
                 AppointmentTime = appointmentDateTime,
-  
+              
                 Message = "Your appointment has been booked successfully"
             };
             patient.AssignedDoctorId = doctorId;
+            BackgroundJob.Schedule<IAppointmentJobService>(
+    x => x.AutoConfirm(appointment.AppointmentId),
+    TimeSpan.FromMinutes(10));
+
             return Result<AddAppointmentResponseDto>.Success(addAppointmentResponseDto);
 
         }

@@ -1,9 +1,13 @@
 ﻿using GraduationProject.Api.Common.Responses;
+using GraduationProject.Application.Features.DoctorSchedule.Commands.BlockScheduleRange;
 using GraduationProject.Application.Features.DoctorSchedule.Commands.CreateSchedule;
 using GraduationProject.Application.Features.DoctorSchedule.Commands.DeactiveSchedule;
 using GraduationProject.Application.Features.DoctorSchedule.Commands.DeleteSchedule;
+using GraduationProject.Application.Features.DoctorSchedule.Commands.DeleteScheduleSlot;
 using GraduationProject.Application.Features.DoctorSchedule.Commands.MakeAScheduleActive;
 using GraduationProject.Application.Features.DoctorSchedule.Commands.RestoreSchedule;
+using GraduationProject.Application.Features.DoctorSchedule.Commands.RestoreScheduleSlot;
+using GraduationProject.Application.Features.DoctorSchedule.Commands.UnblockScheduleRange;
 using GraduationProject.Application.Features.DoctorSchedule.Commands.UpdateSchedule;
 using GraduationProject.Application.Features.DoctorSchedule.Queries.GellAllActiveSchedule;
 using GraduationProject.Application.Features.DoctorSchedule.Queries.GetAllActiveScheduleForDoctor;
@@ -34,7 +38,7 @@ namespace GraduationProject.Api.Controllers
        
         [HttpGet]
         [SwaggerOperation(
-            Summary = "Get all doctor schedules",
+            Summary = "my-schedules",
             Description = "Retrieves all schedules (active and inactive) for all doctors."
         )]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -43,67 +47,125 @@ namespace GraduationProject.Api.Controllers
             var result = await mediator.Send(new GetAllSchedulesQuery());
             return result.ToActionResult();
         }
-
-      
-        [HttpGet("active")]
+        [HttpDelete("schedule-slot/{id}")]
         [SwaggerOperation(
-            Summary = "Get active schedules",
-            Description = "Retrieves all active schedules for doctors."
-        )]
-        public async Task<IActionResult> GetActiveSchedulesForDoctor()
+    Summary = "Delete schedule slot",
+    Description = "Soft deletes a schedule slot by marking it as blocked (unavailable)."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteScheduleSlot(int id)
         {
-            var result = await mediator.Send(new GetAllActiveScheduleQuery());
+            var result = await mediator.Send(new DeleteScheduleSlotCommand(id));
             return result.ToActionResult();
         }
 
-     
-        [HttpGet("inactive")]
+        [HttpPatch("schedule-slot/{id}/restore")]
         [SwaggerOperation(
-            Summary = "Get inactive schedules",
-            Description = "Retrieves all deactivated/inactive schedules."
-        )]
-        public async Task<IActionResult> GetNotActiveSchedulesForDoctor()
+    Summary = "Restore schedule slot",
+    Description = "Makes a blocked slot available again."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> RestoreScheduleSlot(int id)
         {
-            var result = await mediator.Send(new GetAllNotActiveScheduleQuery());
+            var result = await mediator.Send(new RestoreScheduleSlotCommand(id));
+          
+
             return result.ToActionResult();
         }
 
-      
-        [HttpGet("{id}")]
+        [HttpPatch("schedule/block-range")]
         [SwaggerOperation(
-            Summary = "Get schedule by ID",
-            Description = "Retrieves a specific schedule using its ID."
-        )]
-        public async Task<IActionResult> GetScheduleById(int id)
+    Summary = "Block schedule range",
+    Description = "Blocks all available slots within a given time range."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> BlockScheduleRange([FromBody] BlockScheduleRangeCommand command)
         {
-            var result = await mediator.Send(new GetScheduleByIdQuery(id));
+            var result = await mediator.Send(command);
             return result.ToActionResult();
         }
-
-        [HttpGet("doctor/{doctorId}/active")]
+        [HttpPatch("schedule/unblock-range")]
         [SwaggerOperation(
-            Summary = "Get active schedules for doctor",
-            Description = "Retrieves active schedules for a specific doctor."
-        )]
-        public async Task<IActionResult> GetScheduleDetailsByDoctor(int doctorId)
+    Summary = "Unblock schedule range",
+    Description = "Unblocks all blocked slots within a given time range."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UnblockScheduleRange([FromBody] UnblockScheduleRangeCommand command)
         {
-            var result = await mediator.Send(new GetAllActiveScheduleForDoctorQuery(doctorId));
+            var result = await mediator.Send(command);
             return result.ToActionResult();
         }
+        //[HttpGet("active")]
+        //[SwaggerOperation(
+        //    Summary = "Get active schedules",
+        //    Description = "Retrieves all active schedules for doctors."
+        //)]
+        //public async Task<IActionResult> GetActiveSchedulesForDoctor()
+        //{
+        //    var result = await mediator.Send(new GetAllActiveScheduleQuery());
+        //    return result.ToActionResult();
+        //}
 
-        
-        [HttpGet("doctor/{doctorId}/day/{day}")]
-        [SwaggerOperation(
-            Summary = "Get schedules by doctor and day",
-            Description = "Retrieves schedules filtered by doctor and weekday."
-        )]
-        public async Task<IActionResult> GetSchedulesByDoctorAndDay(int doctorId, WeekDay day)
-        {
-            var result = await mediator.Send(new GetSchedulesByDoctorDayQuery(doctorId, day));
-            return result.ToActionResult();
-        }
 
-     
+        //[HttpGet("inactive")]
+        //[SwaggerOperation(
+        //    Summary = "Get inactive schedules",
+        //    Description = "Retrieves all deactivated/inactive schedules."
+        //)]
+        //public async Task<IActionResult> GetNotActiveSchedulesForDoctor()
+        //{
+        //    var result = await mediator.Send(new GetAllNotActiveScheduleQuery());
+        //    return result.ToActionResult();
+        //}
+
+
+        //[HttpGet("{id}")]
+        //[SwaggerOperation(
+        //    Summary = "Get schedule by ID",
+        //    Description = "Retrieves a specific schedule using its ID."
+        //)]
+        //public async Task<IActionResult> GetScheduleById(int id)
+        //{
+        //    var result = await mediator.Send(new GetScheduleByIdQuery(id));
+        //    return result.ToActionResult();
+        //}
+
+        //[HttpGet("doctor/{doctorId}/active")]
+        //[SwaggerOperation(
+        //    Summary = "Get active schedules for doctor",
+        //    Description = "Retrieves active schedules for a specific doctor."
+        //)]
+        //public async Task<IActionResult> GetScheduleDetailsByDoctor(int doctorId)
+        //{
+        //    var result = await mediator.Send(new GetAllActiveScheduleForDoctorQuery(doctorId));
+        //    return result.ToActionResult();
+        //}
+
+
+        //[HttpGet("doctor/{doctorId}/day/{day}")]
+        //[SwaggerOperation(
+        //    Summary = "Get schedules by doctor and day",
+        //    Description = "Retrieves schedules filtered by doctor and weekday."
+        //)]
+        //public async Task<IActionResult> GetSchedulesByDoctorAndDay(int doctorId, WeekDay day)
+        //{
+        //    var result = await mediator.Send(new GetSchedulesByDoctorDayQuery(doctorId, day));
+        //    return result.ToActionResult();
+        //}
+
+
         [HttpPost]
         [SwaggerOperation(
             Summary = "Create new schedule",
@@ -116,67 +178,67 @@ namespace GraduationProject.Api.Controllers
         }
 
        
-        [HttpPut("{id}")]
-        [SwaggerOperation(
-            Summary = "Update schedule",
-            Description = "Updates an existing doctor schedule."
-        )]
-        public async Task<IActionResult> UpdateSchedule(int id, [FromBody] UpdateScheduleCommand command)
-        {
-            if (id != command.ScheduleId)
-                return BadRequest("Schedule ID mismatch between URL and body.");
+        //[HttpPut("{id}")]
+        //[SwaggerOperation(
+        //    Summary = "Update schedule",
+        //    Description = "Updates an existing doctor schedule."
+        //)]
+        //public async Task<IActionResult> UpdateSchedule(int id, [FromBody] UpdateScheduleCommand command)
+        //{
+        //    if (id != command.ScheduleId)
+        //        return BadRequest("Schedule ID mismatch between URL and body.");
 
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
+        //    var result = await mediator.Send(command);
+        //    return result.ToActionResult();
+        //}
 
-        [HttpDelete("{id}")]
-        [SwaggerOperation(
-            Summary = "Delete schedule",
-            Description = "Permanently deletes a doctor schedule."
-        )]
-        public async Task<IActionResult> DeleteSchedule(int id, [FromBody] DeleteScheduleCommand command)
-        {
-            if (id != command.ScheduleId)
-                return BadRequest("Schedule ID mismatch between URL and body.");
+        //[HttpDelete("{id}")]
+        //[SwaggerOperation(
+        //    Summary = "Delete schedule",
+        //    Description = "Permanently deletes a doctor schedule."
+        //)]
+        //public async Task<IActionResult> DeleteSchedule(int id, [FromBody] DeleteScheduleCommand command)
+        //{
+        //    if (id != command.ScheduleId)
+        //        return BadRequest("Schedule ID mismatch between URL and body.");
 
-            var result = await mediator.Send(command);
-            return result.ToActionResult();
-        }
+        //    var result = await mediator.Send(command);
+        //    return result.ToActionResult();
+        //}
 
      
-        [HttpPatch("{id}/activate")]
-        [SwaggerOperation(
-            Summary = "Activate schedule",
-            Description = "Reactivates a previously deactivated schedule."
-        )]
-        public async Task<IActionResult> MakeScheduleActive(int id)
-        {
-            var result = await mediator.Send(new MakeAScheduleActiveCommand(id));
-            return result.ToActionResult();
-        }
+        //[HttpPatch("{id}/activate")]
+        //[SwaggerOperation(
+        //    Summary = "Activate schedule",
+        //    Description = "Reactivates a previously deactivated schedule."
+        //)]
+        //public async Task<IActionResult> MakeScheduleActive(int id)
+        //{
+        //    var result = await mediator.Send(new MakeAScheduleActiveCommand(id));
+        //    return result.ToActionResult();
+        //}
 
        
-        [HttpPatch("{id}/deactivate")]
-        [SwaggerOperation(
-            Summary = "Deactivate schedule",
-            Description = "Soft deletes a schedule if it has no active appointments."
-        )]
-        public async Task<IActionResult> Deactivate(int id)
-        {
-            var result = await mediator.Send(new DeactivateScheduleCommand(id));
-            return result.ToActionResult();
-        }
+        //[HttpPatch("{id}/deactivate")]
+        //[SwaggerOperation(
+        //    Summary = "Deactivate schedule",
+        //    Description = "Soft deletes a schedule if it has no active appointments."
+        //)]
+        //public async Task<IActionResult> Deactivate(int id)
+        //{
+        //    var result = await mediator.Send(new DeactivateScheduleCommand(id));
+        //    return result.ToActionResult();
+        //}
 
-        [HttpPatch("{id}/restore")]
-        [SwaggerOperation(
-            Summary = "Restore schedule",
-            Description = "Reactivates a previously deactivated schedule if there are no conflicts with active schedules."
-        )]
-        public async Task<IActionResult> Restore(int id)
-        {
-            var result = await mediator.Send(new RestoreScheduleCommand(id));
-            return result.ToActionResult();
-        }
+        //[HttpPatch("{id}/restore")]
+        //[SwaggerOperation(
+        //    Summary = "Restore schedule",
+        //    Description = "Reactivates a previously deactivated schedule if there are no conflicts with active schedules."
+        //)]
+        //public async Task<IActionResult> Restore(int id)
+        //{
+        //    var result = await mediator.Send(new RestoreScheduleCommand(id));
+        //    return result.ToActionResult();
+        //}
     }
 }

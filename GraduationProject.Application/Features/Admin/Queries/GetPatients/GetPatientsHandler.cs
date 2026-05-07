@@ -12,8 +12,27 @@ namespace GraduationProject.Application.Features.Admin.Queries.GetPatients
 
 		public async Task<Result<List<PatientListDto>>> Handle(GetPatientsQuery request, CancellationToken cancellationToken)
 		{
-			var data = await _adminRepository.GetPatientsOnlyAsync();
-			return Result<List<PatientListDto>>.Success(data, "Patients retrieved successfully.");
+			try
+			{
+				// 1. جلب البيانات من الـ Repository
+				var data = await _adminRepository.GetPatientsOnlyAsync();
+
+				// 2. حالة عدم وجود أي مرضى (قائمة فارغة)
+				if (data == null || !data.Any())
+				{
+					// بنرجع Success لكن مع قائمة فاضية ورسالة واضحة
+					return Result<List<PatientListDto>>.Success(new List<PatientListDto>(), "No patients found.");
+				}
+
+				// 3. حالة النجاح مع وجود بيانات
+				return Result<List<PatientListDto>>.Success(data, "Patients retrieved successfully.");
+			}
+			catch (Exception ex)
+			{
+				// 4. حالة حدوث خطأ غير متوقع (Database down, mapping error, etc.)
+				// بنستخدم ResultStatus.Failure اللي عندك
+				return Result<List<PatientListDto>>.Failure(ResultStatus.Failure, $"An error occurred: {ex.Message}");
+			}
 		}
 	}
 }

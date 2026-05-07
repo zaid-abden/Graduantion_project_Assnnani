@@ -5,9 +5,12 @@ using GraduationProject.Application.Features.Patients.commands.AddPatient;
 using GraduationProject.Application.Features.Patients.commands.AddPatientAllergy;
 using GraduationProject.Application.Features.Patients.commands.ChangePatientStatus;
 using GraduationProject.Application.Features.Patients.commands.updatepationtcommand;
+using GraduationProject.Application.Features.Patients.Dtos;
 using GraduationProject.Application.Features.Patients.Queries.DoctorByID;
 using GraduationProject.Application.Features.Patients.Queries.DoctorFilteraion;
 using GraduationProject.Application.Features.Patients.Queries.GetAllAppointment;
+using GraduationProject.Application.Features.Patients.Queries.GetMyDoctors;
+
 
 
 //using GraduationProject.Application.Features.Patients.Queries.GetAvaliableSlots;
@@ -20,6 +23,7 @@ using GraduationProject.Application.Features.Patients.Queries.PatientDashborad;
 //using GraduationProject.Application.Features.Patients.Commands.CreatePatient;
 
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -146,6 +150,20 @@ namespace GraduationProject.Api.Controllers
             [FromQuery] GetPatientAppointmentsQuery query)
         {
             var result = await _mediator.Send(query);
+
+            return result.ToActionResult();
+        }
+        //[Authorize(Roles = "Patient")]
+        [HttpGet("my-doctors")]
+        [SwaggerOperation(
+    Summary = "Get my doctors",
+    Description = "Returns a list of doctors associated with the authenticated patient based on previous appointments or ongoing treatments."
+)]
+        [ProducesResponseType(typeof(Result<List<DoctorrDto>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetMyDoctors()
+        {
+            var result = await _mediator.Send(new GetMyDoctorsQuery());
 
             return result.ToActionResult();
         }

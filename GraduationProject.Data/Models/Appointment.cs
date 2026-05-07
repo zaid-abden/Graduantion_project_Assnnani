@@ -27,6 +27,12 @@ namespace GraduationProject.Data.Models
         public PatientStatus PatientStatus { get; set; }
         public TimeOnly ArrivelTime { get; set; }
         public medicalRecord? MedicalRecord { get; set; }
+        public bool IsCheckedIn { get; set; } = false;
+
+        public TimeOnly? ArrivedAt { get; set; }
+        public int? QueueNumber { get; set; }
+        public QueueStatus? QueueStatus { get; set; }
+        public bool IsReminderSent { get; set; } = false;
     }
 
 }

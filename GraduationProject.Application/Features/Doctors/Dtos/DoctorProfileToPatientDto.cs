@@ -82,6 +82,7 @@ namespace GraduationProject.Application.Features.Doctors.Dtos
 
     public class SlotTimeDto
     {
+        public int Id { get; set; }
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
         public bool IsAvailable { get; set; }   

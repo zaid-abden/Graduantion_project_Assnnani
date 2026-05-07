@@ -53,9 +53,7 @@ namespace GraduationProject.Application.Features.Patients.commands.AddPatient
                 .When(x => x.Address != null);
 
            
-            RuleFor(x => x.MedicalHistory)
-                .MaximumLength(1000)
-                .When(x => x.MedicalHistory != null);
+           
         }
 
         

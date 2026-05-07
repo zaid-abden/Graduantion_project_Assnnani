@@ -14,7 +14,7 @@ namespace GraduationProject.Application.Features.Patients.Dtos
         public int Age { get; set; }
         public string Gender { get; set; }
         public string Status { get; set; }
-        public DateOnly LastVisit { get; set; }
+        public DateOnly? LastVisit { get; set; }
         public string AssignedDoctor { get; set; }
     }
 }

@@ -12,8 +12,22 @@ namespace GraduationProject.Application.Features.Admin.Queries.GetReceptionists
 
 		public async Task<Result<List<ReceptionistListDto>>> Handle(GetReceptionistsQuery request, CancellationToken cancellationToken)
 		{
-			var data = await _adminRepository.GetReceptionistsOnlyAsync();
-			return Result<List<ReceptionistListDto>>.Success(data);
+			try
+			{
+				var data = await _adminRepository.GetReceptionistsOnlyAsync();
+
+				if (data == null || !data.Any())
+				{
+					return Result<List<ReceptionistListDto>>.Success(new List<ReceptionistListDto>(), "No receptionists found.");
+				}
+
+				return Result<List<ReceptionistListDto>>.Success(data, "Receptionists retrieved successfully.");
+			}
+			catch (Exception ex)
+			{
+				// هندلة أي خطأ في الـ Database أو الـ Mapping
+				return Result<List<ReceptionistListDto>>.Failure(ResultStatus.Failure, "An error occurred while fetching receptionists.");
+			}
 		}
 	}
 }

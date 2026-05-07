@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Scans.Commands.CreateScan
 {
-    public class CreateScanCommand : IRequest<Result<int>>
+    public class CreateScanCommand : IRequest<Result<string>>
     {
         public IFormFile File { get; set; } 
 

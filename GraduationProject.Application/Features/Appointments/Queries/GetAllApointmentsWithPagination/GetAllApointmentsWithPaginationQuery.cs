@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Appointments.Queries.GetAllApointmentsWithPagination
 {
-    public class GetAllApointmentsWithPaginationQuery:IRequest<Result<PaginatedResult<AppointmentDto>>>
+    public class GetAllApointmentsWithPaginationQuery:IRequest<Result<PaginatedResult<AppointmentDtto>>>
     {
             public int PageSize { get; set; }
             public int PageNumber { get; set; }

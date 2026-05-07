@@ -1,6 +1,7 @@
 ﻿using GraduationProject.Application.Common.Results;
 using GraduationProject.Application.Contracts.Identity;
 using GraduationProject.Application.Contracts.Repositories;
+using GraduationProject.Application.Contracts.Services;
 using GraduationProject.Application.Features.Scans.Dtos;
 using GraduationProject.Data.Enums;
 using MediatR;
@@ -15,11 +16,13 @@ namespace GraduationProject.Application.Features.Doctors.Queries.GetPendingScans
 {
     public class GetPendingScansQueryHandler : IRequestHandler<GetPendingScansQuery, Result<List<ScanDto>>>
     {
+        private readonly INotificationService notificationService;
         private readonly IUnitOfWork unitOfWork;
         private readonly ICurrentUserService currentUserService;
 
-        public GetPendingScansQueryHandler(IUnitOfWork unitOfWork,ICurrentUserService currentUserService)
+        public GetPendingScansQueryHandler(INotificationService notificationService,   IUnitOfWork unitOfWork,ICurrentUserService currentUserService)
         {
+            this.notificationService = notificationService;
             this.unitOfWork = unitOfWork;
             this.currentUserService = currentUserService;
         }
@@ -45,6 +48,11 @@ namespace GraduationProject.Application.Features.Doctors.Queries.GetPendingScans
                     ScanType = x.ScanType.ToString(),
                     UploadedAt = x.UploadedAt
                 }).ToListAsync(cancellationToken);
+
+            await notificationService.SendToUserAsync(doctor.UserId,
+                 "Pending Scan Alert",
+                  "You have scans pending review.",
+     NotificationType.Warning);
             return Result<List<ScanDto>>.Success(pendingScansDto);  
         }
     }

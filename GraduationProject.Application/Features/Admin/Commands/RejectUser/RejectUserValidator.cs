@@ -8,8 +8,8 @@ namespace GraduationProject.Application.Features.Admin.Commands.RejectUser
 		{
 			RuleFor(x => x.Id).NotEmpty().WithMessage("User ID is required.");
 			RuleFor(x => x.Reason)
-				.NotEmpty().WithMessage("Rejection reason is required.")
-				.MinimumLength(10).WithMessage("Please provide a reason with at least 10 characters.");
+				.NotEmpty().WithMessage("Rejection reason is required.");
+			//.MinimumLength(10).WithMessage("Please provide a reason with at least 10 characters.");
 		}
 	}
 }

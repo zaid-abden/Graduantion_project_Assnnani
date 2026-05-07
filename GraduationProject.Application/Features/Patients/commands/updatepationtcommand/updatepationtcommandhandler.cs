@@ -38,7 +38,7 @@ public class UpdatePatientProfileHandler
         user.LastName = request.LName??user.LastName;
         user.PhoneNumber = request.Phone??user.PhoneNumber;
         patient.Address = request.Address??patient.Address;
-        patient.MedicalHistory = request.MedicalHistory??patient.MedicalHistory;
+       
 
          unitOfWork.Patients.Update(patient);
         var result= await _userManager.UpdateAsync(user);

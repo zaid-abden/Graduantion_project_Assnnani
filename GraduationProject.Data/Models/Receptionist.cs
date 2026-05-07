@@ -14,7 +14,7 @@ namespace GraduationProject.Data.Models
     {
         public int ReceptionistId { get; set; }
         public ShiftType Shift { get; set; }= ShiftType.Morning;
-        public string? ImageUrl { get; set; }
+       // public string? ImageUrl { get; set; }
 
      
         public string UserId { get; set; }

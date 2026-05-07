@@ -20,7 +20,7 @@ namespace GraduationProject.Application.Features.Patients.commands.AddPatient
         // Patient data
         public DateTime DateOfBirth { get; set; }
         public string? Address { get; set; }
-        public string? MedicalHistory { get; set; }
+
         public Gender Gender { get; set; }
         public BloodType? BloodType { get; set; }
         }

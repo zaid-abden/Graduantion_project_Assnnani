@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace GraduationProject.Application.Features.Appointments.Queries.GetAllApointmentsWithPagination
 {
-    public class GetAllApointmentsWithPaginationQueryHandler : IRequestHandler<GetAllApointmentsWithPaginationQuery, Result<PaginatedResult<AppointmentDto>>>
+    public class GetAllApointmentsWithPaginationQueryHandler : IRequestHandler<GetAllApointmentsWithPaginationQuery, Result<PaginatedResult<AppointmentDtto>>>
     {
         private readonly IUnitOfWork unitOfWork;
 
@@ -20,7 +20,7 @@ namespace GraduationProject.Application.Features.Appointments.Queries.GetAllApoi
         {
             this.unitOfWork = unitOfWork;
         }
-        public async Task<Result<PaginatedResult<AppointmentDto>>> Handle(GetAllApointmentsWithPaginationQuery request, CancellationToken cancellationToken)
+        public async Task<Result<PaginatedResult<AppointmentDtto>>> Handle(GetAllApointmentsWithPaginationQuery request, CancellationToken cancellationToken)
         {
             var appointments = await unitOfWork.Appointments.Query()
                 .Skip((request.PageNumber-1)  * request.PageSize)
@@ -30,7 +30,7 @@ namespace GraduationProject.Application.Features.Appointments.Queries.GetAllApoi
     .Include(a => a.Doctor)
         .ThenInclude(d => d.User)
     .Include(a => a.ScheduleSlot)
-    .Select(a => new AppointmentDto
+    .Select(a => new AppointmentDtto
     {
         AppointmentId = a.AppointmentId,
         StartTime = a.ScheduleSlot.StartTime,
@@ -42,7 +42,7 @@ namespace GraduationProject.Application.Features.Appointments.Queries.GetAllApoi
     .ToListAsync();
 
             var count =await unitOfWork.Appointments.Query().CountAsync();
-            return Result<PaginatedResult<AppointmentDto>>.Success(new PaginatedResult<AppointmentDto>(appointments,request.PageNumber,request.PageSize,count));
+            return Result<PaginatedResult<AppointmentDtto>>.Success(new PaginatedResult<AppointmentDtto>(appointments,request.PageNumber,request.PageSize,count));
         }
     }
 }

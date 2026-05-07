@@ -54,15 +54,21 @@ namespace GraduationProject.Application.Features.Appointments.Commands.CancelApp
                 .FirstOrDefaultAsync(x => x.Id == appointment.ScheduleSlotId
                 , cancellationToken);
 
-            var slotDateTime = scheduleSlots.Date.ToDateTime(scheduleSlots.StartTime);
+         //   var slotDateTime = scheduleSlots.Date.ToDateTime(scheduleSlots.StartTime);
             if (scheduleSlots is null)
                 return Result<string>.Failure(
-        ResultStatus.NotFound,
-        "Schedule slot not found.");
+                    ResultStatus.NotFound,
+                    "Schedule slot not found."
+                );
+
+            var slotDateTime = scheduleSlots.Date.ToDateTime(scheduleSlots.StartTime);
 
             if (appointment.AppointmentStatus == AppointmentStatus.Confirmed)
             {
-                if (slotDateTime <= DateTime.Now.AddHours(2))
+                var now = DateTime.Now;
+                var diff = slotDateTime - now;
+
+                if (diff.TotalHours <= 2)
                 {
                     return Result<string>.Failure(
                         ResultStatus.Conflict,
