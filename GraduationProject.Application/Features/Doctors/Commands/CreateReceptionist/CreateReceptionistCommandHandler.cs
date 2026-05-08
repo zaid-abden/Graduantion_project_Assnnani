@@ -102,6 +102,10 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateReceptio
                 UserId = user.Id,
                 DoctorId = doctor.DoctorId,
                 Shift = ShiftType.Morning,
+                IsActive = true,
+               ShiftEnd = request.ShiftEnd,
+                    ShiftStart = request.ShiftStart,
+                   
 
             };
 

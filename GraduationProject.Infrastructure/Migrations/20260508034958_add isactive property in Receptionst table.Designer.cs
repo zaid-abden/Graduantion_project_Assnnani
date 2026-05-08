@@ -4,6 +4,7 @@ using GraduationProject.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraduationProject.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260508034958_add isactive property in Receptionst table")]
+    partial class addisactivepropertyinReceptionsttable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,9 +68,6 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LastLoginDateUtc")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -289,34 +289,6 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.HasIndex("ScheduleSlotId");
 
                     b.ToTable("Appointments");
-                });
-
-            modelBuilder.Entity("GraduationProject.Data.Models.DoctorBreak", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DoctorBreaks");
                 });
 
             modelBuilder.Entity("GraduationProject.Data.Models.EmailVerification", b =>
@@ -600,12 +572,6 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.Property<int>("Shift")
                         .HasColumnType("int");
 
-                    b.Property<TimeOnly>("ShiftEnd")
-                        .HasColumnType("time");
-
-                    b.Property<TimeOnly>("ShiftStart")
-                        .HasColumnType("time");
-
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -615,7 +581,8 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.HasKey("ReceptionistId");
 
-                    b.HasIndex("DoctorId");
+                    b.HasIndex("DoctorId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -1424,9 +1391,9 @@ namespace GraduationProject.Infrastructure.Migrations
             modelBuilder.Entity("GraduationProject.Data.Models.Receptionist", b =>
                 {
                     b.HasOne("GraduationProject.Data.Models.doctor", "Doctor")
-                        .WithMany("Receptionists")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne("Receptionist")
+                        .HasForeignKey("GraduationProject.Data.Models.Receptionist", "DoctorId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("GraduationProject.Data.Identity.User", "User")
@@ -1720,7 +1687,8 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Navigation("Prescriptions");
 
-                    b.Navigation("Receptionists");
+                    b.Navigation("Receptionist")
+                        .IsRequired();
 
                     b.Navigation("StudentDoctors");
 

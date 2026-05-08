@@ -4,6 +4,7 @@ using GraduationProject.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GraduationProject.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260508042201_add dateofseet lastlogin in aspnetusers")]
+    partial class adddateofseetlastlogininaspnetusers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -289,34 +292,6 @@ namespace GraduationProject.Infrastructure.Migrations
                     b.HasIndex("ScheduleSlotId");
 
                     b.ToTable("Appointments");
-                });
-
-            modelBuilder.Entity("GraduationProject.Data.Models.DoctorBreak", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Note")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DoctorBreaks");
                 });
 
             modelBuilder.Entity("GraduationProject.Data.Models.EmailVerification", b =>
@@ -599,12 +574,6 @@ namespace GraduationProject.Infrastructure.Migrations
 
                     b.Property<int>("Shift")
                         .HasColumnType("int");
-
-                    b.Property<TimeOnly>("ShiftEnd")
-                        .HasColumnType("time");
-
-                    b.Property<TimeOnly>("ShiftStart")
-                        .HasColumnType("time");
 
                     b.Property<string>("UserId")
                         .IsRequired()

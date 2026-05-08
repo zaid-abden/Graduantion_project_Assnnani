@@ -56,7 +56,7 @@ namespace GraduationProject.Application.Features.Doctors.Commands.AssignSupervis
             var user = await userManager.FindByIdAsync(studentDoctor.UserId.ToString());
             if (user == null)
                 return Result<string>.Failure(ResultStatus.NotFound, "Associated user not found.");
-
+            await userManager.RemoveFromRoleAsync(user,"Patient");
             await userManager.AddToRoleAsync(user, "StudentDoctor");
 
             studentDoctor.ClinicLocation = request.ClinicLocation;

@@ -9,8 +9,8 @@ namespace GraduationProject.Data.Identity
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string FullName => $"{FirstName} {LastName}";
-
-		public DateTime? BirthDate { get; set; }
+        public DateTimeOffset? LastLoginDateUtc { get; set; }
+        public DateTime? BirthDate { get; set; }
 		public string? ImageUrl { get; set; }
 		public bool IsActive { get; set; }
 		public bool EmailVerified { get; set; } = false;

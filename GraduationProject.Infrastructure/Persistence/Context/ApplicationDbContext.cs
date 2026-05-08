@@ -29,6 +29,7 @@ namespace GraduationProject.Infrastructure.Context
         public DbSet<StudentDoctor> StudentDoctors { get; set; }
         public DbSet<Verification> Verifications { get; set; }
         public DbSet<EmailVerification> EmailVerifications { get; set; }
+        public DbSet<DoctorBreak> DoctorBreaks { get; set; }
         public DbSet<Allergy> Allergies { get; set; }
         public DbSet<PatientAllergy> PatientAllergies { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
@@ -79,11 +80,7 @@ namespace GraduationProject.Infrastructure.Context
                 .HasForeignKey(s => s.DoctorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<doctor>()
-                .HasOne(d => d.Receptionist)
-                .WithOne(r => r.Doctor)
-                .HasForeignKey<Receptionist>(r => r.DoctorId)
-                .OnDelete(DeleteBehavior.Restrict);
+           
 
             // ==================== Patients ====================
             builder.Entity<Patient>()

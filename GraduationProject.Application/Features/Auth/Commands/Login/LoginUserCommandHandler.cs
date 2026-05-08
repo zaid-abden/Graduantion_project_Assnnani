@@ -40,6 +40,8 @@ namespace GraduationProject.Application.Features.Auth.Commands.Login
 				Message = "You have logged in successfully",
 				Username = request.Email
 			};
+			user.LastLoginDateUtc = DateTime.UtcNow;
+			await userManager.UpdateAsync(user);
 			return Result<AuthDto>.Success(authDto);
 		}
 	}

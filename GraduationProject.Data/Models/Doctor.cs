@@ -63,7 +63,7 @@ namespace GraduationProject.Data.Models
         public ICollection<Verification> Verifications { get; set; }
         public ICollection<doctorSchedule> DoctorSchedules { get; set; } = new List<doctorSchedule>();
         public ICollection<Appointment> Appointments { get; set; } = new HashSet<Appointment>();
-        public Receptionist Receptionist { get; set; }
+       public ICollection<Receptionist> Receptionists { get; set; } = new HashSet<Receptionist>();
         public ICollection<Patient> Patients { get; set; } = new HashSet<Patient>();
         public decimal? price { get; set; }
         //public decimal? Price { get; set; }

@@ -16,10 +16,12 @@ namespace GraduationProject.Data.Models
         public ShiftType Shift { get; set; }= ShiftType.Morning;
        // public string? ImageUrl { get; set; }
 
-     
+     public bool IsActive { get; set; }
         public string UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }
+        public TimeOnly ShiftStart { get; set; }   
+        public TimeOnly ShiftEnd { get; set; }    
         [ForeignKey("Doctor")]
         public int DoctorId { get; set; }
         public doctor Doctor { get; set; }

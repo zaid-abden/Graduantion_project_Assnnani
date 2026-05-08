@@ -20,6 +20,8 @@ namespace GraduationProject.Application.Features.Doctors.Commands.CreateReceptio
         public string Clinic { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public TimeOnly ShiftStart { get; set; }
+        public TimeOnly ShiftEnd { get; set; }
 
         public ShiftType Shift { get; set; }
     }

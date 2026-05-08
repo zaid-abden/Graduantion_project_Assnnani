@@ -16,6 +16,7 @@ namespace GraduationProject.Application.Contracts.Repositories
         IAppointmentRepository Appointments { get; }
         IDoctorRepository Doctors { get; }
         IDoctorScheduleRepository DoctorSchedules { get; }
+        IDoctorBreakRepository DoctorBreaks { get; }
         IFeedbackRepository Feedbacks { get; }
         IMedicalRecordRepository MedicalRecords { get; }
         IPatientRepository Patients { get; }

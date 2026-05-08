@@ -158,7 +158,7 @@ namespace GraduationProject.Application.Features.Doctors.Queries.GetPatients
     .OrderByDescending(a => a.ScheduleSlot.Date)
     .Select(a => (DateOnly?)a.ScheduleSlot.Date)
     .FirstOrDefault(),
-                    AssignedDoctor = x.AssignedDoctor!.User.FullName,
+                   
                     Phone = x.User.PhoneNumber!,
                     Status = x.Status.ToString()
                 })

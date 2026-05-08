@@ -88,6 +88,20 @@ namespace GraduationProject.Application.Features.Receptionists.Commands.StartCon
                     ResultStatus.Conflict,
                     "Doctor is already in consultation with another patient");
 
+            var now = DateTime.Now;
+
+            var isDoctorOnBreak = await _unitOfWork.DoctorBreaks.Query()
+                .AnyAsync(x =>
+                    x.DoctorId == appointment.DoctorId &&
+                    x.StartTime <= now &&
+                    x.EndTime >= now,
+                    cancellationToken);
+
+            if (isDoctorOnBreak)
+                return Result<string>.Failure(
+                    ResultStatus.Conflict,
+                    "Doctor is currently on a break. Cannot start consultation.");
+
             appointment.QueueStatus = QueueStatus.InProgress;
 
 

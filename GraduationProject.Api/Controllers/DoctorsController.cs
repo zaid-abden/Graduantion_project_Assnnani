@@ -1,7 +1,10 @@
 ﻿using GraduationProject.Api.Common.Responses;
 using GraduationProject.Application.Common.Results;
+using GraduationProject.Application.Features.Doctors.Commands.ActivateReceptionist;
 using GraduationProject.Application.Features.Doctors.Commands.AssignSupervisor;
+using GraduationProject.Application.Features.Doctors.Commands.CreateDoctorBreak;
 using GraduationProject.Application.Features.Doctors.Commands.CreateReceptionist;
+using GraduationProject.Application.Features.Doctors.Commands.DeactivateReceptionist;
 using GraduationProject.Application.Features.Doctors.Commands.UpdateDoctorProfile;
 using GraduationProject.Application.Features.Doctors.Dtos;
 using GraduationProject.Application.Features.Doctors.Queries.GetDoctorDashboard;
@@ -18,6 +21,7 @@ using GraduationProject.Application.Features.Doctors.Queries.GetPatients;
 using GraduationProject.Application.Features.Doctors.Queries.GetPendingScans;
 using GraduationProject.Application.Features.Doctors.Queries.GetRecentPatients;
 using GraduationProject.Application.Features.Doctors.Queries.GetRecentReports;
+using GraduationProject.Application.Features.Doctors.Queries.GetReceptionistAccessControl;
 using GraduationProject.Application.Features.Doctors.Queries.GetSupervisingRequestById;
 using GraduationProject.Application.Features.Doctors.Queries.GetTodayAppointments;
 using GraduationProject.Application.Features.Doctors.Queries.GetWeeklySchedule;
@@ -270,6 +274,66 @@ namespace GraduationProject.Api.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> AssignSupervisor([FromBody] AssignSupervisorCommand command)
+        {
+            var result = await mediator.Send(command);
+
+            return result.ToActionResult();
+        }
+        [HttpGet("My-Receptionst")]
+        [SwaggerOperation(
+        Summary = "Get receptionist access control dashboard",
+        Description = "Returns receptionist statistics and receptionist list for the current doctor."
+    )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetReceptionistAccessControl()
+        {
+            var result = await mediator.Send(
+                new GetReceptionistAccessControlQuery());
+
+            return result.ToActionResult();
+        }
+        [HttpPatch("{id}/activate")]
+        [SwaggerOperation(
+         Summary = "Activate receptionist",
+         Description = "Activates receptionist account."
+     )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Activate(int id)
+        {
+            var result = await mediator.Send(
+                new ActivateReceptionistCommand(id));
+
+            return result.ToActionResult();
+        }
+        [HttpPatch("{id}/deactivate")]
+        [SwaggerOperation(
+    Summary = "Deactivate receptionist",
+    Description = "Deactivates a receptionist account."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Deactivate(int id)
+        {
+            var result = await mediator.Send(
+                new DeactivateReceptionistCommand(id));
+
+            return result.ToActionResult();
+        }
+        [HttpPost("time-request-off")]
+        [SwaggerOperation(
+    Summary = "Create doctor break",
+    Description = "Creates a temporary break for a doctor where no appointments can be booked."
+)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> Create([FromBody] CreateDoctorBreakCommand command)
         {
             var result = await mediator.Send(command);
 

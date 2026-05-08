@@ -15,8 +15,12 @@ using GraduationProject.Application.Features.Receptionists.Commands.StartConsult
 using GraduationProject.Application.Features.Receptionists.Dtos;
 using GraduationProject.Application.Features.Receptionists.Queries.GetAppointmentDetails;
 using GraduationProject.Application.Features.Receptionists.Queries.GetAvailableSlotsByDate;
+using GraduationProject.Application.Features.Receptionists.Queries.GetPatientDoctorInfo;
 using GraduationProject.Application.Features.Receptionists.Queries.GetPatientInfo;
+using GraduationProject.Application.Features.Receptionists.Queries.GetPatientMedicalHistory;
 using GraduationProject.Application.Features.Receptionists.Queries.GetPatientQueue;
+using GraduationProject.Application.Features.Receptionists.Queries.GetPatients;
+using GraduationProject.Application.Features.Receptionists.Queries.GetRecentPatients;
 using GraduationProject.Application.Features.Receptionists.Queries.GetReceptionistAppointmentsDashboard;
 using GraduationProject.Application.Features.Receptionists.Queries.GetReceptionistDashboard;
 using GraduationProject.Application.Features.Receptionists.Queries.GetReceptionistOverview;
@@ -102,11 +106,11 @@ namespace GraduationProject.Api.Controllers
         [ProducesResponseType(typeof(Result<string>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> CompleteAppointment([FromBody] int appointmentId)
+        public async Task<IActionResult> CompleteAppointment([FromBody] CompleteAppointmentCommand command)
         {
-            var command = new CompleteAppointmentCommand(appointmentId);
+            //var command = new CompleteAppointmentCommand(appointmentId);
 
-            var result = await mediator.Send(command);
+            var result = await mediator.Send(new CompleteAppointmentCommand(command.AppointmentId));
 
             return result.ToActionResult();
         }
@@ -331,6 +335,60 @@ namespace GraduationProject.Api.Controllers
         {
             var result = await mediator.Send(new GetAppointmentDetailsQuery(id));
 
+            return result.ToActionResult();
+        }
+        [HttpGet("doctor-patients")]
+        [SwaggerOperation(
+     Summary = "Get doctor patients (Receptionist view)",
+     Description = "Returns paginated list of patients assigned to the receptionist's doctor with filters."
+ )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetPatients([FromQuery] GetPatientsQuery query)
+        {
+            var result = await mediator.Send(query);
+            return result.ToActionResult();
+        }
+        [HttpGet("{id}/doctor-info")]
+        [SwaggerOperation(
+          Summary = "Get patient details for doctor (Receptionist view)",
+          Description = "Returns detailed patient info if the patient belongs to the receptionist's doctor."
+      )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetPatientDoctorInfo(int id)
+        {
+            var result = await mediator.Send(new GetPatientDoctorInfoQuery(id));
+            return result.ToActionResult();
+        }
+        [HttpGet("{patientId}/medical-history")]
+        [SwaggerOperation(
+        Summary = "Get patient medical history (Receptionist view)",
+        Description = "Returns all medical records of a patient if they belong to the receptionist's doctor."
+    )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetMedicalHistory(int patientId)
+        {
+            var result = await mediator.Send(
+                new GetPatientMedicalHistoryQuery { PatientId = patientId});
+               
+
+            return result.ToActionResult();
+        }
+        [HttpGet("recent-patients")]
+        [SwaggerOperation(
+           Summary = "Get recent patients",
+           Description = "Returns the most recently visited patients for the logged-in receptionist's doctor."
+       )]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> GetRecentPatients([FromQuery] GetRecentPatientsQuery query)
+        {
+            var result = await mediator.Send(query);
             return result.ToActionResult();
         }
     }
